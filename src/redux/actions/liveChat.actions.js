@@ -110,6 +110,7 @@ export function showOpenChatSessions (sessions, data) {
 }
 
 export function showCloseChatSessions (sessions, firstPage) {
+  console.log('showCloseChatSessions', sessions)
   var subscribers = sessions.closedSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]

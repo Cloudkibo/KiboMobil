@@ -3,37 +3,11 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
 import { Block, Text, theme, Input } from 'galio-framework'
-import { fetchSubscribers } from '../../redux/actions/subscribers.actions'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
-import Tabs from '../../components/Tabs';
-
-import {
-  fetchOpenSessions,
-  fetchCloseSessions,
-  fetchUserChats,
-  fetchTeamAgents,
-  changeStatus,
-  unSubscribe,
-  getCustomers,
-  appendSubscriber,
-  assignToTeam,
-  assignToAgent,
-  sendNotifications,
-  updatePendingResponse,
-  sendChatMessage,
-  uploadAttachment,
-  sendAttachment,
-  uploadRecording,
-  searchChat,
-  markRead,
-  updateLiveChatInfo,
-  deletefile,
-  clearSearchResult,
-  getSMPStatus,
-  updateSessionProfilePicture
-} from '../../redux/actions/liveChat.actions'
+import Tabs from '../../components/Tabs'
+import {fetchOpenSessions, fetchCloseSessions} from '../../redux/actions/liveChat.actions'
 const { width } = Dimensions.get('screen')
 
 class LiveChat extends React.Component {
@@ -41,25 +15,15 @@ class LiveChat extends React.Component {
     super(props, context)
     this.state = {
       loading: true,
-      fetchingChat: false,
-      loadingChat: true,
-      sessionsLoading: false,
       tabValue: 'open',
-      numberOfRecords: 25,
-      filterSort: -1,
-      filterPage: '',
+      numberOfRecords: 5,
       filterSearch: '',
-      filterPending: false,
-      filterUnread: false,
       sessions: [],
       sessionsCount: 0,
-      activeSession: {},
-      teamAgents: [],
-      userChat: [],
-      showSearch: false,
-      customFieldOptions: [],
-      showingCustomFieldPopover: false,
-      smpStatus: []
+      filterSort: -1,
+      filterPage: '',
+      filterPending: false,
+      filterUnread: false
     }
     this.loadMore = this.loadMore.bind(this)
     this._renderSearchResultsFooter = this._renderSearchResultsFooter.bind(this)
@@ -69,7 +33,42 @@ class LiveChat extends React.Component {
     this.fetchSessions = this.fetchSessions.bind(this)
     this.getChatPreview = this.getChatPreview.bind(this)
 
-    this.fetchSessions(true, 'none', false)
+    this.fetchSessions(true, 'none', true)
+  }
+  /* eslint-disable */
+  UNSAFE_componentWillReceiveProps (nextProps) {
+  /* eslint-enable */
+    let state = {}
+    if (nextProps.openSessions || nextProps.closeSessions) {
+      state.loading = false
+      state.sessionsLoading = false
+      let sessions = this.state.tabValue === 'open' ? nextProps.openSessions : nextProps.closeSessions
+      sessions = sessions || []
+      state.sessions = sessions
+      state.sessionsCount = this.state.tabValue === 'open' ? nextProps.openCount : nextProps.closeCount
+    }
+    this.setState({
+      ...state
+    })
+
+  // if (nextProps.socketData) {
+  //   handleSocketEvent(
+  //     nextProps.socketData,
+  //     this.state,
+  //     this.props,
+  //     this.props.updateLiveChatInfo,
+  //     this.props.user,
+  //     this.props.clearSocketData
+  //   )
+  // }
+  }
+
+  changeTab (value) {
+    this.setState({
+      tabValue: value,
+      sessions: value === 'open' ? this.props.openSessions : this.props.closeSessions,
+      sessionsCount: value === 'open' ? this.props.openCount : this.props.closeCount
+    })
   }
 
   getChatPreview (message, repliedBy, subscriberName) {
@@ -130,14 +129,29 @@ class LiveChat extends React.Component {
     }
   }
 
+  componentDidMount () {
+    // let typingTimer
+    // let doneTypingInterval = this.state.typingInterval
+    // let input = document.getElementById(`generalSearch`)
+    // input.addEventListener('keyup', () => {
+    //   clearTimeout(typingTimer)
+    //   typingTimer = setTimeout(() => {
+    //     this.setState({loading: true}, () => {
+    //       this.fetchSessions(true, 'none')
+    //     })
+    //   }, doneTypingInterval)
+    // })
+    // input.addEventListener('keydown', () => { clearTimeout(typingTimer) })
+  }
+
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
   }
 
-  changeSearchValue (value) {
-    this.setState({searchValue: value, pageSelected: 0}, () => {
-      this.loadSubscribers()
+  handleSearch (value) {
+    this.setState({loading: true, filterSearch: value}, () => {
+      this.fetchSessions(true, 'none')
     })
   }
 
@@ -149,10 +163,9 @@ class LiveChat extends React.Component {
     this.setState({
       onEndReachedCalledDuringMomentum: false
     })
-    let pageSelected = this.state.pageSelected
-    if (this.props.subscribers.length < this.props.count) {
-      this.setState({pageSelected: pageSelected + 1})
-      this.loadSubscribers(pageSelected, pageSelected + 1)
+    if (this.state.sessions.length < this.state.sessionsCount) {
+      const lastId = this.state.sessions[this.state.sessions.length - 1].last_activity_time
+      this.fetchSessions(false, lastId)
     }
   }
 
@@ -169,15 +182,14 @@ class LiveChat extends React.Component {
   }
 
   _renderSearchResultsFooter () {
-    return (
-      this.state.loading || (this.props.subscribers && this.props.subscribers.length < this.props.count.length)
-        ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large' /></View>
-        : null
+    return (this.state.sessions && this.state.sessions.length < this.state.sessionsCount
+      ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large' /></View>
+      : null
     )
   }
 
   _loadMoreData () {
-    if (!this.state.onEndReachedCalledDuringMomentum && this.props.subscribers.length < this.props.count) {
+    if (!this.state.onEndReachedCalledDuringMomentum && this.state.sessions.length < this.state.sessionsCount) {
       this.setState({ onEndReachedCalledDuringMomentum: true }, () => {
         setTimeout(() => {
           this.loadMore()
@@ -191,34 +203,38 @@ class LiveChat extends React.Component {
       <Block flex center style={styles.block}>
         <Block shadow style={styles.pages} flex>
           <Tabs
-            data={[{id: 'open', title: 'Open'}, {id: 'closed', title: 'Closed'}]}
-            initialIndex={'open'} />
+            data={[{id: 'open', title: 'Open'}, {id: 'close', title: 'Closed'}]}
+            initialIndex={'open'}
+            onChange={id => this.changeTab(id)} />
           <Input
             right
             color='black'
             style={styles.search}
             placeholder='Search Subscribers'
             iconContent={<Icon size={25} color={theme.COLORS.MUTED} name='search' family='feather' />}
-            onChangeText={text => this.changeSearchValue(text)}
-            value={this.state.searchValue}
+            value={this.state.filterSearch}
+            onChangeText={text => this.handleSearch(text)}
           />
-          <FlatList
-            data={this.props.openSessions}
-            renderItem={({item}) => {
-              return <SessionsListItem
-                session={item}
-                getChatPreview={this.getChatPreview}
-              />
-            }}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item._id}
-            ListEmptyComponent={this.renderEmpty()}
-            bounces={false}
-            onEndReached={() => this._loadMoreData()}
-            onEndReachedThreshold={0.01}
-            ListFooterComponent={this._renderSearchResultsFooter}
-            onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
-          />
+          {this.state.loading
+            ? <Block flex={0.8} middle><ActivityIndicator size='large' /></Block>
+            : <FlatList
+              data={this.state.sessions}
+              renderItem={({item}) => {
+                return <SessionsListItem
+                  session={item}
+                  getChatPreview={this.getChatPreview}
+                />
+              }}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={(item) => item._id}
+              ListEmptyComponent={this.renderEmpty()}
+              bounces={false}
+              onEndReached={() => this._loadMoreData()}
+              onEndReachedThreshold={0.01}
+              ListFooterComponent={this._renderSearchResultsFooter}
+              onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
+            />
+          }
         </Block>
       </Block>
     )
@@ -230,48 +246,15 @@ function mapStateToProps (state) {
     openSessions: (state.liveChat.openSessions),
     openCount: (state.liveChat.openCount),
     closeCount: (state.liveChat.closeCount),
-    closeSessions: (state.liveChat.closeSessions),
-    userChat: (state.liveChat.userChat),
-    chatCount: (state.liveChat.chatCount),
-    pages: (state.pagesInfo.pages),
-    user: (state.basicInfo.user),
-    customers: (state.liveChat.customers),
-    // members: (state.membersInfo.members),
-    // teams: (state.teamsInfo.teams),
-    searchChatMsgs: (state.liveChat.searchChat)
+    closeSessions: (state.liveChat.closeSessions)
     // socketData: (state.socketInfo.socketData)
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    unSubscribe,
     fetchOpenSessions,
-    fetchCloseSessions,
-    // updatePicture,
-    fetchTeamAgents,
-    assignToTeam,
-    changeStatus,
-    getCustomers,
-    appendSubscriber,
-    // loadTeamsList,
-    sendNotifications,
-    // loadMembersList,
-    assignToAgent,
-    sendChatMessage,
-    uploadAttachment,
-    sendAttachment,
-    uploadRecording,
-    searchChat,
-    fetchUserChats,
-    markRead,
-    // clearSocketData,
-    updateLiveChatInfo,
-    deletefile,
-    clearSearchResult,
-    // urlMetaData,
-    getSMPStatus,
-    updateSessionProfilePicture
+    fetchCloseSessions
   }, dispatch)
 }
 

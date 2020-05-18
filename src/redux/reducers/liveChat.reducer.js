@@ -6,8 +6,6 @@ const initialState = {
 }
 
 export function liveChat (state = initialState, action) {
-  console.log('livechat reducer', action)
-  console.log('livechat reducer state', state)
   switch (action.type) {
     case ActionTypes.UPDATE_SESSION_PROFILE_PICTURE:
       let openSessions = state.openSessions
@@ -246,7 +244,6 @@ export function liveChat (state = initialState, action) {
       })
 
     case ActionTypes.SHOW_CUSTOMERS:
-      console.log('action.customers', action.customers)
       return Object.assign({}, state, {
         customers: action.data
       })

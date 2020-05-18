@@ -1,6 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { Block, Text, Button } from 'galio-framework'
 import Icon from '../../components/Icon'
@@ -13,10 +11,6 @@ class SessionsListItem extends React.Component {
     this.state = {
     }
     this.getChatPreview = this.getChatPreview.bind(this)
-  }
-
-  showSubscriberDetail () {
-    this.setState({expanded: !this.state.expanded})
   }
 
   getChatPreview () {
@@ -43,7 +37,7 @@ class SessionsListItem extends React.Component {
             <Text size={16} style={{marginBottom: 3}}>
               {`${session.firstName} ${session.lastName}`}
             </Text>
-            <Text h7 muted style={{marginBottom: 5}}>
+            <Text h7 muted style={{marginBottom: 5}} numberOfLines={1}>
               {session.lastPayload
                 ? this.getChatPreview()
                 : 'No chat preview is available'
@@ -86,17 +80,7 @@ class SessionsListItem extends React.Component {
   }
 }
 
-function mapStateToProps (state) {
-  return {
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators({
-  }, dispatch)
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SessionsListItem)
+export default SessionsListItem
 const styles = StyleSheet.create({
   avatar: {
     height: 60,
