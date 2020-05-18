@@ -433,7 +433,7 @@ function LiveChatStack (props) {
   return (
     <Stack.Navigator mode='card' headerMode='screen'>
       <Stack.Screen
-        name='Pages'
+        name='Live Chat'
         component={LiveChatSessionScreen}
         options={{
           header: ({ navigation, scene }) => (
