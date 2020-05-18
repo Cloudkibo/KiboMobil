@@ -1,4 +1,5 @@
 import React from 'react'
+import { registerRootComponent } from 'expo'
 import { Platform, StatusBar } from 'react-native'
 import { Block, GalioProvider } from 'galio-framework'
 import { NavigationContainer } from '@react-navigation/native'
@@ -36,4 +37,5 @@ class App extends React.Component {
     )
   }
 }
-export default App
+
+export default registerRootComponent(App)
