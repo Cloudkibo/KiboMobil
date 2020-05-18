@@ -91,7 +91,7 @@ class Subscribers extends React.Component {
   _renderSearchResultsFooter () {
     return (
       this.state.loading || (this.props.subscribers && this.props.subscribers.length < this.props.count.length)
-        ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large'/></View>
+        ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large' /></View>
         : null
     )
   }

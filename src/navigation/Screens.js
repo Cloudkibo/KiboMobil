@@ -17,6 +17,7 @@ import PagesScreen from '../screens/Pages/Pages'
 import SubscribersScreen from '../screens/Subscribers/Subscribers'
 import InviteSubscribersScreen from '../screens/InviteSubscribers/InviteSubscribers'
 import LogOutScreen from '../screens/LogOut/LogOut'
+import LiveChatSessionScreen from '../screens/LiveChat/LiveChat'
 
 
 import ManScreen from '../screens/Man'
@@ -428,7 +429,42 @@ function PagesStack (props) {
   )
 }
 
-
+function LiveChatStack (props) {
+  return (
+    <Stack.Navigator mode='card' headerMode='screen'>
+      <Stack.Screen
+        name='Pages'
+        component={LiveChatSessionScreen}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              search
+              options
+              title='LiveChat'
+              navigation={navigation}
+              scene={scene}
+            />
+          )
+        }}
+      />
+      <Stack.Screen
+        name='Deals'
+        component={DealsScreen}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              back
+              tabs={tabs.deals}
+              title='Best Deals'
+              navigation={navigation}
+              scene={scene}
+            />
+          )
+        }}
+      />
+    </Stack.Navigator>
+  )
+}
 
 function ManStack (props) {
   return (
@@ -1050,8 +1086,8 @@ function AppStack (props, param) {
         }}
       />
       <Drawer.Screen
-        name='Man'
-        component={ManStack}
+        name='Live Chat'
+        component={LiveChatStack}
         options={{
           drawerIcon: ({ focused }) => (
             <Icon
