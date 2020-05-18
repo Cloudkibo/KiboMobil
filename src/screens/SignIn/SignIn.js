@@ -67,7 +67,6 @@ class SignIn extends React.Component {
   }
 
   async handleResponse (res) {
-    console.log('handleResponse', this.props.navigation.dangerouslyGetParent())
     if (res.status === 'success') {
       await AsyncStorage.setItem('token', res.token)
       this.props.navigation.navigate('App Loading')

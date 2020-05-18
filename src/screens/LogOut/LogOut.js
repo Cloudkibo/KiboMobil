@@ -11,7 +11,6 @@ class Dashboard extends React.Component {
   }
 
   render () {
-    console.log('in logout')
     this.props.navigation.navigate('Sign In')
     return null
   }

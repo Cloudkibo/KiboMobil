@@ -68,7 +68,7 @@ export default class Tabs extends React.Component {
       outputRange: [materialTheme.COLORS.MUTED, isActive ? materialTheme.COLORS.ACTIVE : materialTheme.COLORS.MUTED],
       extrapolate: 'clamp',
     });
-    
+
     const width = this.animatedValue.interpolate({
       inputRange: [0, 1],
       outputRange: ['0%', isActive ? '100%' : '0%'],
@@ -132,12 +132,12 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   menu: {
-    paddingHorizontal: theme.SIZES.BASE * 2.5,
-    paddingTop: 8,
+    paddingTop: 15,
     paddingBottom: 0,
   },
   titleContainer: {
     alignItems: 'center',
+    width: width / 2
   },
   menuTitle: {
     fontWeight: '300',

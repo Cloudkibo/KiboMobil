@@ -37,8 +37,6 @@ class InviteSubscribers extends React.Component {
   }
 
   handlePageSelect (index, value) {
-    console.log('index', index)
-    console.log('value', value)
     let selectedPage = this.props.connectedPages[index]
     this.setState({selectedPage: selectedPage})
   }
