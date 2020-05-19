@@ -15,10 +15,11 @@ export function updateConnectedPages (data) {
   }
 }
 
-export function fetchPages () {
+export function fetchPages (callback) {
   return (dispatch) => {
     callApi(`pages/addpages/`).then(res => {
       dispatch(updatePages(res.payload))
+      if (callback) callback()
     })
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { StyleSheet, Dimensions, Image, FlatList, Alert } from 'react-native'
+import { StyleSheet, Dimensions, Image, FlatList, Alert, ActivityIndicator } from 'react-native'
 import { Button, Block, Text, theme } from 'galio-framework'
 import { connectPage, disconnectPage, fetchPages } from '../../redux/actions/pages.actions'
 
@@ -13,15 +13,30 @@ class Pages extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
+      loading: false
     }
     this.renderPage = this.renderPage.bind(this)
     this.showErrorDialog = this.showErrorDialog.bind(this)
+    this.handleResponse = this.handleResponse.bind(this)
   }
 
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
-    this.props.fetchPages()
+  }
+
+  componentDidMount () {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({loading: true})
+      this.props.fetchPages(this.handleResponse)
+    })
+  }
+  componentWillUnmount () {
+    this._unsubscribe()
+  }
+
+  handleResponse () {
+    this.setState({loading: false})
   }
 
   renderPage ({ item }) {
@@ -37,7 +52,8 @@ class Pages extends React.Component {
               round
               textStyle={{color: theme.COLORS.ERROR}}
               style={[styles.optionsButton, {borderColor: theme.COLORS.ERROR}]}
-              onPress={() => this.props.disconnectPage(item)}>Disconnect
+              onPress={() => this.props.disconnectPage(item)}>
+              Disconnect
             </Button>
             : <Button
               round
@@ -69,20 +85,24 @@ class Pages extends React.Component {
   }
 
   render () {
-    return (
-      <Block flex center style={styles.block}>
-        <Block shadow style={styles.pages}>
-          {this.props.pages &&
-            <FlatList
-              data={this.props.pages}
-              renderItem={this.renderPage}
-              showsVerticalScrollIndicator={false}
-              keyExtractor={(item) => item._id}
-              ListEmptyComponent={this.renderEmpty()} />
-          }
+    if (this.state.loading) {
+      return <ActivityIndicator size='large' style={{flex: 0.8}} />
+    } else {
+      return (
+        <Block flex center style={styles.block}>
+          <Block shadow style={styles.pages}>
+            {this.props.pages &&
+              <FlatList
+                data={this.props.pages}
+                renderItem={this.renderPage}
+                showsVerticalScrollIndicator={false}
+                keyExtractor={(item) => item._id}
+                ListEmptyComponent={this.renderEmpty()} />
+            }
+          </Block>
         </Block>
-      </Block>
-    )
+      )
+    }
   }
 }
 
