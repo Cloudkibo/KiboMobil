@@ -442,7 +442,7 @@ function LiveChatStack (props) {
             <Header
               search
               options
-              title='LiveChat'
+              title='Live Chat'
               navigation={navigation}
               scene={scene}
             />

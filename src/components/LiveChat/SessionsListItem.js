@@ -1,10 +1,11 @@
 import React from 'react'
-import { StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native'
 import { Block, Text, Button } from 'galio-framework'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import moment from 'moment'
 import { withNavigation } from '@react-navigation/compat'
+const { width } = Dimensions.get('screen')
 
 class SessionsListItem extends React.Component {
   constructor (props, context) {
@@ -52,7 +53,7 @@ class SessionsListItem extends React.Component {
                 color={materialTheme.COLORS.MUTED}
                 style={{marginRight: 5}}
               />
-              <Text h7 muted style={{marginRight: 10}}>
+              <Text h7 muted style={{marginRight: 10, width: width / 4}} numberOfLines={1}>
                 {session.pageId.pageName}
               </Text>
               <Icon

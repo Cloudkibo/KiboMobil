@@ -92,6 +92,7 @@ class LiveChat extends React.Component {
   }
 
   getChatPreview (message, repliedBy, subscriberName) {
+    console.log('')
     let chatPreview = ''
     if (message.componentType) {
       // agent
@@ -267,7 +268,8 @@ function mapStateToProps (state) {
     openSessions: (state.liveChat.openSessions),
     openCount: (state.liveChat.openCount),
     closeCount: (state.liveChat.closeCount),
-    closeSessions: (state.liveChat.closeSessions)
+    closeSessions: (state.liveChat.closeSessions),
+    user: (state.basicInfo.user)
     // socketData: (state.socketInfo.socketData)
   }
 }

@@ -1,7 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
+import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator, Image,
+ScrollView,
+KeyboardAvoidingView } from 'react-native'
 import { Block, Text, theme, Input } from 'galio-framework'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
@@ -9,6 +11,8 @@ import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
 import {fetchUserChats} from '../../redux/actions/liveChat.actions'
 const { width } = Dimensions.get('screen')
+import Images from "../../constants/Images";
+import { LinearGradient } from 'expo-linear-gradient';
 
 class LiveChat extends React.Component {
   constructor (props, context) {
@@ -19,7 +23,8 @@ class LiveChat extends React.Component {
       activeSession: {},
       teamAgents: [],
       userChat: [],
-      smpStatus: []
+      smpStatus: [],
+      height: 0
     }
     this.loadMore = this.loadMore.bind(this)
     this._renderSearchResultsFooter = this._renderSearchResultsFooter.bind(this)
@@ -60,178 +65,50 @@ class LiveChat extends React.Component {
     // }
   }
 
-  changeTab (value) {
-    this.setState({
-      tabValue: value,
-      sessions: value === 'open' ? this.props.openSessions : this.props.closeSessions,
-      sessionsCount: value === 'open' ? this.props.openCount : this.props.closeCount
-    })
-  }
-
-  getChatPreview (message, repliedBy, subscriberName) {
-    let chatPreview = ''
-    if (message.componentType) {
-      // agent
-      chatPreview = (!repliedBy || (repliedBy.id === this.props.user._id)) ? `You` : `${repliedBy.name}`
-      if (message.componentType === 'text') {
-        chatPreview = `${chatPreview}: ${message.text}`
-      } else {
-        chatPreview = `${chatPreview} shared ${message.componentType}`
-      }
-    } else {
-      // subscriber
-      chatPreview = `${subscriberName}`
-      if (message.attachments) {
-        if (message.attachments[0].type === 'template' &&
-          message.attachments[0].payload.template_type === 'generic'
-        ) {
-          chatPreview = message.attachments[0].payload.elements.length > 1 ? `${chatPreview} sent a gallery` : `${chatPreview} sent a card`
-        } else if (message.attachments[0].type === 'template' &&
-          message.attachments[0].payload.template_type === 'media'
-        ) {
-          chatPreview = `${chatPreview} sent a media`
-        } else if (['image', 'audio', 'location', 'video', 'file'].includes(message.attachments[0].type)) {
-          chatPreview = `${chatPreview} shared ${message.attachments[0].type}`
-        } else {
-          chatPreview = `${chatPreview}: ${message.text}`
-        }
-      } else {
-        chatPreview = `${chatPreview}: ${message.text}`
-      }
-    }
-    return chatPreview
-  }
-
-  fetchSessions (firstPage, lastId, fetchBoth) {
-    const data = {
-      first_page: firstPage,
-      last_id: lastId,
-      number_of_records: this.state.numberOfRecords,
-      filter: false,
-      filter_criteria: {
-        sort_value: this.state.filterSort,
-        page_value: this.state.filterPage,
-        search_value: this.state.filterSearch,
-        pendingResponse: this.state.filterPending,
-        unreadMessages: this.state.filterUnread
-      }
-    }
-    if (fetchBoth) {
-      this.props.fetchOpenSessions(data)
-      this.props.fetchCloseSessions(data)
-    } else if (this.state.tabValue === 'open') {
-      this.props.fetchOpenSessions(data)
-    } else if (this.state.tabValue === 'close') {
-      this.props.fetchCloseSessions(data)
-    }
-  }
-
-  componentDidMount () {
-    // let typingTimer
-    // let doneTypingInterval = this.state.typingInterval
-    // let input = document.getElementById(`generalSearch`)
-    // input.addEventListener('keyup', () => {
-    //   clearTimeout(typingTimer)
-    //   typingTimer = setTimeout(() => {
-    //     this.setState({loading: true}, () => {
-    //       this.fetchSessions(true, 'none')
-    //     })
-    //   }, doneTypingInterval)
-    // })
-    // input.addEventListener('keydown', () => { clearTimeout(typingTimer) })
-  }
-
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
   }
 
-  handleSearch (value) {
-    this.setState({loading: true, filterSearch: value}, () => {
-      this.fetchSessions(true, 'none')
-    })
-  }
 
-  updateLoading () {
-    this.setState({loading: false})
-  }
-
-  loadMore () {
-    this.setState({
-      onEndReachedCalledDuringMomentum: false
-    })
-    if (this.state.sessions.length < this.state.sessionsCount) {
-      const lastId = this.state.sessions[this.state.sessions.length - 1].last_activity_time
-      this.fetchSessions(false, lastId)
-    }
-  }
-
-  renderEmpty () {
-    return (
-      !this.state.loading
-        ? <Text color={materialTheme.COLORS.ERROR} style={styles.empty}>No data to display</Text>
-        : null
-    )
-  }
-
-  _onMomentumScrollBegin () {
-    this.setState({ onEndReachedCalledDuringMomentum: false })
-  }
-
-  _renderSearchResultsFooter () {
-    return (this.state.sessions && this.state.sessions.length < this.state.sessionsCount
-      ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large' /></View>
-      : null
-    )
-  }
-
-  _loadMoreData () {
-    if (!this.state.onEndReachedCalledDuringMomentum && this.state.sessions.length < this.state.sessionsCount) {
-      this.setState({ onEndReachedCalledDuringMomentum: true }, () => {
-        setTimeout(() => {
-          this.loadMore()
-        }, 1500)
-      })
-    }
-  }
 
   render () {
     return (
       <Block flex center style={styles.block}>
-        <Block shadow style={styles.pages} flex>
-          <Tabs
-            data={[{id: 'open', title: 'Open'}, {id: 'close', title: 'Closed'}]}
-            initialIndex={'open'}
-            onChange={id => this.changeTab(id)} />
-          <Input
-            right
-            color='black'
-            style={styles.search}
-            placeholder='Search Subscribers'
-            iconContent={<Icon size={25} color={theme.COLORS.MUTED} name='search' family='feather' />}
-            value={this.state.filterSearch}
-            onChangeText={text => this.handleSearch(text)}
+        <Block shadow flex>
+          {/*<CHAT
+            userChat={this.state.userChat}
+            chatCount={this.props.chatCount}
+            sessions={this.state.sessions}
+            activeSession={this.state.activeSession}
+            changeStatus={this.changeStatus}
+            updateState={this.updateState}
+            getChatPreview={this.getChatPreview}
+            handlePendingResponse={this.handlePendingResponse}
+            showSearch={this.showSearch}
+            performAction={this.performAction}
+            alertMsg={this.alertMsg}
+            user={this.props.user}
+            sendChatMessage={this.props.sendChatMessage}
+            uploadAttachment={this.props.uploadAttachment}
+            sendAttachment={this.props.sendAttachment}
+            uploadRecording={this.props.uploadRecording}
+            loadingChat={this.state.loadingChat}
+            fetchUserChats={this.props.fetchUserChats}
+            markRead={this.props.markRead}
+            deletefile={this.props.deletefile}
+            fetchUrlMeta={this.props.urlMetaData}
+            isSMPApproved={this.isSMPApproved()}
+            showUploadAttachment={true}
+            showRecordAudio={true}
+            showSticker={true}
+            showEmoji={true}
+            showGif={true}
+            showThumbsUp={true}
+            setMessageData={this.setMessageData}
+            filesAccepted={'image/*, audio/*, video/*, application/*, text/*'}
           />
-          {this.state.loading
-            ? <Block flex={0.8} middle><ActivityIndicator size='large' /></Block>
-            : <FlatList
-              data={this.state.sessions}
-              renderItem={({item}) => {
-                return <SessionsListItem
-                  session={item}
-                  getChatPreview={this.getChatPreview}
-                />
-              }}
-              showsVerticalScrollIndicator={false}
-              keyExtractor={(item) => item._id}
-              ListEmptyComponent={this.renderEmpty()}
-              bounces={false}
-              onEndReached={() => this._loadMoreData()}
-              onEndReachedThreshold={0.01}
-              ListFooterComponent={this._renderSearchResultsFooter}
-              onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
-            />
-          }
+          */}
         </Block>
       </Block>
     )
@@ -239,7 +116,6 @@ class LiveChat extends React.Component {
 }
 
 function mapStateToProps (state) {
-  console.log('state got', state.liveChat.chatCount)
   return {
     userChat: (state.liveChat.userChat),
     chatCount: (state.liveChat.chatCount),
@@ -283,5 +159,60 @@ const styles = StyleSheet.create({
   empty: {
     marginHorizontal: 16,
     marginVertical: 20
+  },
+  container: {
+
+  },
+  messageFormContainer: {
+    height: 96,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 32,
+  },
+  input: {
+    width: width * 0.78,
+    height: theme.SIZES.BASE * 3,
+    backgroundColor: theme.COLORS.WHITE,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'transparent',
+  },
+  messagesWrapper: {
+    flexGrow: 1,
+    top: 0,
+    paddingLeft: 8,
+    paddingRight: 16,
+    paddingVertical: 16,
+    paddingBottom: 68
+  },
+  messageCardWrapper: {
+    maxWidth: '85%',
+    marginLeft: 8,
+    marginBottom: 32,
+  },
+  messageCard: {
+    paddingHorizontal: 8,
+    paddingVertical: 16,
+    borderRadius: 6,
+    backgroundColor: theme.COLORS.WHITE,
+  },
+  shadow: {
+    shadowColor: "rgba(0, 0, 0, 0.12)",
+    shadowOffset: { width: 0, height: 7 },
+    shadowRadius: 20,
+    shadowOpacity: 1
+  },
+  time: {
+    fontSize: 11,
+    opacity: 0.5,
+    marginTop: 8,
+  },
+  avatar: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    marginBottom: theme.SIZES.BASE,
   }
 })

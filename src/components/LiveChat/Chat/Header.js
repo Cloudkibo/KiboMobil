@@ -1,11 +1,9 @@
 import React from 'react'
 import { withNavigation } from '@react-navigation/compat'
 import { TouchableOpacity, StyleSheet, Platform, Dimensions, Image } from 'react-native'
-import { Button, Block, NavBar, Input, Text, theme } from 'galio-framework'
+import { Button, Block, NavBar, Text, theme } from 'galio-framework'
 
 import Icon from '../../Icon'
-import materialTheme from '../../../constants/Theme'
-import Tabs from '../..//Tabs'
 
 const { height, width } = Dimensions.get('window')
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896)
@@ -27,15 +25,16 @@ class Header extends React.Component {
     return (
       <Block flex={0.8} row>
         <Button round style={{ width: 80, height: 30 }} color='success'>
-          <Text style={{color: 'white'}}>Done</Text>
+          <Text style={{color: 'white'}}>Reopen</Text>
         </Button>
-        <Icon
-          size={16}
-          name='facebook'
-          family='entypo'
-          color={materialTheme.COLORS.MUTED}
-          style={{marginRight: 10}}
-        />
+        <TouchableOpacity>
+          <Icon
+            size={20}
+            name='dots-three-vertical'
+            family='Entypo'
+            style={{marginLeft: 8, marginTop: 6}}
+          />
+        </TouchableOpacity>
       </Block>
     )
   }
@@ -52,25 +51,17 @@ class Header extends React.Component {
         <Text size={16} style={{marginLeft: 5}}>
           {`${activeSession.firstName} ${activeSession.lastName}`}
         </Text>
-          <Text size={12} style={{marginLeft: 5}}>
-            Assigned
-          </Text>
+        <Text size={12} style={{marginLeft: 5}}>
+          Assigned
+        </Text>
       </Block>
     </Block>)
   }
 
-  render() {
-    const { back, title, white, transparent, navigation, scene, activeSession } = this.props
-    // const { routeName } = navigation.state;
-    // const { options } = scene.descriptor;
-    // const routeName = scene.descriptor?.options.headerTitle ?? '';
-    const noShadow = ["Search", "Profile"].includes(title);
-    const headerStyles = [
-      !noShadow ? styles.shadow : null,
-      transparent ? { backgroundColor: 'rgba(0,0,0,0)' } : null,
-    ];
+  render () {
+    const { back, white, transparent, activeSession } = this.props
     return (
-      <Block style={headerStyles}>
+      <Block>
         <NavBar
           back={back}
           title={this.renderTitle(activeSession)}
@@ -84,32 +75,27 @@ class Header extends React.Component {
           leftIconColor={white ? theme.COLORS.WHITE : theme.COLORS.ICON}
           titleStyle={[
             styles.title,
-            { color: theme.COLORS[white ? 'WHITE' : 'ICON'] },
+            { color: theme.COLORS[white ? 'WHITE' : 'ICON'] }
           ]}
-          onLeftPress={this.handleLeftPress}>
-        </NavBar>
+          onLeftPress={this.handleLeftPress} />
       </Block>
-    );
+    )
   }
 }
 
-export default withNavigation(Header);
+export default withNavigation(Header)
 
 const styles = StyleSheet.create({
-  button: {
-    padding: 12,
-    position: 'relative',
-  },
   title: {
     width: '100%',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   navbar: {
     paddingVertical: 0,
     paddingBottom: theme.SIZES.BASE * 1.5,
     paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,
-    zIndex: 5,
+    zIndex: 5
   },
   shadow: {
     backgroundColor: theme.COLORS.WHITE,
@@ -117,51 +103,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     shadowOpacity: 0.2,
-    elevation: 3,
-  },
-  notify: {
-    backgroundColor: materialTheme.COLORS.LABEL,
-    borderRadius: 4,
-    height: theme.SIZES.BASE / 2,
-    width: theme.SIZES.BASE / 2,
-    position: 'absolute',
-    top: 8,
-    right: 8,
-  },
-  header: {
-    backgroundColor: theme.COLORS.WHITE,
-  },
-  divider: {
-    borderRightWidth: 0.3,
-    borderRightColor: theme.COLORS.MUTED,
-  },
-  search: {
-    height: 48,
-    width: width - 32,
-    marginHorizontal: 16,
-    borderWidth: 1,
-    borderRadius: 3,
-  },
-  tabs: {
-    marginBottom: 24,
-    marginTop: 10,
-  },
-  tab: {
-    backgroundColor: theme.COLORS.TRANSPARENT,
-    width: width * 0.50,
-    borderRadius: 0,
-    borderWidth: 0,
-    height: 24,
-    elevation: 0,
-  },
-  tabTitle: {
-    lineHeight: 19,
-    fontWeight: '300'
+    elevation: 3
   },
   avatar: {
     height: 40,
     width: 40,
     borderRadius: 50,
-    marginRight: 10,
-  },
-});
+    marginRight: 10
+  }
+})
