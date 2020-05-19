@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
 import { Block, Text, theme, Input } from 'galio-framework'
-import { fetchSubscribers } from '../../redux/actions/subscribers.actions'
+import { fetchSubscribers, updatePicture } from '../../redux/actions/subscribers.actions'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SubscribersListItem from '../../components/Subscribers/SubscribersListItem'
@@ -31,7 +31,15 @@ class Subscribers extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
-    this.loadSubscribers()
+  }
+
+  componentDidMount () {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.loadSubscribers()
+    })
+  }
+  componentWillUnmount () {
+    this._unsubscribe()
   }
 
   changeSearchValue (value) {
@@ -122,7 +130,10 @@ class Subscribers extends React.Component {
           <FlatList
             data={this.props.subscribers}
             renderItem={({item}) => {
-              return <SubscribersListItem item={item} />
+              return <SubscribersListItem
+                item={item}
+                updatePicture={this.props.updatePicture}
+              />
             }}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item) => item._id}
@@ -148,7 +159,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    fetchSubscribers
+    fetchSubscribers,
+    updatePicture
   }, dispatch)
 }
 

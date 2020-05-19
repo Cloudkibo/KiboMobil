@@ -15,10 +15,15 @@ class SubscribersListItem extends React.Component {
       expanded: false
     }
     this.showSubscriberDetail = this.showSubscriberDetail.bind(this)
+    this.profilePicError = this.profilePicError.bind(this)
   }
 
   showSubscriberDetail () {
     this.setState({expanded: !this.state.expanded})
+  }
+
+  profilePicError (subscriber) {
+    this.props.updatePicture({ subscriber })
   }
 
   render () {
@@ -28,7 +33,7 @@ class SubscribersListItem extends React.Component {
         <Block flex row style={{paddingVertical: 20}}>
           <Block flex={0.2}>
             <Image
-              onError={({ nativeEvent: {error} }) => console.log(error)}
+              onError={() => this.profilePicError(item)}
               source={{uri: item.profilePic}}
               style={styles.avatar} />
           </Block>

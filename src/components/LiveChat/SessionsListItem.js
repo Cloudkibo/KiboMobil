@@ -4,6 +4,7 @@ import { Block, Text, Button } from 'galio-framework'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import moment from 'moment'
+import { withNavigation } from '@react-navigation/compat'
 
 class SessionsListItem extends React.Component {
   constructor (props, context) {
@@ -25,11 +26,11 @@ class SessionsListItem extends React.Component {
   render () {
     const {session} = this.props
     return (
-      <TouchableOpacity style={styles.touchableOpacity} onPress={this.showSubscriberDetail}>
+      <TouchableOpacity style={styles.touchableOpacity} onPress={() => { this.props.navigation.navigate('Chat', { activeSession: session }) }}>
         <Block flex row style={{paddingVertical: 20}}>
           <Block center flex={0.3}>
             <Image
-              onError={({ nativeEvent: {error} }) => console.log(error)}
+              onError={() => this.props.profilePicError(session)}
               source={{uri: session.profilePic}}
               style={styles.avatar} />
           </Block>
@@ -80,7 +81,7 @@ class SessionsListItem extends React.Component {
   }
 }
 
-export default SessionsListItem
+export default withNavigation(SessionsListItem)
 const styles = StyleSheet.create({
   avatar: {
     height: 60,

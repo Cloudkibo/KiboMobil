@@ -6,7 +6,6 @@ import callApi from '../../utility/api.caller.service'
 // import { clearCustomFieldValues } from '../../redux/actions/customFields.actions'
 
 export function updateSessionProfilePicture (subscriber, profilePic) {
-  console.log('updateActiveSessionPicture called')
   return {
     type: ActionTypes.UPDATE_SESSION_PROFILE_PICTURE,
     subscriber,
@@ -15,14 +14,12 @@ export function updateSessionProfilePicture (subscriber, profilePic) {
 }
 
 export function clearUserChat () {
-  console.log('clearUserChat called')
   return {
     type: ActionTypes.CLEAR_USER_CHAT
   }
 }
 
 export function handleCustomers (customers) {
-  console.log('handleCustomers called: ', customers)
   return {
     type: ActionTypes.SHOW_CUSTOMERS,
     data: customers
@@ -69,7 +66,6 @@ export function showChatSessions (sessions) {
   var sorted = subscribers.sort(function (a, b) {
     return new Date(b.lastDateTime) - new Date(a.lastDateTime)
   })
-  console.log('sorted sessions', sorted)
   return {
     type: ActionTypes.SHOW_CHAT_SESSIONS,
     sessions: sorted
@@ -77,7 +73,6 @@ export function showChatSessions (sessions) {
 }
 
 export function updateUserChat (message) {
-  console.log('updateUserChat called', message)
   return {
     type: ActionTypes.UPDATE_USER_CHAT,
     chat: message
@@ -110,7 +105,6 @@ export function showOpenChatSessions (sessions, data) {
 }
 
 export function showCloseChatSessions (sessions, firstPage) {
-  console.log('showCloseChatSessions', sessions)
   var subscribers = sessions.closedSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
@@ -170,7 +164,6 @@ export function clearSearchResult () {
 }
 
 export function showUserChats (payload, originalData) {
-  console.log('showUserChats response', payload)
   if (originalData.page === 'first') {
     return {
       type: ActionTypes.SHOW_USER_CHAT_OVERWRITE,
@@ -235,7 +228,6 @@ export function showSearchChat (data) {
 }
 
 export function emptySocketData () {
-  console.log('emptySocketData')
   return {
     type: ActionTypes.EMPTY_SOCKET_DATA
   }
@@ -252,7 +244,6 @@ export function emptySocketData () {
 // }
 
 export function clearData () {
-  console.log('livechat clearData')
   return (dispatch) => {
     dispatch(clearUserChat())
     // dispatch(clearCustomFieldValues())
@@ -262,22 +253,18 @@ export function clearData () {
 }
 
 export function fetchOpenSessions (data) {
-  console.log('fetchOpenSessions data', data)
   return (dispatch) => {
     callApi('sessions/getOpenSessions', 'post', data)
       .then(res => {
-        console.log('fetchOpenSessions response', res)
         dispatch(showOpenChatSessions(res.payload, data))
       })
   }
 }
 
 export function fetchCloseSessions (data) {
-  console.log('fetchCloseSessions data', data)
   return (dispatch) => {
     callApi('sessions/getClosedSessions', 'post', data)
       .then(res => {
-        console.log('fetchCloseSessions response', res)
         dispatch(showCloseChatSessions(res.payload, data.first_page))
       })
   }
@@ -287,7 +274,6 @@ export function fetchSingleSession (sessionid, appendDeleteInfo) {
   return (dispatch) => {
     callApi(`sessions/${sessionid}`)
       .then(res => {
-        console.log('response from fetchSingleSession', res)
         dispatch(updateChatSessions(res.payload, appendDeleteInfo))
       })
   }
@@ -352,7 +338,6 @@ export function deletefile (data, handleRemove) {
 export function sendAttachment (data, handleSendAttachment) {
   return (dispatch) => {
     callApi('livechat/', 'post', data).then(res => {
-      console.log('sendAttachment response', res)
       handleSendAttachment(res)
     })
   }
@@ -362,10 +347,8 @@ export function searchChat (data) {
   return (dispatch) => {
     callApi('livechat/search', 'post', data).then(res => {
       if (res.status === 'success') {
-        console.log('searchChat results', res.payload)
         dispatch(showSearchChat(res.payload))
       } else {
-        console.log('response got from server', res.description)
       }
     })
   }
@@ -374,7 +357,6 @@ export function searchChat (data) {
 export function sendChatMessage (data, fetchOpenSessions) {
   return (dispatch) => {
     callApi('livechat/', 'post', data).then(res => {
-      console.log('response from sendChatMessage', res)
       // dispatch(fetchSessions())
       //  fetchOpenSessions({first_page: true, last_id: 'none', number_of_records: 10, filter: false, filter_criteria: {sort_value: -1, page_value: '', search_value: ''}})
     })
@@ -384,7 +366,6 @@ export function sendChatMessage (data, fetchOpenSessions) {
 export function getSMPStatus (callback) {
   return (dispatch) => {
     callApi('livechat/SMPStatus').then(res => {
-      console.log('getSMPStatus Response', res)
       callback(res)
     })
   }
@@ -394,7 +375,6 @@ export function fetchUrlMeta (url) {
   return (dispatch) => {
     dispatch(loadingUrlMeta(url))
     callApi('livechat/geturlmeta', 'post', {url: url}).then(res => {
-      console.log('Fetch Url Meta Response', res)
       if (res.status === 'success') {
         dispatch(urlMetaReceived(res.payload))
       } else {
@@ -407,13 +387,11 @@ export function fetchUrlMeta (url) {
 export function markRead (sessionid) {
   return (dispatch) => {
     callApi(`sessions/markread/${sessionid}`).then(res => {
-      console.log('Mark as read Response', res)
     })
   }
 }
 
 export function changeStatus (data, handleActiveSession) {
-  console.log('changeStatus called')
   return (dispatch) => {
     callApi('sessions/changeStatus', 'post', data).then(res => {
       handleActiveSession()
@@ -424,7 +402,6 @@ export function changeStatus (data, handleActiveSession) {
 export function assignToAgent (data, handleResponse) {
   return (dispatch) => {
     callApi('sessions/assignAgent', 'post', data).then(res => {
-      console.log('assign to agent response', res)
       dispatch(updateSessions(data))
       if (handleResponse) {
         handleResponse(res)
@@ -440,10 +417,8 @@ export function sendNotifications (data) {
 }
 
 export function assignToTeam (data, handleResponse) {
-  console.log('data for assigned to team', data)
   return (dispatch) => {
     callApi('sessions/assignTeam', 'post', data).then(res => {
-      console.log('assign to team response', res)
       dispatch(updateSessions(data))
       if (handleResponse) {
         handleResponse(res)

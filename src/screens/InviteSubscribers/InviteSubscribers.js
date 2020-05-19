@@ -33,7 +33,15 @@ class InviteSubscribers extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
-    this.props.fetchConnectedPages(this.handleFetchPagesResponse)
+  }
+
+  componentDidMount () {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.props.fetchConnectedPages(this.handleFetchPagesResponse)
+    })
+  }
+  componentWillUnmount () {
+    this._unsubscribe()
   }
 
   handlePageSelect (index, value) {
@@ -81,8 +89,8 @@ class InviteSubscribers extends React.Component {
     if (!this.state.pagesFetched ||
       (this.state.pagesFetched && this.props.pages && this.props.pages.length > 0 && this.state.pageSelected === '')) {
       return <ActivityIndicator size='large' style={{flex: 0.8}} />
-    } else if (this.props.pages && this.props.pages.length === 0) {
-      return <Text>You do not have any connected Pages</Text>
+    } else if (this.props.connectedPages && this.props.connectedPages.length === 0) {
+      return <Block flex center style={{marginVertical: 20}}><Text>You do not have any connected Pages</Text></Block>
     } else {
       return (
         <Block flex center style={styles.block}>

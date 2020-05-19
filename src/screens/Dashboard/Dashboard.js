@@ -12,7 +12,15 @@ class Dashboard extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
-    this.props.loadDashboardData()
+  }
+
+  componentDidMount () {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.props.loadDashboardData()
+    })
+  }
+  componentWillUnmount () {
+    this._unsubscribe()
   }
 
   render () {

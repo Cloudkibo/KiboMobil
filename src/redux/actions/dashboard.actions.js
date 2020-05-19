@@ -11,6 +11,8 @@ export function updateDashboard (data) {
 export function loadDashboardData () {
   return (dispatch) => {
     callApi('dashboard/stats')
-      .then(res => dispatch(updateDashboard(res.payload)))
+      .then(res => {
+        dispatch(updateDashboard(res.payload))
+      })
   }
 }
