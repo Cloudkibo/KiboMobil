@@ -18,6 +18,8 @@ import SubscribersScreen from '../screens/Subscribers/Subscribers'
 import InviteSubscribersScreen from '../screens/InviteSubscribers/InviteSubscribers'
 import LogOutScreen from '../screens/LogOut/LogOut'
 import LiveChatSessionScreen from '../screens/LiveChat/LiveChat'
+import ChatScreen from '../screens/LiveChat/Chat'
+import ChatHeader from '../components/LiveChat/Chat/Header'
 
 
 import ManScreen from '../screens/Man'
@@ -29,7 +31,7 @@ import CategoriesScreen from '../screens/Categories'
 import CategoryScreen from '../screens/Category'
 import ProductScreen from '../screens/Product'
 import GalleryScreen from '../screens/Gallery'
-import ChatScreen from '../screens/Chat'
+// import ChatScreen from '../screens/Chat'
 
 import CartScreen from '../screens/Cart'
 import SignInScreen from '../screens/SignIn/SignIn'
@@ -448,18 +450,21 @@ function LiveChatStack (props) {
         }}
       />
       <Stack.Screen
-        name='Deals'
-        component={DealsScreen}
+        name='Chat'
+        component={ChatScreen}
         options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              back
-              tabs={tabs.deals}
-              title='Best Deals'
-              navigation={navigation}
-              scene={scene}
-            />
-          )
+          header: ({ navigation, scene }) => {
+            const activeSession = scene.__memo[0].params.activeSession
+            return (
+              <ChatHeader
+                back
+                activeSession={activeSession}
+                title={`${activeSession.firstName} ${activeSession.lastName}`}
+                navigation={navigation}
+                scene={scene}
+              />
+            )
+          }
         }}
       />
     </Stack.Navigator>

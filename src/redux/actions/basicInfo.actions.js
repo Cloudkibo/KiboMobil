@@ -24,3 +24,17 @@ export function getuserdetails (callback, joinRoom) {
     })
   }
 }
+export function updatePicture (data, callback) {
+  return (dispatch) => {
+    callApi('updatePicture', 'post', data, 'accounts')
+      .then(res => {
+        console.log('response from updatePicture', res)
+        if (res.status === 'success') {
+          dispatch(getuserdetails())
+          if (callback) {
+            callback(res.payload)
+          }
+        }
+      })
+  }
+}

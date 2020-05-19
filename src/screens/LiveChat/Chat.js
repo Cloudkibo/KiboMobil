@@ -7,25 +7,19 @@ import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
-import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture} from '../../redux/actions/liveChat.actions'
-import { updatePicture } from '../../redux/actions/subscribers.actions'
-
+import {fetchUserChats} from '../../redux/actions/liveChat.actions'
 const { width } = Dimensions.get('screen')
 
 class LiveChat extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-      loading: true,
-      tabValue: 'open',
-      numberOfRecords: 25,
-      filterSearch: '',
-      sessions: [],
-      sessionsCount: 0,
-      filterSort: -1,
-      filterPage: '',
-      filterPending: false,
-      filterUnread: false
+      fetchingChat: false,
+      loadingChat: true,
+      activeSession: {},
+      teamAgents: [],
+      userChat: [],
+      smpStatus: []
     }
     this.loadMore = this.loadMore.bind(this)
     this._renderSearchResultsFooter = this._renderSearchResultsFooter.bind(this)
@@ -34,44 +28,36 @@ class LiveChat extends React.Component {
     this.updateLoading = this.updateLoading.bind(this)
     this.fetchSessions = this.fetchSessions.bind(this)
     this.getChatPreview = this.getChatPreview.bind(this)
-    this.profilePicError = this.profilePicError.bind(this)
+    // console.log('props.scene', props)
+    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
   }
-  componentDidMount () {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.fetchSessions(true, 'none', true)
-    })
-  }
-
-  componentWillUnmount () {
-    this._unsubscribe()
-  }
-
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
     let state = {}
-    if (nextProps.openSessions || nextProps.closeSessions) {
-      state.loading = false
-      state.sessionsLoading = false
-      let sessions = this.state.tabValue === 'open' ? nextProps.openSessions : nextProps.closeSessions
-      sessions = sessions || []
-      state.sessions = sessions
-      state.sessionsCount = this.state.tabValue === 'open' ? nextProps.openCount : nextProps.closeCount
+    if (nextProps.userChat) {
+      if (nextProps.userChat.length > 0 && nextProps.userChat[0].subscriber_id === this.state.activeSession._id) {
+        state.userChat = nextProps.userChat
+        state.loadingChat = false
+      } else if (nextProps.userChat.length === 0) {
+        state.loadingChat = false
+      }
     }
+
     this.setState({
       ...state
     })
 
-  // if (nextProps.socketData) {
-  //   handleSocketEvent(
-  //     nextProps.socketData,
-  //     this.state,
-  //     this.props,
-  //     this.props.updateLiveChatInfo,
-  //     this.props.user,
-  //     this.props.clearSocketData
-  //   )
-  // }
+    // if (nextProps.socketData) {
+    //   handleSocketEvent(
+    //     nextProps.socketData,
+    //     this.state,
+    //     this.props,
+    //     this.props.updateLiveChatInfo,
+    //     this.props.user,
+    //     this.props.clearSocketData
+    //   )
+    // }
   }
 
   changeTab (value) {
@@ -79,15 +65,6 @@ class LiveChat extends React.Component {
       tabValue: value,
       sessions: value === 'open' ? this.props.openSessions : this.props.closeSessions,
       sessionsCount: value === 'open' ? this.props.openCount : this.props.closeCount
-    })
-  }
-
-  profilePicError (subscriber) {
-    this.props.updatePicture({ subscriber }, (newProfilePic) => {
-      if (newProfilePic) {
-        this.props.updateSessionProfilePicture(subscriber, newProfilePic)
-        // e.target.src = newProfilePic
-      }
     })
   }
 
@@ -149,20 +126,20 @@ class LiveChat extends React.Component {
     }
   }
 
-  // componentDidMount () {
-  // let typingTimer
-  // let doneTypingInterval = this.state.typingInterval
-  // let input = document.getElementById(`generalSearch`)
-  // input.addEventListener('keyup', () => {
-  //   clearTimeout(typingTimer)
-  //   typingTimer = setTimeout(() => {
-  //     this.setState({loading: true}, () => {
-  //       this.fetchSessions(true, 'none')
-  //     })
-  //   }, doneTypingInterval)
-  // })
-  // input.addEventListener('keydown', () => { clearTimeout(typingTimer) })
-  // }
+  componentDidMount () {
+    // let typingTimer
+    // let doneTypingInterval = this.state.typingInterval
+    // let input = document.getElementById(`generalSearch`)
+    // input.addEventListener('keyup', () => {
+    //   clearTimeout(typingTimer)
+    //   typingTimer = setTimeout(() => {
+    //     this.setState({loading: true}, () => {
+    //       this.fetchSessions(true, 'none')
+    //     })
+    //   }, doneTypingInterval)
+    // })
+    // input.addEventListener('keydown', () => { clearTimeout(typingTimer) })
+  }
 
   /* eslint-disable */
   UNSAFE_componentWillMount () {
@@ -243,7 +220,6 @@ class LiveChat extends React.Component {
                 return <SessionsListItem
                   session={item}
                   getChatPreview={this.getChatPreview}
-                  profilePicError={this.profilePicError}
                 />
               }}
               showsVerticalScrollIndicator={false}
@@ -263,21 +239,21 @@ class LiveChat extends React.Component {
 }
 
 function mapStateToProps (state) {
+  console.log('state got', state.liveChat.chatCount)
   return {
-    openSessions: (state.liveChat.openSessions),
-    openCount: (state.liveChat.openCount),
-    closeCount: (state.liveChat.closeCount),
-    closeSessions: (state.liveChat.closeSessions)
+    userChat: (state.liveChat.userChat),
+    chatCount: (state.liveChat.chatCount),
+    pages: (state.pagesInfo.pages),
+    user: (state.basicInfo.user)
+    // members: (state.membersInfo.members),
+    // teams: (state.teamsInfo.teams),
     // socketData: (state.socketInfo.socketData)
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    fetchOpenSessions,
-    fetchCloseSessions,
-    updateSessionProfilePicture,
-    updatePicture
+    fetchUserChats
   }, dispatch)
 }
 

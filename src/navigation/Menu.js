@@ -1,12 +1,11 @@
 import React from 'react'
 import {
   ScrollView,
-  StyleSheet,
-  Image
+  StyleSheet
 } from 'react-native'
 import { Block, Text, theme } from 'galio-framework'
 import { useSafeArea } from 'react-native-safe-area-context'
-
+import Profile from './Profile'
 import { Drawer as DrawerCustomItem } from '../components/'
 
 function CustomDrawerContent ({
@@ -60,17 +59,7 @@ function CustomDrawerContent ({
       </Block>
       {profile &&
         <Block flex={0.23} style={styles.footer}>
-          <Block row style={styles.profile}>
-            <Image source={{ uri: profile.facebookInfo.profilePic }} style={styles.avatar} />
-            <Block>
-              <Text h5 color='white'>
-                {profile.name}
-              </Text>
-              <Text h7 color='white'>
-                {profile.email}
-              </Text>
-            </Block>
-          </Block>
+          <Profile profile={profile} />
           <Block style={{paddingHorizontal: 6, paddingBottom: 0}}>
             <DrawerCustomItem
               title='Log Out'
