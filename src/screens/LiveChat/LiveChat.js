@@ -18,7 +18,7 @@ class LiveChat extends React.Component {
     this.state = {
       loading: true,
       tabValue: 'open',
-      numberOfRecords: 25,
+      numberOfRecords: 5,
       filterSearch: '',
       sessions: [],
       sessionsCount: 0,

@@ -18,7 +18,7 @@ class Subscribers extends React.Component {
       pageSelected: 0,
       onEndReachedCalledDuringMomentum: true,
       lastLoadCount: 0,
-      loading: false
+      loading: true
     }
     this.loadSubscribers = this.loadSubscribers.bind(this)
     this.loadMore = this.loadMore.bind(this)
@@ -49,7 +49,6 @@ class Subscribers extends React.Component {
   }
 
   loadSubscribers (currentPage, requestedPage) {
-    this.setState({loading: true})
     this.props.fetchSubscribers({
       current_page: currentPage,
       requested_page: requestedPage,
@@ -97,10 +96,9 @@ class Subscribers extends React.Component {
   }
 
   _renderSearchResultsFooter () {
-    return (
-      this.state.loading || (this.props.subscribers && this.props.subscribers.length < this.props.count.length)
-        ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large' /></View>
-        : null
+    return (this.props.subscribers && this.props.subscribers.length < this.props.count
+      ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large' /></View>
+      : null
     )
   }
 
@@ -127,23 +125,26 @@ class Subscribers extends React.Component {
             onChangeText={text => this.changeSearchValue(text)}
             value={this.state.searchValue}
           />
-          <FlatList
-            data={this.props.subscribers}
-            renderItem={({item}) => {
-              return <SubscribersListItem
-                item={item}
-                updatePicture={this.props.updatePicture}
-              />
-            }}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item._id}
-            ListEmptyComponent={this.renderEmpty()}
-            bounces={false}
-            onEndReached={() => this._loadMoreData()}
-            onEndReachedThreshold={0.01}
-            ListFooterComponent={this._renderSearchResultsFooter}
-            onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
-          />
+          {this.state.loading
+            ? <Block flex={0.8} middle><ActivityIndicator size='large' /></Block>
+            : <FlatList
+              data={this.props.subscribers}
+              renderItem={({item}) => {
+                return <SubscribersListItem
+                  item={item}
+                  updatePicture={this.props.updatePicture}
+                />
+              }}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={(item) => item._id}
+              ListEmptyComponent={this.renderEmpty()}
+              bounces={false}
+              onEndReached={() => this._loadMoreData()}
+              onEndReachedThreshold={0.01}
+              ListFooterComponent={this._renderSearchResultsFooter}
+              onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
+            />
+        }
         </Block>
       </Block>
     )
