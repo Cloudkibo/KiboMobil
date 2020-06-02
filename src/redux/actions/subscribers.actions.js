@@ -35,11 +35,9 @@ export function updateSubscriberPicture (subscriberId, profilePic) {
 }
 
 export function updatePicture (subscriberData, callback) {
-  console.log('updatePicture data', subscriberData)
   return (dispatch) => {
     callApi('subscribers/updatePicture', 'post', subscriberData).then(res => {
       if (res.status === 'success') {
-        console.log('succesfully updated profile picture for ', subscriberData)
         if (callback) {
           callback(res.payload)
         }

@@ -9,10 +9,35 @@ import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
-import {fetchUserChats} from '../../redux/actions/liveChat.actions'
+import CHAT from '../../components/LiveChat/Chat/index'
+
+import {
+  fetchOpenSessions,
+  fetchCloseSessions,
+  fetchUserChats,
+  fetchTeamAgents,
+  changeStatus,
+  unSubscribe,
+  getCustomers,
+  appendSubscriber,
+  assignToTeam,
+  assignToAgent,
+  sendNotifications,
+  updatePendingResponse,
+  sendChatMessage,
+  uploadAttachment,
+  sendAttachment,
+  uploadRecording,
+  searchChat,
+  markRead,
+  updateLiveChatInfo,
+  deletefile,
+  clearSearchResult,
+  getSMPStatus,
+  updateSessionProfilePicture
+} from '../../redux/actions/liveChat.actions'
+
 const { width } = Dimensions.get('screen')
-import Images from "../../constants/Images";
-import { LinearGradient } from 'expo-linear-gradient';
 
 class LiveChat extends React.Component {
   constructor (props, context) {
@@ -20,28 +45,53 @@ class LiveChat extends React.Component {
     this.state = {
       fetchingChat: false,
       loadingChat: true,
-      activeSession: {},
       teamAgents: [],
       userChat: [],
       smpStatus: [],
-      height: 0
+      height: 0,
+      activeSession: props.route.params.activeSession
     }
-    this.loadMore = this.loadMore.bind(this)
-    this._renderSearchResultsFooter = this._renderSearchResultsFooter.bind(this)
-    this._loadMoreData = this._loadMoreData.bind(this)
-    this._onMomentumScrollBegin = this._onMomentumScrollBegin.bind(this)
-    this.updateLoading = this.updateLoading.bind(this)
-    this.fetchSessions = this.fetchSessions.bind(this)
-    this.getChatPreview = this.getChatPreview.bind(this)
-    // console.log('props.scene', props)
-    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
+
+    this.isSMPApproved = this.isSMPApproved.bind(this)
+    this.setMessageData = this.setMessageData.bind(this)
+    this.performAction = this.performAction.bind(this)
+    this.handleAgents = this.handleAgents.bind(this)
+    this.fetchTeamAgents = this.fetchTeamAgents.bind(this)
+    this.updateState = this.updateState.bind(this)
+    this.handleSMPStatus = this.handleSMPStatus.bind(this)
+
+    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 10 })
+    props.getSMPStatus(this.handleSMPStatus)
+    if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
+      this.props.markRead(props.route.params.activeSession._id)
+    }
   }
+
+  updateState (state, callback) {
+    if (state.reducer) {
+      const data = {
+        userChat: state.userChat
+      }
+      this.props.updateLiveChatInfo(data)
+    } else {
+      this.setState(state, () => {
+        if (callback) callback()
+      })
+    }
+  }
+
+  handleSMPStatus (res) {
+    if (res.status === 'success') {
+      this.setState({smpStatus: res.payload})
+    }
+  }
+
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
     let state = {}
     if (nextProps.userChat) {
-      if (nextProps.userChat.length > 0 && nextProps.userChat[0].subscriber_id === this.state.activeSession._id) {
+      if (nextProps.userChat.length > 0) {
         state.userChat = nextProps.userChat
         state.loadingChat = false
       } else if (nextProps.userChat.length === 0) {
@@ -65,18 +115,88 @@ class LiveChat extends React.Component {
     // }
   }
 
+  isSMPApproved () {
+    const page = this.state.smpStatus.find((item) => item.pageId === this.state.activeSession.pageId._id)
+    if (page && page.smpStatus === 'approved') {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  performAction (errorMsg, session) {
+    let isAllowed = true
+    if (session.is_assigned) {
+      if (session.assigned_to.type === 'agent' && session.assigned_to.id !== this.props.user._id) {
+        isAllowed = false
+        errorMsg = `Only assigned agent can ${errorMsg}`
+      } else if (session.assigned_to.type === 'team') {
+        this.fetchTeamAgents(session._id, (teamAgents) => {
+          const agentIds = teamAgents.map((agent) => agent.agentId._id)
+          if (!agentIds.includes(this.props.user._id)) {
+            isAllowed = false
+            errorMsg = `Only agents who are part of assigned team can ${errorMsg}`
+          }
+        })
+      }
+    }
+    errorMsg = `You can not perform this action. ${errorMsg}`
+    return {isAllowed, errorMsg}
+  }
+
+  fetchTeamAgents (id) {
+    this.props.fetchTeamAgents(id, this.handleAgents)
+  }
+
+  handleAgents (teamAgents) {
+    let agentIds = []
+    for (let i = 0; i < teamAgents.length; i++) {
+      if (teamAgents[i].agentId !== this.props.user._id) {
+        agentIds.push(teamAgents[i].agentId)
+      }
+    }
+    if (agentIds.length > 0) {
+      let notificationsData = {
+        message: `Session of subscriber ${this.state.activeSession.firstName + ' ' + this.state.activeSession.lastName} has been assigned to your team.`,
+        category: { type: 'chat_session', id: this.state.activeSession._id },
+        agentIds: agentIds,
+        companyId: this.state.activeSession.companyId
+      }
+      // this.props.sendNotifications(notificationsData)
+    }
+  }
+
+  setMessageData (session, payload) {
+    const data = {
+      sender_id: session.pageId._id,
+      recipient_id: session._id,
+      sender_fb_id: session.pageId.pageId,
+      recipient_fb_id: session.senderId,
+      subscriber_id: session._id,
+      company_id: session.companyId,
+      payload: payload,
+      url_meta: this.state.urlmeta,
+      datetime: new Date().toString(),
+      status: 'unseen',
+      replied_by: {
+        type: 'agent',
+        id: this.props.user._id,
+        name: this.props.user.name
+      }
+    }
+    return data
+  }
+
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
   }
 
-
-
   render () {
     return (
-      <Block flex center style={styles.block}>
+      <Block flex style={styles.block}>
         <Block shadow flex>
-          {/*<CHAT
+          <CHAT
             userChat={this.state.userChat}
             chatCount={this.props.chatCount}
             sessions={this.state.sessions}
@@ -99,16 +219,15 @@ class LiveChat extends React.Component {
             deletefile={this.props.deletefile}
             fetchUrlMeta={this.props.urlMetaData}
             isSMPApproved={this.isSMPApproved()}
-            showUploadAttachment={true}
-            showRecordAudio={true}
-            showSticker={true}
-            showEmoji={true}
-            showGif={true}
-            showThumbsUp={true}
+            showUploadAttachment
+            showRecordAudio
+            showSticker
+            showEmoji
+            showGif
+            showThumbsUp
             setMessageData={this.setMessageData}
             filesAccepted={'image/*, audio/*, video/*, application/*, text/*'}
           />
-          */}
         </Block>
       </Block>
     )
@@ -129,7 +248,42 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    fetchUserChats
+    unSubscribe,
+    fetchOpenSessions,
+    fetchCloseSessions,
+    // updatePicture,
+    fetchTeamAgents,
+    assignToTeam,
+    changeStatus,
+    getCustomers,
+    appendSubscriber,
+    // loadTeamsList,
+    sendNotifications,
+    // loadMembersList,
+    assignToAgent,
+    // getSubscriberTags,
+    // loadTags,
+    // assignTags,
+    // createTag,
+    // unassignTags,
+    updatePendingResponse,
+    // loadCustomFields,
+    // getCustomFieldValue,
+    // setCustomFieldValue,
+    sendChatMessage,
+    uploadAttachment,
+    sendAttachment,
+    uploadRecording,
+    searchChat,
+    fetchUserChats,
+    markRead,
+    // clearSocketData,
+    updateLiveChatInfo,
+    deletefile,
+    clearSearchResult,
+    // urlMetaData,
+    getSMPStatus,
+    updateSessionProfilePicture
   }, dispatch)
 }
 

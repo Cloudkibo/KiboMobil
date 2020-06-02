@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Dimensions, FlatList, Animated } from 'react-native';
-import { Block, theme } from 'galio-framework';
+import { StyleSheet, Dimensions, FlatList, Animated, TouchableOpacity } from 'react-native';
+import { Block, theme, Text, Button } from 'galio-framework';
 
 const { width } = Dimensions.get('screen');
 import materialTheme from '../constants/Theme';
@@ -12,7 +12,7 @@ const defaultMenu = [
   { id: 'motocycles', title: 'Motocycles', },
 ];
 
-export default class Tabs extends React.Component {
+export default class ButtonTabs extends React.Component {
   static defaultProps = {
     data: defaultMenu,
     initialIndex: null,
@@ -77,15 +77,20 @@ export default class Tabs extends React.Component {
 
     return (
       <Block style={styles.titleContainer}>
-        <Animated.Text
-          style={[
-            styles.menuTitle,
-            { color: textColor }
-          ]}
-          onPress={() => this.selectMenu(item.id)}>
+        <Animated.View>
+          <Button
+            style={{width: item.width,
+            height: 30,
+            backgroundColor: isActive ? '#716aca' : materialTheme.COLORS.MUTED,
+            borderRadius: 20
+          }}
+          onPress={() => this.selectMenu(item.id)}
+          >
+          <Text color='white'>
           {item.title}
-        </Animated.Text>
-        <Animated.View style={{ height: 2, width, backgroundColor: materialTheme.COLORS.ACTIVE }} />
+        </Text>
+          </Button>
+        </Animated.View>
       </Block>
     )
   }
@@ -121,8 +126,6 @@ export default class Tabs extends React.Component {
 const styles = StyleSheet.create({
   container: {
     width: width,
-    backgroundColor: theme.COLORS.WHITE,
-    zIndex: 2,
   },
   shadow: {
     shadowColor: theme.COLORS.BLACK,
@@ -132,12 +135,13 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   menu: {
-    paddingTop: 10,
+    paddingTop: 0,
     paddingBottom: 0,
   },
   titleContainer: {
     alignItems: 'center',
-    width: width / 2
+    width: width / 3,
+    paddingBottom: 5
   },
   menuTitle: {
     fontWeight: '300',

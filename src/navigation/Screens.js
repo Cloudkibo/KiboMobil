@@ -15,7 +15,7 @@ import SubscribersScreen from '../screens/Subscribers/Subscribers'
 import InviteSubscribersScreen from '../screens/InviteSubscribers/InviteSubscribers'
 import LiveChatSessionScreen from '../screens/LiveChat/LiveChat'
 import ChatScreen from '../screens/LiveChat/Chat'
-import ChatHeader from '../components/LiveChat/Chat/Header'
+import ChatHeader from '../screens/LiveChat/ChatHeader'
 import SignInScreen from '../screens/SignIn/SignIn'
 
 import CustomDrawerContent from './Menu'

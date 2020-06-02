@@ -1,6 +1,9 @@
 
 import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
+import { AsyncStorage } from 'react-native'
+
+export const API_URL = 'https://kibochat.cloudkibo.com/api'
 
 // import { clearSubscriberTags } from '../../redux/actions/tags.actions'
 // import { clearCustomFieldValues } from '../../redux/actions/customFields.actions'
@@ -290,39 +293,59 @@ export function fetchUserChats (sessionid, data, handleFunction) {
       })
   }
 }
-// export function uploadRecording (fileData, handleUpload) {
-//   return (dispatch) => {
-//     // eslint-disable-next-line no-undef
-//     fetch(`${API_URL}/broadcasts/uploadRecording`, {
-//       method: 'post',
-//       body: fileData,
-//       // eslint-disable-next-line no-undef
-//       headers: new Headers({
-//         'Authorization': `Bearer ${auth.getToken()}`
-//       })
-//     }).then((res) => res.json()).then((res) => res).then(res => {
-//       console.log('respone', res)
-//       handleUpload(res)
-//     })
-//   }
-// }
+export function uploadRecording (fileData, handleUpload) {
+  return (dispatch) => {
+    // eslint-disable-next-line no-undef
+    console.log('in upload attachment', `${API_URL}/broadcasts/upload`)
+    AsyncStorage.getItem('token')
+      .then(token => {
+        fetch(`${API_URL}/broadcasts/uploadRecording`, {
+          method: 'post',
+          body: fileData,
+          // eslint-disable-next-line no-undef
+          headers: new Headers({
+            'Authorization': `Bearer ${token}`
+          })
+        }).then((res) => res.json()).then((res) => res).then(res => {
+          console.log('respone', res)
+          handleUpload(res)
+        })
+          .catch((err) => {
+            console.log('failed to upload file', err)
+          })
+      })
+      .catch((err) => {
+        console.log('failed to fetch token', err)
+      })
+  }
+}
 
-// export function uploadAttachment (fileData, handleUpload) {
-//   return (dispatch) => {
-//     // eslint-disable-next-line no-undef
-//     fetch(`${API_URL}/broadcasts/upload`, {
-//       method: 'post',
-//       body: fileData,
-//       // eslint-disable-next-line no-undef
-//       headers: new Headers({
-//         'Authorization': `Bearer ${auth.getToken()}`
-//       })
-//     }).then((res) => res.json()).then((res) => res).then(res => {
-//       console.log('respone', res)
-//       handleUpload(res)
-//     })
-//   }
-// }
+export function uploadAttachment (fileData, handleUpload) {
+  return (dispatch) => {
+    // eslint-disable-next-line no-undef
+    console.log('in upload attachment', `${API_URL}/broadcasts/upload`)
+    AsyncStorage.getItem('token')
+      .then(token => {
+        fetch(`${API_URL}/broadcasts/upload`, {
+          method: 'post',
+          body: fileData,
+          // eslint-disable-next-line no-undef
+          headers: new Headers({
+            'Authorization': `Bearer ${token}`
+          })
+        }).then((res) => res.json()).then((res) => res).then(res => {
+          console.log('respone', res)
+          handleUpload(res)
+        })
+          .catch((err) => {
+            console.log('failed to upload file', err)
+          })
+      })
+      .catch((err) => {
+        console.log('failed to fetch token', err)
+      })
+  }
+}
 
 export function deletefile (data, handleRemove) {
   return (dispatch) => {

@@ -5,9 +5,9 @@ import { withNavigation } from '@react-navigation/compat'
 import { TouchableOpacity, StyleSheet, Platform, Dimensions, Image } from 'react-native'
 import { Button, Block, NavBar, Text, theme } from 'galio-framework'
 import Toast from 'react-native-simple-toast'
-import Icon from '../../Icon'
+import Icon from '../../components/Icon'
 
-import { changeStatus } from '../../../redux/actions/liveChat.actions'
+import { changeStatus } from '../../redux/actions/liveChat.actions'
 
 const { height, width } = Dimensions.get('window')
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896)
@@ -121,7 +121,6 @@ class Header extends React.Component {
   }
 
   render () {
-    console.log('this.props.active')
     const { back, white, transparent } = this.props
     return (
       <Block>

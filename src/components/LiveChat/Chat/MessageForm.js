@@ -1,0 +1,564 @@
+import React from 'react'
+import PropTypes from 'prop-types'
+import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert } from 'react-native'
+import Icon from '../../../components/Icon'
+import { materialTheme } from '../../../constants/'
+import { Input, Block, Button, theme } from 'galio-framework'
+import EmojiSelector, { Categories } from 'react-native-emoji-selector'
+import * as DocumentPicker from 'expo-document-picker'
+import Tabs from '../../ButtonTabs'
+import * as mime from 'react-native-mime-types'
+import * as Permissions from 'expo-permissions'
+import * as FileSystem from 'expo-file-system'
+import { Audio } from 'expo-av'
+
+const { width } = Dimensions.get('screen')
+
+class Footer extends React.Component {
+  constructor (props, context) {
+    super(props, context)
+    this.recording = null
+    this.state = {
+      text: '',
+      attachment: {},
+      componentType: '',
+      gif: '',
+      sticker: '',
+      urlmeta: {},
+      uploadingFile: false,
+      uploaded: false,
+      loading: false,
+      loadingUrlMeta: false,
+      currentUrl: '',
+      showAudioRecording: false,
+      showPickers: false,
+      selectedPicker: '',
+      isRecording: false,
+      isLoading: false,
+      recordingDuration: null,
+      recordingPermissionGranted: false
+    }
+
+    this.recordingSettings = JSON.parse(JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY))
+
+    this.onInputChange = this.onInputChange.bind(this)
+    this.sendMessage = this.sendMessage.bind(this)
+    this.setDataPayload = this.setDataPayload.bind(this)
+    this.updateChatData = this.updateChatData.bind(this)
+    this.changeTab = this.changeTab.bind(this)
+    this.showPickers = this.showPickers.bind(this)
+    this.setEmoji = this.setEmoji.bind(this)
+    this.hidePickers = this.hidePickers.bind(this)
+    this.selectAttachment = this.selectAttachment.bind(this)
+    this.getComponentType = this.getComponentType.bind(this)
+    this.removeAttachment = this.removeAttachment.bind(this)
+    this.onAttachmentUpload = this.onAttachmentUpload.bind(this)
+    this.handleMessageResponse = this.handleMessageResponse.bind(this)
+    this.onRecordPress = this.onRecordPress.bind(this)
+    this._stopRecording = this._stopRecording.bind(this)
+    this._updateScreenForRecordingStatus = this._updateScreenForRecordingStatus.bind(this)
+    this._beginRecording = this._beginRecording.bind(this)
+    this._getMMSSFromMillis = this._getMMSSFromMillis.bind(this)
+    this._getRecordingTimestamp = this._getRecordingTimestamp.bind(this)
+  }
+
+  handleMessageResponse (res, data, payload) {
+    if (res.status === 'success') {
+      data.format = 'convos'
+      this.setState({
+        attachment: {},
+        componentType: '',
+        uploadingFile: false,
+        uploaded: false,
+        loading: false
+      }, () => {
+        this.updateChatData(data, payload)
+      })
+    } else {
+      this.setState({loading: false})
+      Alert.alert('ERROR!', 'Failed to send message', [{ text: 'OK' }], { cancelable: true })
+    }
+  }
+
+  removeAttachment () {
+    this.props.deletefile(this.state.attachment.id)
+    this.setState({
+      attachment: {},
+      componentType: '',
+      uploadingFile: false,
+      uploaded: false
+    })
+  }
+
+  getComponentType (type) {
+    if (type.match('image.*')) {
+      return 'image'
+    } else if (type.match('audio.*')) {
+      return 'audio'
+    } else if (type.match('video.*')) {
+      return 'video'
+    } else if (type.match('application.*') || type.match('text.*')) {
+      return 'file'
+    }
+  }
+
+  selectAttachment () {
+    this.setState({showPickers: false, selectedPicker: ''})
+    DocumentPicker.getDocumentAsync()
+      .then(result => {
+        if (result && result.type === 'success') {
+          const file = result
+          if (file.size > 25000000) {
+            Alert.alert('ERROR!', 'Attachment exceeds the limit of 25MB', [{ text: 'OK' }], { cancelable: true })
+          } else {
+            let type = mime.lookup(file.uri)
+            const data = this.props.performAction('send attachments', this.props.activeSession)
+            if (data.isAllowed) {
+              if (this.state.attachment && this.state.attachment.id) {
+                this.props.deletefile(this.state.attachment.id)
+              }
+              const componentType = this.getComponentType(type)
+              this.setState({
+                uploadingFile: true,
+                attachment: file,
+                componentType
+              })
+              var fileData = new FormData()
+              fileData.append('file', {uri: file.uri, type: type, name: file.name, size: file.size})
+              fileData.append('filename', file.name)
+              fileData.append('filetype', type)
+              fileData.append('filesize', file.size)
+              fileData.append('componentType', componentType)
+              this.props.uploadAttachment(fileData, this.onAttachmentUpload)
+            } else {
+              Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
+            }
+          }
+        }
+      })
+      .catch((err) => {
+        console.log('err in selecting file', err)
+      })
+  }
+
+  onAttachmentUpload (res) {
+    if (res.status === 'success') {
+      let attachment = this.state.attachment
+      attachment.id = res.payload.id
+      attachment.url = res.payload.url
+      this.setState({
+        uploadingFile: false,
+        attachment,
+        uploaded: true
+      })
+    } else {
+      this.setState({
+        uploadingFile: false,
+        attachment: {},
+        componentType: ''
+      })
+      Alert.alert('ERROR!', 'Failed to upload attachment', [{ text: 'OK' }], { cancelable: true })
+    }
+  }
+
+  showPickers () {
+    Keyboard.dismiss()
+    this.setState({showPickers: true, selectedPicker: 'emoji'})
+  }
+
+  hidePickers () {
+    this.setState({showPickers: false, selectedPicker: ''})
+  }
+
+  setEmoji (emoji) {
+    this.setState({text: this.state.text + emoji})
+  }
+
+  updateChatData (data, payload) {
+    data._id = new Date().getTime()
+    // let sessions = this.props.sessions
+    // let session = this.props.activeSession
+    // let index = sessions.findIndex((s) => s._id === session._id)
+    // sessions.splice(index, 1)
+    // session.lastPayload = payload
+    // session.lastRepliedBy = data.replied_by
+    // session.pendingResponse = false
+    // session.last_activity_time = new Date()
+    this.props.updateNewMessage(true)
+    this.props.updateState({
+      reducer: true,
+      userChat: [...this.props.userChat, data]
+      // sessions: [session, ...sessions]
+    })
+  }
+
+  onInputChange (text) {
+    this.setState({text: text})
+  }
+
+  sendMessage () {
+    const data = this.props.performAction('send messages', this.props.activeSession)
+    if (data.isAllowed) {
+      let payload = {}
+      let data = {}
+      if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
+        payload = this.setDataPayload('text')
+        data = this.props.setMessageData(this.props.activeSession, payload)
+        this.props.sendChatMessage(data)
+        this.setState({ text: '', urlmeta: {}, currentUrl: '', selectedPicker: '', showPickers: false })
+        this.props.updateChatAreaHeight('57vh')
+        data.format = 'convos'
+        this.updateChatData(data, payload)
+      } else if (this.state.attachment && this.state.attachment.name) {
+        this.setState({loading: true})
+        payload = this.setDataPayload('attachment')
+        data = this.props.setMessageData(this.props.activeSession, payload)
+        this.props.sendAttachment(data, (res) => this.handleMessageResponse(res, data, payload))
+      }
+    } else {
+      Alert.alert(
+        'ERROR!',
+        data.errorMsg,
+        [
+          { text: 'OK' }
+        ],
+        { cancelable: true }
+      )
+    }
+  }
+
+  setDataPayload (component) {
+    let payload = {}
+    switch (component) {
+      case 'text':
+        payload = {
+          componentType: 'text',
+          text: this.state.text
+        }
+        break
+      case 'attachment':
+        payload = {
+          componentType: this.state.componentType,
+          fileName: this.state.attachment.name,
+          size: this.state.attachment.size,
+          type: this.state.attachment.type,
+          fileurl: {
+            id: this.state.attachment.id,
+            name: this.state.attachment.name,
+            url: this.state.attachment.url
+          }
+        }
+        break
+      case 'gif':
+        payload = {
+          componentType: this.state.componentType,
+          fileurl: this.state.gif
+        }
+        break
+      case 'sticker':
+        payload = {
+          componentType: this.state.componentType,
+          fileurl: this.state.sticker
+        }
+        break
+      case 'thumbsUp':
+        payload = {
+          componentType: 'thumbsUp',
+          fileurl: 'https://cdn.cloudkibo.com/public/img/thumbsup.png'
+        }
+        break
+      default:
+    }
+    return payload
+  }
+
+  changeTab (value) {
+    this.setState({selectedPicker: value})
+  }
+
+  onRecordPress () {
+    if (!this.state.recordingPermissionGranted) {
+      Permissions.askAsync(Permissions.AUDIO_RECORDING)
+        .then(response => {
+          if (response.status === 'granted') {
+            this.setState({recordingPermissionGranted: true})
+            // if (this.state.isRecording) {
+            //   this._stopRecording()
+            // } else {
+            //   this._beginRecording()
+            // }
+          }
+        })
+    } else {
+      if (this.state.isRecording) {
+        this._stopRecording()
+      } else {
+        this._beginRecording()
+      }
+    }
+  }
+
+  async _beginRecording () {
+    this.setState({
+      isLoading: true
+    })
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: true,
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+      playThroughEarpieceAndroid: false,
+      staysActiveInBackground: true
+    })
+    if (this.recording !== null) {
+      this.recording.setOnRecordingStatusUpdate(null)
+      this.recording = null
+    }
+
+    const recording = new Audio.Recording()
+    await recording.prepareToRecordAsync(this.recordingSettings)
+    recording.setOnRecordingStatusUpdate(this._updateScreenForRecordingStatus)
+
+    this.recording = recording
+    await this.recording.startAsync()
+    this.setState({
+      isLoading: false
+    })
+  }
+
+  _updateScreenForRecordingStatus (status) {
+    if (status.canRecord) {
+      this.setState({
+        isRecording: status.isRecording,
+        recordingDuration: status.durationMillis
+      })
+    } else if (status.isDoneRecording) {
+      this.setState({
+        isRecording: false,
+        recordingDuration: status.durationMillis
+      })
+      if (!this.state.isLoading) {
+        this._stopRecording()
+      }
+    }
+  }
+
+  async _stopRecording () {
+    this.setState({
+      isLoading: true
+    })
+    try {
+      await this.recording.stopAndUnloadAsync()
+    } catch (error) {
+      // Do nothing -- we are already unloaded.
+    }
+    const info = await FileSystem.getInfoAsync(this.recording.getURI())
+    console.log(`FILE INFO: ${JSON.stringify(info)}`)
+    this.setState({
+      isLoading: false
+    })
+    const data = this.props.performAction('send attachments', this.props.activeSession)
+    if (data.isAllowed) {
+      let attachment = {uri: info.uri, type: 'audio/mp3', name: 'recorded-audio.mp3', size: info.size}
+      this.setState({
+        uploadingFile: true,
+        attachment: attachment,
+        componentType: 'audio'
+      })
+      var fileData = new FormData()
+      fileData.append('file', attachment)
+      fileData.append('filename', 'recorded-audio')
+      fileData.append('filetype', 'audio/mp3')
+      fileData.append('filesize', info.size)
+      fileData.append('componentType', 'audio')
+      this.props.uploadRecording(fileData, this.onAttachmentUpload)
+    } else {
+      Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
+    }
+  }
+
+  _getRecordingTimestamp () {
+    if (this.state.recordingDuration != null) {
+      return `${this._getMMSSFromMillis(this.state.recordingDuration)}`
+    }
+    return `${this._getMMSSFromMillis(0)}`
+  }
+
+  _getMMSSFromMillis (millis) {
+    const totalSeconds = millis / 1000
+    const seconds = Math.floor(totalSeconds % 60)
+    const minutes = Math.floor(totalSeconds / 60)
+
+    const padWithZero = number => {
+      const string = number.toString()
+      if (number < 10) {
+        return '0' + string
+      }
+      return string
+    }
+    return padWithZero(minutes) + ':' + padWithZero(seconds)
+  }
+
+  render () {
+    return (
+      <Block>
+        <Block style={styles.messageFormContainer}>
+          <Block flex row middle space='between'>
+            {this.state.uploadingFile
+              ? <Input
+                borderless
+                color='black'
+                style={[styles.input, {width: width * 0.92}]}
+                value='Uploading...'
+                editable={false}
+              />
+              : this.state.uploaded && this.state.attachment.name
+                ? <Input
+                  borderless
+                  color='black'
+                  style={[styles.input, {width: width * 0.8}]}
+                  value={`Attachment: ${this.state.attachment.name.length > 15 ? this.state.attachment.name.substring(0, 15) + '...' : this.state.attachment.name}`}
+                  right
+                  editable={false}
+                  iconContent={
+                    <Block row>
+                      <TouchableOpacity onPress={this.removeAttachment}>
+                        <Icon size={20} color={theme.COLORS.MUTED} name='trash' family='entypo' />
+                      </TouchableOpacity>
+                    </Block>
+                  }
+                />
+                : this.state.isRecording
+                  ? <Input
+                    borderless
+                    color='black'
+                    style={[styles.input, {width: width * 0.92}]}
+                    value={`Recording... ${this._getRecordingTimestamp()}`}
+                    editable={false}
+                    right
+                    iconContent={
+                      <Block row>
+                        <TouchableOpacity onPress={this.onRecordPress}>
+                          <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
+                        </TouchableOpacity>
+                      </Block>
+                    }
+                  />
+                  : <Input
+                    onFocus={this.hidePickers}
+                    borderless
+                    color='black'
+                    blurOnSubmit
+                    style={[styles.input, {width: this.state.text === '' ? width * 0.92 : width * 0.8}]}
+                    placeholder='Type a message...'
+                    returnKeyType='send'
+                    textContentType='none'
+                    placeholderTextColor='#9fa5aa'
+                    value={this.state.text}
+                    onChangeText={text => this.onInputChange(text)}
+                    right
+                    iconContent={
+                      <Block row>
+                        <TouchableOpacity onPress={this.showPickers}>
+                          <Icon size={20} color={theme.COLORS.MUTED} name='emoji-happy' family='entypo' />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={this.selectAttachment}>
+                          <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='attachment' family='entypo' />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={this.onRecordPress}>
+                          <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
+                        </TouchableOpacity>
+                      </Block>
+                    }
+                  />
+            }
+            {(this.state.text !== '' || this.state.uploaded) &&
+            <Button
+              round
+              shadowless
+              radius={28}
+              opacity={0.9}
+              style={styles.iconButton}
+              color={materialTheme.COLORS.BUTTON_COLOR}
+              onPress={this.sendMessage}
+            >
+              <Icon size={22} name='send' family='MaterialCommunityIcons' color='white' />
+            </Button>
+            }
+          </Block>
+        </Block>
+        {this.state.showPickers && this.state.selectedPicker !== '' &&
+          <Block>
+            <Tabs
+              data={[
+                {id: 'emoji', title: 'EMOJI', width: 70},
+                {id: 'stickers', title: 'STICKERS', width: 100},
+                {id: 'gifs', title: 'GIFS', width: 55}
+              ]}
+              initialIndex={'emoji'}
+              onChange={id => this.changeTab(id)}
+            />
+            {this.state.selectedPicker === 'emoji' &&
+              <EmojiSelector
+                category={Categories.emotion}
+                onEmojiSelected={emoji => this.setEmoji(emoji)}
+                showSearchBar={false}
+                showSectionTitles={false}
+                style={{height: 250, width: width}}
+                columns={8}
+                showHistory
+              />
+            }
+          </Block>
+        }
+      </Block>
+    )
+  }
+}
+
+Footer.defaultProps = {
+  'performAction': PropTypes.func.isRequired,
+  'activeSession': PropTypes.object.isRequired,
+  'user': PropTypes.object.isRequired,
+  'sendChatMessage': PropTypes.func.isRequired,
+  'updateState': PropTypes.func.isRequired,
+  'userChat': PropTypes.array.isRequired,
+  'sessions': PropTypes.array.isRequired,
+  'uploadAttachment': PropTypes.func,
+  'sendAttachment': PropTypes.func,
+  'uploadRecording': PropTypes.func,
+  'getPicker': PropTypes.func.isRequired,
+  'togglePopover': PropTypes.func.isRequired,
+  'updateNewMessage': PropTypes.func.isRequired,
+  'deletefile': PropTypes.func,
+  'updateChatAreaHeight': PropTypes.func.isRequired,
+  'showUploadAttachment': PropTypes.bool.isRequired,
+  'showRecordAudio': PropTypes.bool.isRequired,
+  'showSticker': PropTypes.bool.isRequired,
+  'showEmoji': PropTypes.bool.isRequired,
+  'showGif': PropTypes.bool.isRequired,
+  'showThumbsUp': PropTypes.bool.isRequired,
+  'filesAccepted': PropTypes.string
+}
+
+export default Footer
+
+const styles = StyleSheet.create({
+  messageFormContainer: {
+    height: 70,
+    marginHorizontal: 16
+  },
+  iconButton: {
+    width: 43,
+    height: 43,
+    backgroundColor: '#716aca',
+    marginLeft: 6
+  },
+  input: {
+    // width: width * 0.8,
+    height: theme.SIZES.BASE * 3,
+    backgroundColor: theme.COLORS.WHITE,
+    borderRadius: 30
+  }
+})
