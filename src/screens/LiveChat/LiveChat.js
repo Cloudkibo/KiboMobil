@@ -18,7 +18,7 @@ class LiveChat extends React.Component {
     this.state = {
       loading: true,
       tabValue: 'open',
-      numberOfRecords: 5,
+      numberOfRecords: 25,
       filterSearch: '',
       sessions: [],
       sessionsCount: 0,
@@ -27,6 +27,7 @@ class LiveChat extends React.Component {
       filterPending: false,
       filterUnread: false
     }
+
     this.loadMore = this.loadMore.bind(this)
     this._renderSearchResultsFooter = this._renderSearchResultsFooter.bind(this)
     this._loadMoreData = this._loadMoreData.bind(this)
@@ -38,6 +39,7 @@ class LiveChat extends React.Component {
   }
   componentDidMount () {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({loading: true})
       this.fetchSessions(true, 'none', true)
     })
   }
@@ -92,7 +94,6 @@ class LiveChat extends React.Component {
   }
 
   getChatPreview (message, repliedBy, subscriberName) {
-    console.log('')
     let chatPreview = ''
     if (message.componentType) {
       // agent

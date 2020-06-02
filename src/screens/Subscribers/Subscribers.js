@@ -144,7 +144,7 @@ class Subscribers extends React.Component {
               ListFooterComponent={this._renderSearchResultsFooter}
               onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
             />
-        }
+          }
         </Block>
       </Block>
     )
