@@ -21,7 +21,7 @@ class File extends React.Component {
         this.saveFile(uri)
       })
       .catch(error => {
-        console.error(error)
+        console.log(error)
       })
   }
 

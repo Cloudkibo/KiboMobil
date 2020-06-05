@@ -43,3 +43,9 @@ export const EMPTY_SOCKET_DATA = 'EMPTY_SOCKET_DATA'
 export const CLEAR_USER_CHAT = 'CLEAR_USER_CHAT'
 export const UPDATE_LIVECHAT_INFO = 'UPDATE_LIVECHAT_INFO'
 export const UPDATE_SESSION_PROFILE_PICTURE = 'UPDATE_SESSION_PROFILE_PICTURE'
+
+// constants for members
+export const LOAD_MEMBERS = 'LOAD_MEMBERS'
+
+// constants for teams
+export const SHOW_TEAMS_LIST = 'SHOW_TEAMS_LIST'

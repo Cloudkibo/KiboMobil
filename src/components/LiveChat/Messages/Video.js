@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Dimensions } from 'react-native'
-import { Video } from 'expo-av'
 import VideoPlayer from 'expo-video-player'
 
 const { width } = Dimensions.get('screen')

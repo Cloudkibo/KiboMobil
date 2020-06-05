@@ -1,21 +1,9 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, {PureComponent} from 'react'
 import {
-  View,
   Image,
-  Dimensions,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  KeyboardAvoidingView,
-} from 'react-native';
-
-import { LinearGradient } from 'expo-linear-gradient';
-import { Input, Block, Text, Button, theme } from 'galio-framework';
-import { Icon } from '../../../components/';
-
-import Images from "../../../constants/Images";
-import materialTheme from '../../../constants/Theme';
+  StyleSheet
+} from 'react-native'
+import { Block, Text, theme } from 'galio-framework'
 
 // components
 import TEXTCOMPONENT from '../Messages/Text'
@@ -26,9 +14,7 @@ import FILE from '../Messages/File'
 import CARD from '../Messages/Card'
 import LOCATION from '../Messages/Location'
 
-const { width } = Dimensions.get('screen')
-
-class LeftChatItem extends React.Component {
+class LeftChatItem extends PureComponent {
   constructor (props, context) {
     super(props, context)
     this.state = {
@@ -110,7 +96,7 @@ class LeftChatItem extends React.Component {
 
   render () {
     return (
-      <Block key={this.props.message._id}>
+      <Block key={this.props.message._id} flex>
         {
           this.props.index === 0
             ? <Block row middle>
@@ -135,46 +121,19 @@ class LeftChatItem extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-
-  },
-  messageFormContainer: {
-    height: 96,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 32,
-  },
-  input: {
-    width: width * 0.78,
-    height: theme.SIZES.BASE * 3,
-    backgroundColor: theme.COLORS.WHITE,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    backgroundColor: 'transparent',
-  },
-  messagesWrapper: {
-    flexGrow: 1,
-    top: 0,
-    paddingLeft: 8,
-    paddingRight: 16,
-    paddingVertical: 16,
-    paddingBottom: 68
-  },
   messageCardWrapper: {
     maxWidth: '85%',
     marginLeft: 8,
-    marginBottom: 20,
+    marginBottom: 20
   },
   messageCard: {
     paddingHorizontal: 8,
     paddingVertical: 10,
     borderRadius: 6,
-    backgroundColor: theme.COLORS.WHITE,
+    backgroundColor: theme.COLORS.WHITE
   },
   shadow: {
-    shadowColor: "rgba(0, 0, 0, 0.12)",
+    shadowColor: 'rgba(0, 0, 0, 0.12)',
     shadowOffset: { width: 0, height: 7 },
     shadowRadius: 20,
     shadowOpacity: 1
@@ -188,8 +147,8 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 20,
-    marginBottom: theme.SIZES.BASE,
-  },
-});
+    marginBottom: theme.SIZES.BASE
+  }
+})
 
 export default LeftChatItem
