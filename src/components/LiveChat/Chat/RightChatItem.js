@@ -1,21 +1,8 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import {
-  View,
-  Image,
-  Dimensions,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  KeyboardAvoidingView,
-} from 'react-native';
+import React, { PureComponent } from 'react'
+import {StyleSheet} from 'react-native'
 
-import { LinearGradient } from 'expo-linear-gradient';
-import { Input, Block, Text, Button, theme } from 'galio-framework';
-import { Icon } from '../../../components/';
-
-import Images from "../../../constants/Images";
-import materialTheme from '../../../constants/Theme';
+import { LinearGradient } from 'expo-linear-gradient'
+import { Block, Text, theme } from 'galio-framework'
 
 // components
 import TEXTCOMPONENT from '../Messages/Text'
@@ -28,9 +15,7 @@ import SURVEY from '../Messages/Survey'
 import CARD from '../Messages/Card'
 import GALLERY from '../Messages/Gallery'
 
-const { width } = Dimensions.get('screen')
-
-class RightChatItem extends React.Component {
+class RightChatItem extends PureComponent {
   constructor (props, context) {
     super(props, context)
     this.state = {
@@ -40,14 +25,15 @@ class RightChatItem extends React.Component {
     this.getMessage = this.getMessage.bind(this)
   }
   getRepliedByMsg () {
+    let repliedBy = this.props.message.replied_by || this.props.message.repliedBy
     if (
-      !this.state.repliedBy ||
-      this.state.repliedBy.id === this.props.user._id
+      !repliedBy ||
+      repliedBy.id === this.props.user._id
     ) {
       return null
     } else {
       return (
-        <Text color='white' style={{marginBottom: 10}}>{this.state.repliedBy.name} replied:</Text>
+        <Text color='white' style={{marginBottom: 10}}>{repliedBy.name} replied:</Text>
       )
     }
   }
@@ -61,7 +47,7 @@ class RightChatItem extends React.Component {
           text={message}
           linkColor='white'
           textColor='white'
-          urlMeta={this.props.message.url_meta}
+          urlMeta={this.props.message.url_meta !== '' ? this.props.message.url_meta : null}
         />
       )
     } else if (['image', 'sticker', 'gif', 'thumbsUp'].includes(type)) {
@@ -122,7 +108,7 @@ class RightChatItem extends React.Component {
 
   render () {
     return (
-      <Block key={this.props.message._id}>
+      <Block key={this.props.message._id} flex>
         {this.props.index === 0
           ? <Block row middle>
             <Text style={styles.time}>{this.props.displayDate(this.props.message.datetime)}</Text>
@@ -151,46 +137,19 @@ class RightChatItem extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-
-  },
-  messageFormContainer: {
-    height: 96,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 32,
-  },
-  input: {
-    width: width * 0.78,
-    height: theme.SIZES.BASE * 3,
-    backgroundColor: theme.COLORS.WHITE,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    backgroundColor: 'transparent',
-  },
-  messagesWrapper: {
-    flexGrow: 1,
-    top: 0,
-    paddingLeft: 8,
-    paddingRight: 16,
-    paddingVertical: 16,
-    paddingBottom: 68
-  },
   messageCardWrapper: {
     maxWidth: '85%',
     marginLeft: 8,
-    marginBottom: 20,
+    marginBottom: 20
   },
   messageCard: {
     paddingHorizontal: 8,
     paddingVertical: 10,
     borderRadius: 6,
-    backgroundColor: theme.COLORS.WHITE,
+    backgroundColor: theme.COLORS.WHITE
   },
   shadow: {
-    shadowColor: "rgba(0, 0, 0, 0.12)",
+    shadowColor: 'rgba(0, 0, 0, 0.12)',
     shadowOffset: { width: 0, height: 7 },
     shadowRadius: 20,
     shadowOpacity: 1
@@ -204,8 +163,8 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 20,
-    marginBottom: theme.SIZES.BASE,
-  },
-});
+    marginBottom: theme.SIZES.BASE
+  }
+})
 
 export default RightChatItem

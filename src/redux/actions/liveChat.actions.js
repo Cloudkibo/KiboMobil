@@ -5,9 +5,6 @@ import { AsyncStorage } from 'react-native'
 
 export const API_URL = 'https://kibochat.cloudkibo.com/api'
 
-// import { clearSubscriberTags } from '../../redux/actions/tags.actions'
-// import { clearCustomFieldValues } from '../../redux/actions/customFields.actions'
-
 export function updateSessionProfilePicture (subscriber, profilePic) {
   return {
     type: ActionTypes.UPDATE_SESSION_PROFILE_PICTURE,
@@ -323,7 +320,6 @@ export function uploadRecording (fileData, handleUpload) {
 export function uploadAttachment (fileData, handleUpload) {
   return (dispatch) => {
     // eslint-disable-next-line no-undef
-    console.log('in upload attachment', `${API_URL}/broadcasts/upload`)
     AsyncStorage.getItem('token')
       .then(token => {
         fetch(`${API_URL}/broadcasts/upload`, {

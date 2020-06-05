@@ -1,9 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator, Image,
-ScrollView,
-KeyboardAvoidingView } from 'react-native'
-import { Block, Text, theme, Input, Toast, Button } from 'galio-framework'
+import { Block, Text, Button } from 'galio-framework'
 import { materialTheme } from '../../../constants/'
 import { displayDate, showDate } from '../../../screens/LiveChat/utilities'
 import moment from 'moment'
@@ -14,17 +10,11 @@ class Chat extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-      chatAreaHieght: '57vh'
     }
     this.overrideUserInput = this.overrideUserInput.bind(this)
     this.updateNewMessage = this.updateNewMessage.bind(this)
-    this.updateChatAreaHeight = this.updateChatAreaHeight.bind(this)
 
     this.newMessage = false
-  }
-
-  updateChatAreaHeight (value) {
-    this.setState({chatAreaHieght: value})
   }
 
   updateNewMessage (value) {
@@ -43,7 +33,6 @@ class Chat extends React.Component {
     return (
       <Block flex>
         <BODY
-          chatAreaHieght={this.state.chatAreaHieght}
           userChat={this.props.userChat}
           chatCount={this.props.chatCount}
           activeSession={this.props.activeSession}

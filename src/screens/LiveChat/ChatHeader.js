@@ -6,8 +6,9 @@ import { TouchableOpacity, StyleSheet, Platform, Dimensions, Image } from 'react
 import { Button, Block, NavBar, Text, theme } from 'galio-framework'
 import Toast from 'react-native-simple-toast'
 import Icon from '../../components/Icon'
+import ASSIGNSESSION from '../../components/LiveChat/Chat/AssignSession'
 
-import { changeStatus } from '../../redux/actions/liveChat.actions'
+import { changeStatus, fetchTeamAgents, assignToTeam, assignToAgent } from '../../redux/actions/liveChat.actions'
 
 const { height, width } = Dimensions.get('window')
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896)
@@ -16,7 +17,8 @@ class Header extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-      activeSession: this.props.activeSession
+      activeSession: this.props.activeSession,
+      showAssignmentModal: false
     }
     this.handleLeftPress = this.handleLeftPress.bind(this)
     this.renderRight = this.renderRight.bind(this)
@@ -24,6 +26,56 @@ class Header extends React.Component {
     this.performAction = this.performAction.bind(this)
     this.changeStatus = this.changeStatus.bind(this)
     this.handleStatusChange = this.handleStatusChange.bind(this)
+    this.toggleAssignmentModal = this.toggleAssignmentModal.bind(this)
+    this.getAgents = this.getAgents.bind(this)
+    this.getTeams = this.getTeams.bind(this)
+    this.fetchTeamAgents = this.fetchTeamAgents.bind(this)
+    this.handleAgents = this.handleAgents.bind(this)
+    this.handleAssignment = this.handleAssignment.bind(this)
+  }
+
+  fetchTeamAgents (id) {
+    this.props.fetchTeamAgents(id, this.handleAgents)
+  }
+
+  handleAgents (teamAgents) {
+    // let agentIds = []
+    // for (let i = 0; i < teamAgents.length; i++) {
+    //   if (teamAgents[i].agentId !== this.props.user._id) {
+    //     agentIds.push(teamAgents[i].agentId)
+    //   }
+    // }
+    // if (agentIds.length > 0) {
+    //   let notificationsData = {
+    //     message: `Session of subscriber ${this.state.activeSession.firstName + ' ' + this.state.activeSession.lastName} has been assigned to your team.`,
+    //     category: { type: 'chat_session', id: this.state.activeSession._id },
+    //     agentIds: agentIds,
+    //     companyId: this.state.activeSession.companyId
+    //   }
+    //   this.props.sendNotifications(notificationsData)
+    // }
+  }
+
+  getAgents () {
+    let agents = []
+    if (this.props.members && this.props.members.length > 0) {
+      agents = this.props.members.map(m => m.userId).map(agent => (
+        {label: agent.name, value: agent._id, group: 'agent'}))
+    }
+    return agents
+  }
+
+  getTeams () {
+    let teams = []
+    if (this.props.teams && this.props.teams.length > 0) {
+      teams = this.props.teams.map(team => (
+        {label: team.name, value: team._id, group: 'team'}))
+    }
+    return teams
+  }
+
+  toggleAssignmentModal (value) {
+    this.setState({showAssignmentModal: false})
   }
 
   performAction (errorMsg, session) {
@@ -56,6 +108,10 @@ class Header extends React.Component {
     ])
   }
 
+  handleAssignment (activeSession) {
+    this.setState({activeSession: activeSession})
+  }
+
   changeStatus (status, session) {
     let errorMsg = (status === 'resolved') ? 'mark this session as resolved' : 'reopen this session'
     const data = this.performAction(errorMsg, session)
@@ -86,14 +142,29 @@ class Header extends React.Component {
             <Text style={{color: 'white'}}>Reopen</Text>
           </Button>
         }
-        <TouchableOpacity>
-          <Icon
-            size={20}
-            name='dots-three-vertical'
-            family='Entypo'
-            style={{marginLeft: 8, marginTop: 6}}
-          />
-        </TouchableOpacity>
+        {(this.props.user.currentPlan.unique_ID === 'plan_C' || this.props.user.currentPlan.unique_ID === 'plan_D') &&
+          (['admin', 'buyer'].includes(this.props.user.role)) &&
+          <TouchableOpacity onPress={() => this.setState({showAssignmentModal: true})}>
+            <Icon
+              size={20}
+              name='dots-three-vertical'
+              family='Entypo'
+              style={{marginLeft: 8, marginTop: 6}}
+            />
+          </TouchableOpacity>
+        }
+        <ASSIGNSESSION
+          showModal={this.state.showAssignmentModal}
+          toggleAssignmentModal={this.toggleAssignmentModal}
+          teams={this.getTeams()}
+          agents={this.getAgents()}
+          activeSession={this.props.activeSession}
+          fetchTeamAgents={this.props.fetchTeamAgents}
+          assignToTeam={this.props.assignToTeam}
+          assignToAgent={this.props.assignToAgent}
+          user={this.props.user}
+          handleAssignment={this.handleAssignment}
+        />
       </Block>
     )
   }
@@ -147,14 +218,19 @@ class Header extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    user: (state.basicInfo.user)
+    user: (state.basicInfo.user),
+    members: (state.membersInfo.members),
+    teams: (state.teamsInfo.teams)
     // socketData: (state.socketInfo.socketData)
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    changeStatus
+    changeStatus,
+    fetchTeamAgents,
+    assignToTeam,
+    assignToAgent
   }, dispatch)
 }
 

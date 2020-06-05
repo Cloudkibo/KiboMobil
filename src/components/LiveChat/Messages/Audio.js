@@ -70,7 +70,6 @@ class AudioComponent extends React.Component {
   }
 
   async _loadNewPlaybackInstance (playing) {
-    console.log('in _loadNewPlaybackInstance')
     if (this.playbackInstance != null) {
       await this.playbackInstance.unloadAsync()
       // this.playbackInstance.setOnPlaybackStatusUpdate(null);

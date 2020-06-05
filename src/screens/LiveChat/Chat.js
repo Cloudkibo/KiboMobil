@@ -1,42 +1,29 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator, Image,
-ScrollView,
-KeyboardAvoidingView } from 'react-native'
-import { Block, Text, theme, Input } from 'galio-framework'
-import Icon from '../../components/Icon'
-import { materialTheme } from '../../constants/'
-import SessionsListItem from '../../components/LiveChat/SessionsListItem'
-import Tabs from '../../components/Tabs'
-import CHAT from '../../components/LiveChat/Chat/index'
+import { StyleSheet, Dimensions } from 'react-native'
+import { Block } from 'galio-framework'
 
+import CHAT from '../../components/LiveChat/Chat/index'
 import {
-  fetchOpenSessions,
-  fetchCloseSessions,
   fetchUserChats,
   fetchTeamAgents,
   changeStatus,
-  unSubscribe,
-  getCustomers,
-  appendSubscriber,
   assignToTeam,
   assignToAgent,
   sendNotifications,
-  updatePendingResponse,
   sendChatMessage,
   uploadAttachment,
   sendAttachment,
   uploadRecording,
-  searchChat,
   markRead,
   updateLiveChatInfo,
-  deletefile,
-  clearSearchResult,
   getSMPStatus,
-  updateSessionProfilePicture
+  updateSessionProfilePicture,
+  deletefile
 } from '../../redux/actions/liveChat.actions'
-
+import { loadTeamsList } from '../../redux/actions/teams.actions'
+import { loadMembersList } from '../../redux/actions/members.actions'
 const { width } = Dimensions.get('screen')
 
 class LiveChat extends React.Component {
@@ -60,10 +47,14 @@ class LiveChat extends React.Component {
     this.updateState = this.updateState.bind(this)
     this.handleSMPStatus = this.handleSMPStatus.bind(this)
 
-    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 10 })
+    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
     props.getSMPStatus(this.handleSMPStatus)
     if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
       this.props.markRead(props.route.params.activeSession._id)
+    }
+    if (this.props.user.currentPlan.unique_ID === 'plan_C' || this.props.user.currentPlan.unique_ID === 'plan_D') {
+      props.loadMembersList()
+      props.loadTeamsList({pageId: props.route.params.activeSession.pageId._id})
     }
   }
 
@@ -155,15 +146,15 @@ class LiveChat extends React.Component {
         agentIds.push(teamAgents[i].agentId)
       }
     }
-    if (agentIds.length > 0) {
-      let notificationsData = {
-        message: `Session of subscriber ${this.state.activeSession.firstName + ' ' + this.state.activeSession.lastName} has been assigned to your team.`,
-        category: { type: 'chat_session', id: this.state.activeSession._id },
-        agentIds: agentIds,
-        companyId: this.state.activeSession.companyId
-      }
-      // this.props.sendNotifications(notificationsData)
-    }
+    // if (agentIds.length > 0) {
+    //   let notificationsData = {
+    //     message: `Session of subscriber ${this.state.activeSession.firstName + ' ' + this.state.activeSession.lastName} has been assigned to your team.`,
+    //     category: { type: 'chat_session', id: this.state.activeSession._id },
+    //     agentIds: agentIds,
+    //     companyId: this.state.activeSession.companyId
+    //   }
+    //   this.props.sendNotifications(notificationsData)
+    // }
   }
 
   setMessageData (session, payload) {
@@ -248,42 +239,26 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    unSubscribe,
-    fetchOpenSessions,
-    fetchCloseSessions,
     // updatePicture,
     fetchTeamAgents,
     assignToTeam,
     changeStatus,
-    getCustomers,
-    appendSubscriber,
-    // loadTeamsList,
+    loadTeamsList,
     sendNotifications,
-    // loadMembersList,
+    loadMembersList,
     assignToAgent,
-    // getSubscriberTags,
-    // loadTags,
-    // assignTags,
-    // createTag,
-    // unassignTags,
-    updatePendingResponse,
-    // loadCustomFields,
-    // getCustomFieldValue,
-    // setCustomFieldValue,
     sendChatMessage,
     uploadAttachment,
     sendAttachment,
     uploadRecording,
-    searchChat,
     fetchUserChats,
     markRead,
     // clearSocketData,
     updateLiveChatInfo,
-    deletefile,
-    clearSearchResult,
     // urlMetaData,
     getSMPStatus,
-    updateSessionProfilePicture
+    updateSessionProfilePicture,
+    deletefile
   }, dispatch)
 }
 
@@ -291,82 +266,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(LiveChat)
 const styles = StyleSheet.create({
   block: {
     width: width
-  },
-  search: {
-    height: 48,
-    width: width - 32,
-    marginHorizontal: 16,
-    borderWidth: 1,
-    borderRadius: 3,
-    marginTop: 15
-  },
-  pages: {
-    width: width,
-    borderWidth: 0,
-    marginHorizontal: theme.SIZES.BASE,
-    backgroundColor: theme.COLORS.WHITE,
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: theme.SIZES.BASE / 4,
-    shadowOpacity: 0.1
-  },
-  empty: {
-    marginHorizontal: 16,
-    marginVertical: 20
-  },
-  container: {
-
-  },
-  messageFormContainer: {
-    height: 96,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 32,
-  },
-  input: {
-    width: width * 0.78,
-    height: theme.SIZES.BASE * 3,
-    backgroundColor: theme.COLORS.WHITE,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    backgroundColor: 'transparent',
-  },
-  messagesWrapper: {
-    flexGrow: 1,
-    top: 0,
-    paddingLeft: 8,
-    paddingRight: 16,
-    paddingVertical: 16,
-    paddingBottom: 68
-  },
-  messageCardWrapper: {
-    maxWidth: '85%',
-    marginLeft: 8,
-    marginBottom: 32,
-  },
-  messageCard: {
-    paddingHorizontal: 8,
-    paddingVertical: 16,
-    borderRadius: 6,
-    backgroundColor: theme.COLORS.WHITE,
-  },
-  shadow: {
-    shadowColor: "rgba(0, 0, 0, 0.12)",
-    shadowOffset: { width: 0, height: 7 },
-    shadowRadius: 20,
-    shadowOpacity: 1
-  },
-  time: {
-    fontSize: 11,
-    opacity: 0.5,
-    marginTop: 8,
-  },
-  avatar: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-    marginBottom: theme.SIZES.BASE,
   }
 })

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert } from 'react-native'
+import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator } from 'react-native'
 import Icon from '../../../components/Icon'
 import { materialTheme } from '../../../constants/'
 import { Input, Block, Button, theme } from 'galio-framework'
@@ -11,6 +11,7 @@ import * as mime from 'react-native-mime-types'
 import * as Permissions from 'expo-permissions'
 import * as FileSystem from 'expo-file-system'
 import { Audio } from 'expo-av'
+import StickerMenu from '../../StickerPicker/stickers'
 
 const { width } = Dimensions.get('screen')
 
@@ -36,7 +37,10 @@ class Footer extends React.Component {
       isRecording: false,
       isLoading: false,
       recordingDuration: null,
-      recordingPermissionGranted: false
+      recordingPermissionGranted: false,
+      gifSearchValue: '',
+      gifs: [],
+      loadingGif: false
     }
 
     this.recordingSettings = JSON.parse(JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY))
@@ -60,6 +64,14 @@ class Footer extends React.Component {
     this._beginRecording = this._beginRecording.bind(this)
     this._getMMSSFromMillis = this._getMMSSFromMillis.bind(this)
     this._getRecordingTimestamp = this._getRecordingTimestamp.bind(this)
+    this.sendSticker = this.sendSticker.bind(this)
+    this.fetchGifs = this.fetchGifs.bind(this)
+    this.sendGif = this.sendGif.bind(this)
+    this.changeGifSearchValue = this.changeGifSearchValue.bind(this)
+  }
+
+  componentDidMount () {
+    this.fetchGifs()
   }
 
   handleMessageResponse (res, data, payload) {
@@ -77,6 +89,19 @@ class Footer extends React.Component {
     } else {
       this.setState({loading: false})
       Alert.alert('ERROR!', 'Failed to send message', [{ text: 'OK' }], { cancelable: true })
+    }
+  }
+
+  async fetchGifs () {
+    this.setState({loadingGif: true})
+    try {
+      const API_KEY = 'GG9olJLktt5SG2kJEdCj9YDuzgoWeYAr'
+      const BASE_URL = 'http://api.giphy.com/v1/gifs/trending'
+      const resJson = await fetch(`${BASE_URL}?api_key=${API_KEY}&q=hi`)
+      const res = await resJson.json()
+      this.setState({gifs: res.data, loadingGif: false})
+    } catch (error) {
+      console.warn(error)
     }
   }
 
@@ -206,7 +231,6 @@ class Footer extends React.Component {
         data = this.props.setMessageData(this.props.activeSession, payload)
         this.props.sendChatMessage(data)
         this.setState({ text: '', urlmeta: {}, currentUrl: '', selectedPicker: '', showPickers: false })
-        this.props.updateChatAreaHeight('57vh')
         data.format = 'convos'
         this.updateChatData(data, payload)
       } else if (this.state.attachment && this.state.attachment.name) {
@@ -282,11 +306,6 @@ class Footer extends React.Component {
         .then(response => {
           if (response.status === 'granted') {
             this.setState({recordingPermissionGranted: true})
-            // if (this.state.isRecording) {
-            //   this._stopRecording()
-            // } else {
-            //   this._beginRecording()
-            // }
           }
         })
     } else {
@@ -400,6 +419,55 @@ class Footer extends React.Component {
     return padWithZero(minutes) + ':' + padWithZero(seconds)
   }
 
+  sendSticker (sticker) {
+    const data = this.props.performAction('send messages', this.props.activeSession)
+    if (data.isAllowed) {
+      const payload = {
+        componentType: 'sticker',
+        fileurl: sticker.image.hdpi
+      }
+      const data = this.props.setMessageData(this.props.activeSession, payload)
+      this.props.sendChatMessage(data)
+      data.format = 'convos'
+      this.updateChatData(data, payload)
+    } else {
+      Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
+    }
+  }
+
+  sendGif (gif) {
+    const data = this.props.performAction('send messages', this.props.activeSession)
+    if (data.isAllowed) {
+      const payload = {
+        componentType: 'gif',
+        fileurl: gif.images.original.url
+      }
+      const data = this.props.setMessageData(this.props.activeSession, payload)
+      this.props.sendChatMessage(data)
+      data.format = 'convos'
+      this.updateChatData(data, payload)
+    } else {
+      Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
+    }
+  }
+
+  async changeGifSearchValue (text) {
+    this.setState({gifSearchValue: text, loadingGif: true})
+    if (text === '') {
+      this.fetchGifs()
+    } else {
+      try {
+        const API_KEY = 'GG9olJLktt5SG2kJEdCj9YDuzgoWeYAr'
+        const BASE_URL = 'http://api.giphy.com/v1/gifs/search'
+        const resJson = await fetch(`${BASE_URL}?api_key=${API_KEY}&q=${text}`)
+        const res = await resJson.json()
+        this.setState({gifs: res.data, loadingGif: false})
+      } catch (error) {
+        console.warn(error)
+      }
+    }
+  }
+
   render () {
     return (
       <Block>
@@ -510,6 +578,43 @@ class Footer extends React.Component {
                 showHistory
               />
             }
+            {this.state.selectedPicker === 'stickers' &&
+              <Block style={{height: 250, width: width, marginVertical: 15}}>
+                <StickerMenu
+                  apiKey='80b32d82b0c7dc5c39d2aafaa00ba2bf'
+                  userId='imran.shoukat@khi.iba.edu.pk'
+                  sendSticker={(sticker) => this.sendSticker(sticker)}
+                />
+              </Block>
+            }
+            {this.state.selectedPicker === 'gifs' &&
+              <Block style={styles.view}>
+                <Input
+                  placeholder='Search Gif...'
+                  style={styles.textInput}
+                  color='black'
+                  onChangeText={(text) => this.changeGifSearchValue(text)}
+                />
+                {this.state.loadingGif
+                  ? <ActivityIndicator size='large' />
+                  : <FlatList
+                    data={this.state.gifs}
+                    numColumns={2}
+                    renderItem={({item}) => (
+                      <Block center style={{ flex: 1, flexDirection: 'column', marginBottom: 1 }}>
+                        <TouchableOpacity onPress={() => this.sendGif(item)}>
+                          <Image
+                            resizeMode='stretch'
+                            style={styles.image}
+                            source={{uri: item.images.original.url}}
+                          />
+                        </TouchableOpacity>
+                      </Block>
+                    )}
+                  />
+                }
+              </Block>
+            }
           </Block>
         }
       </Block>
@@ -556,9 +661,21 @@ const styles = StyleSheet.create({
     marginLeft: 6
   },
   input: {
-    // width: width * 0.8,
     height: theme.SIZES.BASE * 3,
     backgroundColor: theme.COLORS.WHITE,
     borderRadius: 30
+  },
+  view: {
+    height: 250,
+    width: width
+  },
+  textInput: {
+    height: 40,
+    borderWidth: 0,
+    borderRadius: 0
+  },
+  image: {
+    width: width / 2 - 2,
+    height: 150
   }
 })
