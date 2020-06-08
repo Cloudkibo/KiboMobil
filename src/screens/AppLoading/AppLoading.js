@@ -6,6 +6,7 @@ import { AppLoading } from 'expo'
 import { Image, AsyncStorage, ActivityIndicator } from 'react-native'
 import { Asset } from 'expo-asset'
 import { Images } from '../../constants/'
+import { joinRoom } from '../../utility/socketio'
 
 const assetImages = [
   Images.Profile,
@@ -38,7 +39,7 @@ class Loading extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
         if (token) {
-          this.props.getuserdetails(this.handleResponse)
+          this.props.getuserdetails(this.handleResponse, joinRoom)
         } else {
           this.props.navigation.navigate('Sign In')
         }

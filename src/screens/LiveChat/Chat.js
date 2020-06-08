@@ -22,6 +22,8 @@ import {
   updateSessionProfilePicture,
   deletefile
 } from '../../redux/actions/liveChat.actions'
+import { handleSocketEvent } from './socket'
+import { clearSocketData } from '../../redux/actions/socket.actions'
 import { loadTeamsList } from '../../redux/actions/teams.actions'
 import { loadMembersList } from '../../redux/actions/members.actions'
 const { width } = Dimensions.get('screen')
@@ -49,9 +51,9 @@ class LiveChat extends React.Component {
 
     this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
     props.getSMPStatus(this.handleSMPStatus)
-    if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
-      this.props.markRead(props.route.params.activeSession._id)
-    }
+    // if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
+    //   this.props.markRead(props.route.params.activeSession._id)
+    // }
     if (this.props.user.currentPlan.unique_ID === 'plan_C' || this.props.user.currentPlan.unique_ID === 'plan_D') {
       props.loadMembersList()
       props.loadTeamsList({pageId: props.route.params.activeSession.pageId._id})
@@ -87,6 +89,9 @@ class LiveChat extends React.Component {
         state.loadingChat = false
       } else if (nextProps.userChat.length === 0) {
         state.loadingChat = false
+      }
+      if (this.state.activeSession.unreadCount && this.state.activeSession.unreadCount > 0) {
+        this.props.markRead(this.state.activeSession._id)
       }
     }
 
@@ -230,10 +235,10 @@ function mapStateToProps (state) {
     userChat: (state.liveChat.userChat),
     chatCount: (state.liveChat.chatCount),
     pages: (state.pagesInfo.pages),
-    user: (state.basicInfo.user)
+    user: (state.basicInfo.user),
     // members: (state.membersInfo.members),
     // teams: (state.teamsInfo.teams),
-    // socketData: (state.socketInfo.socketData)
+    socketData: (state.socketInfo.socketData)
   }
 }
 
@@ -253,7 +258,7 @@ function mapDispatchToProps (dispatch) {
     uploadRecording,
     fetchUserChats,
     markRead,
-    // clearSocketData,
+    clearSocketData,
     updateLiveChatInfo,
     // urlMetaData,
     getSMPStatus,

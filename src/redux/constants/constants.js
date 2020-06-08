@@ -49,3 +49,8 @@ export const LOAD_MEMBERS = 'LOAD_MEMBERS'
 
 // constants for teams
 export const SHOW_TEAMS_LIST = 'SHOW_TEAMS_LIST'
+
+//  constants for socket
+export const SET_SOCKET_STATUS = 'SET_SOCKET_STATUS'
+export const SOCKET_EVENT = 'SOCKET_EVENT'
+export const CLEAR_SOCKET_DATA = 'CLEAR_SOCKET_DATA'

@@ -31,6 +31,19 @@ class AssignSession extends React.Component {
     this.unassignTeam = this.unassignTeam.bind(this)
   }
 
+  /* eslint-disable */
+  UNSAFE_componentWillReceiveProps (nextProps) {
+  /* eslint-enable */
+    if (nextProps.activeSession) {
+      let currentSelected = nextProps.activeSession.is_assigned ? {
+        value: nextProps.activeSession.assigned_to.id,
+        label: nextProps.activeSession.assigned_to.name,
+        group: nextProps.activeSession.assigned_to.type
+      } : ''
+      this.setState({currentSelected: currentSelected})
+    }
+  }
+
   changeTab (value) {
     this.setState({
       tabValue: value

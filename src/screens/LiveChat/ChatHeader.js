@@ -34,6 +34,29 @@ class Header extends React.Component {
     this.handleAssignment = this.handleAssignment.bind(this)
   }
 
+  /* eslint-disable */
+  UNSAFE_componentWillReceiveProps (nextProps) {
+  /* eslint-enable */
+    let state = {}
+    if (nextProps.openSessions) {
+      let sessions = nextProps.openSessions
+      sessions = sessions || []
+      let index = sessions.findIndex((session) => session._id === this.state.activeSession._id)
+      if (index !== -1) {
+        state.activeSession = sessions[index]
+      }
+    }
+    if (nextProps.closeSessions) {
+      let sessions = nextProps.closeSessions
+      sessions = sessions || []
+      let index = sessions.findIndex((session) => session._id === this.state.activeSession._id)
+      if (index !== -1) {
+        state.activeSession = sessions[index]
+      }
+    }
+    this.setState({...state})
+  }
+
   fetchTeamAgents (id) {
     this.props.fetchTeamAgents(id, this.handleAgents)
   }
@@ -129,10 +152,10 @@ class Header extends React.Component {
     return (back ? navigation.goBack() : navigation.openDrawer())
   }
 
-  renderRight () {
+  renderRight (activeSession) {
     return (
       <Block flex={0.8} row>
-        {this.props.activeSession.status === 'new'
+        {activeSession.status === 'new'
           ? <Button round style={{ width: 80, height: 30 }} color='success'
             onPress={() => this.changeStatus('resolved', this.state.activeSession)}>
             <Text style={{color: 'white'}}>Done</Text>
@@ -158,7 +181,7 @@ class Header extends React.Component {
           toggleAssignmentModal={this.toggleAssignmentModal}
           teams={this.getTeams()}
           agents={this.getAgents()}
-          activeSession={this.props.activeSession}
+          activeSession={activeSession}
           fetchTeamAgents={this.props.fetchTeamAgents}
           assignToTeam={this.props.assignToTeam}
           assignToAgent={this.props.assignToAgent}
@@ -200,7 +223,7 @@ class Header extends React.Component {
           title={this.renderTitle(this.state.activeSession)}
           style={styles.navbar}
           transparent={transparent}
-          right={this.renderRight()}
+          right={this.renderRight(this.state.activeSession)}
           rightStyle={{ alignItems: 'center' }}
           leftStyle={{ flex: 0.3, paddingBottom: 10 }}
           leftIconName='arrowleft'
@@ -220,7 +243,11 @@ function mapStateToProps (state) {
   return {
     user: (state.basicInfo.user),
     members: (state.membersInfo.members),
-    teams: (state.teamsInfo.teams)
+    teams: (state.teamsInfo.teams),
+    openSessions: (state.liveChat.openSessions),
+    openCount: (state.liveChat.openCount),
+    closeCount: (state.liveChat.closeCount),
+    closeSessions: (state.liveChat.closeSessions)
     // socketData: (state.socketInfo.socketData)
   }
 }
@@ -234,7 +261,7 @@ function mapDispatchToProps (dispatch) {
   }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(Header))
+export default connect(mapStateToProps, mapDispatchToProps)(Header)
 
 const styles = StyleSheet.create({
   title: {

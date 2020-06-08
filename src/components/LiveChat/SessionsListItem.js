@@ -27,7 +27,7 @@ class SessionsListItem extends React.Component {
   render () {
     const {session} = this.props
     return (
-      <TouchableOpacity style={styles.touchableOpacity} onPress={() => { this.props.navigation.navigate('Chat', { activeSession: session }) }}>
+      <TouchableOpacity style={styles.touchableOpacity} onPress={() => this.props.changeActiveSession(session)}>
         <Block flex row style={{paddingVertical: 20}}>
           <Block center flex={0.3}>
             <Image
