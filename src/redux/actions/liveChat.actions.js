@@ -293,7 +293,6 @@ export function fetchUserChats (sessionid, data, handleFunction) {
 export function uploadRecording (fileData, handleUpload) {
   return (dispatch) => {
     // eslint-disable-next-line no-undef
-    console.log('in upload attachment', `${API_URL}/broadcasts/upload`)
     AsyncStorage.getItem('token')
       .then(token => {
         fetch(`${API_URL}/broadcasts/uploadRecording`, {

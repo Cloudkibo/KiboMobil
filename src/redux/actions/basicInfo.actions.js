@@ -2,6 +2,13 @@ import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 import {AsyncStorage} from 'react-native'
 
+export function setSocketStatus (data) {
+  return {
+    type: ActionTypes.SET_SOCKET_STATUS,
+    data
+  }
+}
+
 export function showuserdetails (data) {
   // NOTE: don't remove following auth method call
   // auth.putUserId(data._id)

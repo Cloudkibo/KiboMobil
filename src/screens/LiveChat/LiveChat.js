@@ -7,8 +7,10 @@ import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
-import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture} from '../../redux/actions/liveChat.actions'
+import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo} from '../../redux/actions/liveChat.actions'
 import { updatePicture } from '../../redux/actions/subscribers.actions'
+import { handleSocketEvent } from './socket'
+import { clearSocketData } from '../../redux/actions/socket.actions'
 
 const { width } = Dimensions.get('screen')
 
@@ -25,7 +27,8 @@ class LiveChat extends React.Component {
       filterSort: -1,
       filterPage: '',
       filterPending: false,
-      filterUnread: false
+      filterUnread: false,
+      activeSession: {}
     }
 
     this.loadMore = this.loadMore.bind(this)
@@ -36,7 +39,14 @@ class LiveChat extends React.Component {
     this.fetchSessions = this.fetchSessions.bind(this)
     this.getChatPreview = this.getChatPreview.bind(this)
     this.profilePicError = this.profilePicError.bind(this)
+    this.changeActiveSession = this.changeActiveSession.bind(this)
   }
+
+  changeActiveSession (session) {
+    this.setState({activeSession: session})
+    this.props.navigation.navigate('Chat', { activeSession: session })
+  }
+
   componentDidMount () {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({loading: true})
@@ -64,16 +74,16 @@ class LiveChat extends React.Component {
       ...state
     })
 
-  // if (nextProps.socketData) {
-  //   handleSocketEvent(
-  //     nextProps.socketData,
-  //     this.state,
-  //     this.props,
-  //     this.props.updateLiveChatInfo,
-  //     this.props.user,
-  //     this.props.clearSocketData
-  //   )
-  // }
+    if (nextProps.socketData) {
+      handleSocketEvent(
+        nextProps.socketData,
+        this.state,
+        this.props,
+        this.props.updateLiveChatInfo,
+        this.props.user,
+        this.props.clearSocketData
+      )
+    }
   }
 
   changeTab (value) {
@@ -246,6 +256,7 @@ class LiveChat extends React.Component {
                   session={item}
                   getChatPreview={this.getChatPreview}
                   profilePicError={this.profilePicError}
+                  changeActiveSession={this.changeActiveSession}
                 />
               }}
               showsVerticalScrollIndicator={false}
@@ -270,8 +281,10 @@ function mapStateToProps (state) {
     openCount: (state.liveChat.openCount),
     closeCount: (state.liveChat.closeCount),
     closeSessions: (state.liveChat.closeSessions),
-    user: (state.basicInfo.user)
-    // socketData: (state.socketInfo.socketData)
+    user: (state.basicInfo.user),
+    socketData: (state.socketInfo.socketData),
+    userChat: (state.liveChat.userChat),
+    chatCount: (state.liveChat.chatCount)
   }
 }
 
@@ -280,7 +293,9 @@ function mapDispatchToProps (dispatch) {
     fetchOpenSessions,
     fetchCloseSessions,
     updateSessionProfilePicture,
-    updatePicture
+    updatePicture,
+    clearSocketData,
+    updateLiveChatInfo
   }, dispatch)
 }
 

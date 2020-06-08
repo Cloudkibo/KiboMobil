@@ -53,6 +53,7 @@
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "socket.io-client": "^2.3.0",
     "superagent": "^5.2.2"
   },
   "devDependencies": {
