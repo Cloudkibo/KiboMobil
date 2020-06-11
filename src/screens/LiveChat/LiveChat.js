@@ -11,6 +11,7 @@ import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, upda
 import { updatePicture } from '../../redux/actions/subscribers.actions'
 import { handleSocketEvent } from './socket'
 import { clearSocketData } from '../../redux/actions/socket.actions'
+import { CommonActions } from '@react-navigation/native';
 
 const { width } = Dimensions.get('screen')
 
@@ -179,6 +180,14 @@ class LiveChat extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
+  // console.log('props.route.params.activeSession',this.props.route.params.activeSession)
+    // this.props.navigation.dispatch(
+    //   CommonActions.reset({
+    //     index: 0,
+    //     routes: [
+    //       { name: 'Chat',  params: { activeSession: this.props.route.params.activeSession } }        ],
+    //   })
+    // )
   }
 
   handleSearch (value) {

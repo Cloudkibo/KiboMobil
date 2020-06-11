@@ -188,6 +188,9 @@ class LiveChat extends React.Component {
   /* eslint-enable */
   }
 
+  componentDidMount () {
+  }
+
   render () {
     return (
       <Block flex style={styles.block}>
