@@ -31,6 +31,16 @@ export function getuserdetails (callback, joinRoom) {
     })
   }
 }
+
+export function saveNotificationToken(user) {
+  return (dispatch) => {
+    callApi(`companyUsers/update/${user._id}`, 'post', {expoListToken: user.expoListToken}).then(res => {
+      if (res.status === 'success') {
+        dispatch(showuserdetails(user))
+      }
+    })
+  }
+}
 export function updatePicture (data, callback) {
   return (dispatch) => {
     callApi('updatePicture', 'post', data, 'accounts')
