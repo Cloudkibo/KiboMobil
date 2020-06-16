@@ -74,7 +74,6 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
     session.pendingResponse = true
     session.status = 'new'
     sessions = [session, ...sessions]
-    console.log('sesssion appending', session)
     data = {
       openSessions: sessions,
       openCount: props.openCount + 1,

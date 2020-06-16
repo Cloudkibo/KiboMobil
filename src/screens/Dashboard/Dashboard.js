@@ -23,8 +23,8 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount () {
-    // this.registerForPushNotificationsAsync()
-    // this._notificationSubscription = Notifications.addListener(this._handleNotification)
+    this.registerForPushNotificationsAsync()
+    this._notificationSubscription = Notifications.addListener(this._handleNotification)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.props.loadDashboardData()
     })
