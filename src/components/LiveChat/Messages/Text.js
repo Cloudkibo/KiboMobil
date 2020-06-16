@@ -61,7 +61,7 @@ class TextComponent extends React.Component {
           this.props.text.buttons.length > 0 &&
           <FlatList
             data={this.props.text.buttons}
-            keyExtractor={(item, index) => index}
+            keyExtractor={(item, index) => index.toString()}
             showsVerticalScrollIndicator={false}
             renderItem={({ item, index }) => {
               return (

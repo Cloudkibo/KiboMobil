@@ -19,7 +19,7 @@ class Survey extends React.Component {
           this.props.survey.attachment.payload.buttons.length > 0 &&
           <FlatList
             data={this.props.survey.attachment.payload.buttons}
-            keyExtractor={(item, index) => index}
+            keyExtractor={(item, index) => index.toString()}
             showsVerticalScrollIndicator={false}
             renderItem={({ item, index }) => {
               return (
