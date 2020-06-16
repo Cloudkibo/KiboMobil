@@ -50,7 +50,7 @@ class LiveChat extends React.Component {
 
   componentDidMount () {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.setState({loading: true})
+      this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
     })
   }
