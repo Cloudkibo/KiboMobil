@@ -19,7 +19,7 @@ class Poll extends React.Component {
           this.props.poll.quick_replies.length > 0 &&
           <FlatList
             data={this.props.poll.quick_replies}
-            keyExtractor={(item, index) => index}
+            keyExtractor={(item, index) => index.toString()}
             showsHorizontalScrollIndicator={false}
             horizontal
             renderItem={({ item, index }) => {

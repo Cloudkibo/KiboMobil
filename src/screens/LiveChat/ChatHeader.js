@@ -122,7 +122,7 @@ class Header extends React.Component {
   }
 
   handleStatusChange (session, status) {
-    const message = (status === 'resolved') ? 'Session has been marked as resoleved successfully' : 'Session has been reopened successfully'
+    const message = (status === 'resolved') ? 'Session has been marked as resolved successfully' : 'Session has been reopened successfully'
     let activeSession = this.state.activeSession
     activeSession.status = status
     this.setState({activeSession: activeSession})
