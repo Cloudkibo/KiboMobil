@@ -64,7 +64,6 @@ export function log (tag, data) {
 
 export function joinRoom (data) {
   console.log('Trying to join room socket', data)
-  console.log('joined', joined)
   myId = data
   if (joined) {
     return
