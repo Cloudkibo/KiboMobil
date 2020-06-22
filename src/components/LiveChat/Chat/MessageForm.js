@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import Icon from '../../../components/Icon'
 import { materialTheme } from '../../../constants/'
 import { Input, Block, Button, theme } from 'galio-framework'
@@ -473,74 +473,76 @@ class Footer extends React.Component {
       <Block>
         <Block style={styles.messageFormContainer}>
           <Block flex row middle space='between'>
-            {this.state.uploadingFile
-              ? <Input
-                borderless
-                color='black'
-                style={[styles.input, {width: width * 0.92}]}
-                value='Uploading...'
-                editable={false}
-              />
-              : this.state.uploaded && this.state.attachment.name
+            <KeyboardAvoidingView>
+              {this.state.uploadingFile
                 ? <Input
                   borderless
                   color='black'
-                  style={[styles.input, {width: width * 0.8}]}
-                  value={`Attachment: ${this.state.attachment.name.length > 15 ? this.state.attachment.name.substring(0, 15) + '...' : this.state.attachment.name}`}
-                  right
+                  style={[styles.input, {width: width * 0.92}]}
+                  value='Uploading...'
                   editable={false}
-                  iconContent={
-                    <Block row>
-                      <TouchableOpacity onPress={this.removeAttachment}>
-                        <Icon size={20} color={theme.COLORS.MUTED} name='trash' family='entypo' />
-                      </TouchableOpacity>
-                    </Block>
-                  }
                 />
-                : this.state.isRecording
+                : this.state.uploaded && this.state.attachment.name
                   ? <Input
                     borderless
                     color='black'
-                    style={[styles.input, {width: width * 0.92}]}
-                    value={`Recording... ${this._getRecordingTimestamp()}`}
+                    style={[styles.input, {width: width * 0.8}]}
+                    value={`Attachment: ${this.state.attachment.name.length > 15 ? this.state.attachment.name.substring(0, 15) + '...' : this.state.attachment.name}`}
+                    right
                     editable={false}
-                    right
                     iconContent={
                       <Block row>
-                        <TouchableOpacity onPress={this.onRecordPress}>
-                          <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
+                        <TouchableOpacity onPress={this.removeAttachment}>
+                          <Icon size={20} color={theme.COLORS.MUTED} name='trash' family='entypo' />
                         </TouchableOpacity>
                       </Block>
                     }
                   />
-                  : <Input
-                    onFocus={this.hidePickers}
-                    borderless
-                    color='black'
-                    blurOnSubmit
-                    style={[styles.input, {width: this.state.text === '' ? width * 0.92 : width * 0.8}]}
-                    placeholder='Type a message...'
-                    returnKeyType='send'
-                    textContentType='none'
-                    placeholderTextColor='#9fa5aa'
-                    value={this.state.text}
-                    onChangeText={text => this.onInputChange(text)}
-                    right
-                    iconContent={
-                      <Block row>
-                        <TouchableOpacity onPress={this.showPickers}>
-                          <Icon size={20} color={theme.COLORS.MUTED} name='emoji-happy' family='entypo' />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={this.selectAttachment}>
-                          <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='attachment' family='entypo' />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={this.onRecordPress}>
-                          <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
-                        </TouchableOpacity>
-                      </Block>
-                    }
-                  />
-            }
+                  : this.state.isRecording
+                    ? <Input
+                      borderless
+                      color='black'
+                      style={[styles.input, {width: width * 0.92}]}
+                      value={`Recording... ${this._getRecordingTimestamp()}`}
+                      editable={false}
+                      right
+                      iconContent={
+                        <Block row>
+                          <TouchableOpacity onPress={this.onRecordPress}>
+                            <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
+                          </TouchableOpacity>
+                        </Block>
+                      }
+                    />
+                    : <Input
+                      onFocus={this.hidePickers}
+                      borderless
+                      color='black'
+                      blurOnSubmit
+                      style={[styles.input, {width: this.state.text === '' ? width * 0.92 : width * 0.8}]}
+                      placeholder='Type a message...'
+                      returnKeyType='send'
+                      textContentType='none'
+                      placeholderTextColor='#9fa5aa'
+                      value={this.state.text}
+                      onChangeText={text => this.onInputChange(text)}
+                      right
+                      iconContent={
+                        <Block row>
+                          <TouchableOpacity onPress={this.showPickers}>
+                            <Icon size={20} color={theme.COLORS.MUTED} name='emoji-happy' family='entypo' />
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={this.selectAttachment}>
+                            <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='attachment' family='entypo' />
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={this.onRecordPress}>
+                            <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
+                          </TouchableOpacity>
+                        </Block>
+                      }
+                    />
+              }
+            </KeyboardAvoidingView>
             {(this.state.text !== '' || this.state.uploaded) &&
             <Button
               round
