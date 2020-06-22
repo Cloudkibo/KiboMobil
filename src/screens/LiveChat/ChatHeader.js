@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { withNavigation } from '@react-navigation/compat'
 import { TouchableOpacity, StyleSheet, Platform, Dimensions, Image } from 'react-native'
 import { Button, Block, NavBar, Text, theme } from 'galio-framework'
-import Toast from 'react-native-simple-toast'
+import Toast from 'react-native-tiny-toast'
 import Icon from '../../components/Icon'
 import ASSIGNSESSION from '../../components/LiveChat/Chat/AssignSession'
 
@@ -126,9 +126,7 @@ class Header extends React.Component {
     let activeSession = this.state.activeSession
     activeSession.status = status
     this.setState({activeSession: activeSession})
-    Toast.show(message, Toast.SHORT, [
-      'UIAlertController'
-    ])
+    Toast.show(message)
   }
 
   handleAssignment (activeSession) {
@@ -141,9 +139,7 @@ class Header extends React.Component {
     if (data.isAllowed) {
       this.props.changeStatus({_id: session._id, status: status}, () => this.handleStatusChange(session, status))
     } else {
-      Toast.show(data.errorMsg, Toast.SHORT, [
-        'UIAlertController'
-      ])
+      Toast.show(data.errorMsg)
     }
   }
 

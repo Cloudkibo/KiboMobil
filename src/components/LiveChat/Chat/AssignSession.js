@@ -5,7 +5,7 @@ import { Button, Block, Text } from 'galio-framework'
 import Tabs from '../../Tabs'
 import { materialTheme } from '../../../constants/'
 import { CheckBox } from 'react-native-elements'
-import Toast from 'react-native-simple-toast'
+import Toast from 'react-native-tiny-toast'
 
 const { height } = Dimensions.get('screen')
 
@@ -93,9 +93,9 @@ class AssignSession extends React.Component {
         let activeSession = this.props.activeSession
         activeSession.is_assigned = false
         this.props.handleAssignment(activeSession)
-        Toast.show('Agent unassigned succesfully', Toast.SHORT, ['UIAlertController'])
+        Toast.show('Agent unassigned succesfully')
       } else {
-        Toast.show('Agent was unable to be unassigned', Toast.SHORT, ['UIAlertController'])
+        Toast.show('Agent was unable to be unassigned')
       }
     })
     // if (this.props.activeSession.assigned_to.id !== this.props.user._id) {
@@ -122,10 +122,10 @@ class AssignSession extends React.Component {
         let activeSession = this.props.activeSession
         activeSession.is_assigned = false
         this.props.handleAssignment(activeSession)
-        Toast.show('Team unassigned succesfully', Toast.SHORT, ['UIAlertController'])
+        Toast.show('Team unassigned succesfully')
         this.props.alertMsg.success('Team unassigned succesfully')
       } else {
-        Toast.show('Team was unable to be unassigned', Toast.SHORT, ['UIAlertController'])
+        Toast.show('Team was unable to be unassigned')
       }
     })
   }
@@ -147,9 +147,9 @@ class AssignSession extends React.Component {
           type: 'agent'
         }
         this.props.handleAssignment(activeSession)
-        Toast.show('Agent assigned succesfully', Toast.SHORT, ['UIAlertController'])
+        Toast.show('Agent assigned succesfully')
       } else {
-        Toast.show('Agent was unable to be assigned', Toast.SHORT, ['UIAlertController'])
+        Toast.show('Agent was unable to be assigned')
       }
     })
     // if (this.state.currentSelected.value !== this.props.user._id) {
@@ -181,9 +181,9 @@ class AssignSession extends React.Component {
           type: 'agent'
         }
         this.props.handleAssignment(activeSession)
-        Toast.show('Team assigned succesfully', Toast.SHORT, ['UIAlertController'])
+        Toast.show('Team assigned succesfully')
       } else {
-        Toast.show('Team was unable to be assigned', Toast.SHORT, ['UIAlertController'])
+        Toast.show('Team was unable to be assigned')
       }
     })
   }
