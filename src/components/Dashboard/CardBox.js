@@ -1,20 +1,24 @@
 import React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, TouchableOpacity} from 'react-native'
 import {Block, Text, theme} from 'galio-framework'
+import { withNavigation } from '@react-navigation/compat'
 
 class CardBox extends React.Component {
   render () {
     return (
       <Block flex style={[styles.product, styles.shadow, this.props.style]}>
-        <Block flex style={styles.productDescription}>
-          <Text h2 style={styles.productTitle}>{this.props.title}</Text>
-          <Text size={14}>{this.props.subtitle}</Text>
-        </Block>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate(this.props.navigateTo)}>
+          <Block flex style={styles.productDescription}>
+            <Text h2 style={styles.productTitle}>{this.props.title}</Text>
+            <Text size={14}>{this.props.subtitle}</Text>
+          </Block>
+        </TouchableOpacity>
       </Block>
     )
   }
 }
-export default CardBox
+export default withNavigation(CardBox)
 
 const styles = StyleSheet.create({
   product: {
