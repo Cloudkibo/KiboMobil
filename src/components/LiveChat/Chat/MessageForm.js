@@ -509,7 +509,7 @@ class Footer extends React.Component {
                       iconContent={
                         <Block row>
                           <TouchableOpacity onPress={this.onRecordPress}>
-                            <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
+                            <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='stop-circle' family='feather' />
                           </TouchableOpacity>
                         </Block>
                       }

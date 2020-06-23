@@ -2,25 +2,37 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {
   StyleSheet,
-  Linking,
   TouchableOpacity,
   Image,
   Dimensions
 } from 'react-native'
+import { Block } from 'galio-framework'
+
+import ImageView from 'react-native-image-viewing'
 
 const { width } = Dimensions.get('screen')
 
 class ImageComponent extends React.Component {
   constructor (props, context) {
     super(props, context)
-    this.state = {}
+    this.state = {
+      showFullScreen: false
+    }
   }
 
   render () {
     return (
-      <TouchableOpacity onPress={() => Linking.openURL(this.props.image.fileurl.url || this.props.image.fileurl)}>
-        <Image resizeMode='contain' style={styles.image} source={{ uri: this.props.image.fileurl.url || this.props.image.fileurl }} />
-      </TouchableOpacity>
+      <Block>
+        <TouchableOpacity onPress={() => this.setState({showFullScreen: true})}>
+          <Image resizeMode='contain' style={styles.image} source={{ uri: this.props.image.fileurl.url || this.props.image.fileurl }} />
+        </TouchableOpacity>
+        <ImageView
+          images={[{uri: this.props.image.fileurl.url || this.props.image.fileurl}]}
+          imageIndex={0}
+          visible={this.state.showFullScreen}
+          onRequestClose={() => this.setState({showFullScreen: false})}
+        />
+      </Block>
     )
   }
 }

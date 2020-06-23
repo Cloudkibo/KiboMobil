@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { StyleSheet, TouchableOpacity, Linking } from 'react-native'
 import { Block, Text, theme } from 'galio-framework'
 
 import Icon from './Icon'
@@ -55,6 +55,15 @@ class DrawerItem extends React.Component {
             color={focused ? 'white' : materialTheme.COLORS.MUTED}
           />
         )
+      case 'User Guide':
+        return (
+          <Icon
+            size={16}
+            name='add-user'
+            family='entypo'
+            color={focused ? 'white' : materialTheme.COLORS.MUTED}
+          />
+        )
       case 'Log Out':
         return (
           <Icon
@@ -83,7 +92,10 @@ class DrawerItem extends React.Component {
     return (
       <TouchableOpacity
         style={{ height: 55 }}
-        onPress={() => navigation.navigate(title)}
+        onPress={() => {
+          title === 'User Guide' ? Linking.openURL('https://kibopush.com/kibopush-mobile')
+            : navigation.navigate(title)
+        }}
       >
         <Block
           flex

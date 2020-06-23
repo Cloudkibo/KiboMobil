@@ -11,7 +11,7 @@ import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, upda
 import { updatePicture } from '../../redux/actions/subscribers.actions'
 import { handleSocketEvent } from './socket'
 import { clearSocketData } from '../../redux/actions/socket.actions'
-import { CommonActions } from '@react-navigation/native';
+// import { CommonActions } from '@react-navigation/native'
 
 const { width } = Dimensions.get('screen')
 
