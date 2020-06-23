@@ -473,7 +473,7 @@ class Footer extends React.Component {
       <Block>
         <Block style={styles.messageFormContainer}>
           <Block flex row middle space='between'>
-            <KeyboardAvoidingView>
+            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
               {this.state.uploadingFile
                 ? <Input
                   borderless
@@ -652,6 +652,9 @@ Footer.defaultProps = {
 export default Footer
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   messageFormContainer: {
     height: 70,
     marginHorizontal: 16
