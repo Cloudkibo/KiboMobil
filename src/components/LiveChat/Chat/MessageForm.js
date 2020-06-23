@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator} from 'react-native'
 import Icon from '../../../components/Icon'
 import { materialTheme } from '../../../constants/'
 import { Input, Block, Button, theme } from 'galio-framework'
@@ -472,9 +472,9 @@ class Footer extends React.Component {
     return (
       <Block>
         <Block style={styles.messageFormContainer}>
-          <Block flex row middle space='between'>
-            <KeyboardAvoidingView>
-              {this.state.uploadingFile
+          <Block flex row middle space='between'> 
+              {
+                this.state.uploadingFile
                 ? <Input
                   borderless
                   color='black'
@@ -542,7 +542,6 @@ class Footer extends React.Component {
                       }
                     />
               }
-            </KeyboardAvoidingView>
             {(this.state.text !== '' || this.state.uploaded) &&
             <Button
               round
@@ -652,6 +651,10 @@ Footer.defaultProps = {
 export default Footer
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  
   messageFormContainer: {
     height: 70,
     marginHorizontal: 16
