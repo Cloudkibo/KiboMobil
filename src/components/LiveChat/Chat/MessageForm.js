@@ -11,6 +11,7 @@ import * as mime from 'react-native-mime-types'
 import * as Permissions from 'expo-permissions'
 import * as FileSystem from 'expo-file-system'
 import { Audio } from 'expo-av'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import StickerMenu from '../../StickerPicker/stickers'
 
 const { width } = Dimensions.get('screen')
@@ -473,7 +474,7 @@ class Footer extends React.Component {
       <Block>
         <Block style={styles.messageFormContainer}>
           <Block flex row middle space='between'>
-            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
+          <KeyboardAwareScrollView>
             <View> 
               {
                 this.state.uploadingFile
@@ -545,7 +546,7 @@ class Footer extends React.Component {
                     />
               }
             </View>
-            </KeyboardAvoidingView>
+            </KeyboardAwareScrollView>
             {(this.state.text !== '' || this.state.uploaded) &&
             <Button
               round
