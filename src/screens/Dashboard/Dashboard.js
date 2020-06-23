@@ -86,12 +86,31 @@ class Dashboard extends React.Component {
           {this.props.dashboard &&
             <Block middle flex>
               <Block flex row middle>
-                <CardBox title={this.props.dashboard.totalPages} subtitle='Total Pages' style={{ borderBottomColor: theme.COLORS.PRIMARY, marginRight: theme.SIZES.BASE }} />
-                <CardBox title={this.props.dashboard.pages} subtitle='Connected Pages' style={{ borderBottomColor: theme.COLORS.WARNING }} />
+                <CardBox
+                  title={this.props.dashboard.totalPages}
+                  subtitle='Total Pages'
+                  style={{ borderBottomColor: theme.COLORS.PRIMARY, marginRight: theme.SIZES.BASE }}
+                  navigateTo='Pages'
+                />
+                <CardBox
+                  title={this.props.dashboard.pages}
+                  subtitle='Connected Pages'
+                  style={{ borderBottomColor: theme.COLORS.WARNING }}
+                  navigateTo='Pages'
+                />
               </Block>
               <Block flex row>
-                <CardBox title={this.props.dashboard.subscribers} subtitle='Subscribers' style={{ borderBottomColor: theme.COLORS.ERROR, marginRight: theme.SIZES.BASE }} />
-                <CardBox title={this.props.dashboard.unreadCount} subtitle='New Messages' style={{ borderBottomColor: theme.COLORS.INFO }} />
+                <CardBox
+                  title={this.props.dashboard.subscribers}
+                  subtitle='Subscribers'
+                  style={{ borderBottomColor: theme.COLORS.ERROR, marginRight: theme.SIZES.BASE }}
+                  navigateTo='Subscribers'
+                />
+                <CardBox title={this.props.dashboard.unreadCount}
+                  subtitle='New Messages'
+                  style={{ borderBottomColor: theme.COLORS.INFO }}
+                  navigateTo='Live Chat'
+                />
               </Block>
             </Block>
           }

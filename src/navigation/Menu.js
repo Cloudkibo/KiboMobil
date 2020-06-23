@@ -22,7 +22,8 @@ function CustomDrawerContent ({
     'Live Chat',
     'Subscribers',
     'Pages',
-    'Invite Subscribers'
+    'Invite Subscribers',
+    'User Guide'
   ]
   return (
     <Block
