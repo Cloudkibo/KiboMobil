@@ -1,23 +1,21 @@
 import React from 'react'
+import { StyleSheet, Dimensions, ScrollView } from 'react-native'
 import { Block, theme } from 'galio-framework'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import CardBox from '../../components/Dashboard/CardBox'
 import { saveNotificationToken } from '../../redux/actions/basicInfo.actions'
-import { loadDashboardData } from '../../redux/actions/dashboard.actions'
-import { Vibration, Platform, StyleSheet, Dimensions, ScrollView } from 'react-native'
+import { loadDashboardData} from '../../redux/actions/dashboard.actions'
+import { Text, View, Button, Vibration, Platform } from 'react-native'
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions'
-import Constants from 'expo-constants'
+import Constants from 'expo-constants';
 const { width } = Dimensions.get('screen')
 
 class Dashboard extends React.Component {
-  constructor (props, context) {
-    super(props, context)
-    this.state = {
-      expoPushToken: '',
-      notification: {}
-    }
+  state = {
+    expoPushToken: '',
+    notification: {},
   }
   /* eslint-disable */
   UNSAFE_componentWillMount () {
@@ -32,38 +30,38 @@ class Dashboard extends React.Component {
     })
   }
 
-  _handleNotification (notification) {
-    Vibration.vibrate()
-    console.log('notification', notification)
+  _handleNotification = notification => {
+    Vibration.vibrate();
+    console.log('notification', notification);
     this.setState({ notification: notification })
     console.log('this.props.navigation', this.props.navigation)
-    if (notification.origin === 'selected') {
-      this.props.navigation.navigate('Chat', { activeSession: notification.data })
+    if(notification.origin === 'selected') {
+    this.props.navigation.navigate('Chat', { activeSession: notification.data })
     }
-  }
-  async registerForPushNotificationsAsync () {
+  };
+  registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
-      const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS)
-      let finalStatus = existingStatus
+      const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+      let finalStatus = existingStatus;
       if (existingStatus !== 'granted') {
-        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS)
-        finalStatus = status
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        finalStatus = status;
       }
       if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!')
-        return
+        alert('Failed to get push token for push notification!');
+        return;
       }
-      token = await Notifications.getExpoPushTokenAsync()
+      token = await Notifications.getExpoPushTokenAsync();
       let user = this.props.user
-      console.log(token)
-      if (!user.expoListToken.includes(token)) {
+      console.log(token);
+      if(!user.expoListToken.includes(token)) {
         user.expoListToken.push(token)
         this.props.saveNotificationToken(user)
       } else {
         console.log('token already exist in database')
       }
     } else {
-      alert('Must use physical device for Push Notifications')
+      alert('Must use physical device for Push Notifications');
     }
 
     if (Platform.OS === 'android') {
@@ -71,8 +69,8 @@ class Dashboard extends React.Component {
         name: 'default',
         sound: true,
         priority: 'max',
-        vibrate: [0, 250, 250, 250]
-      })
+        vibrate: [0, 250, 250, 250],
+      });
     }
   }
   componentWillUnmount () {
@@ -125,14 +123,14 @@ class Dashboard extends React.Component {
 function mapStateToProps (state) {
   return {
     dashboard: (state.dashboardInfo.dashboard),
-    user: (state.basicInfo.user)
+    user: (state.basicInfo.user),
   }
 }
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     loadDashboardData,
     saveNotificationToken},
-  dispatch)
+    dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
