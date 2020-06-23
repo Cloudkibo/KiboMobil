@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, KeyboardAvoidingView, View } from 'react-native'
+import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator} from 'react-native'
 import Icon from '../../../components/Icon'
 import { materialTheme } from '../../../constants/'
 import { Input, Block, Button, theme } from 'galio-framework'
@@ -11,7 +11,6 @@ import * as mime from 'react-native-mime-types'
 import * as Permissions from 'expo-permissions'
 import * as FileSystem from 'expo-file-system'
 import { Audio } from 'expo-av'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import StickerMenu from '../../StickerPicker/stickers'
 
 const { width } = Dimensions.get('screen')
@@ -473,9 +472,7 @@ class Footer extends React.Component {
     return (
       <Block>
         <Block style={styles.messageFormContainer}>
-          <Block flex row middle space='between'>
-          <KeyboardAwareScrollView>
-            <View> 
+          <Block flex row middle space='between'> 
               {
                 this.state.uploadingFile
                 ? <Input
@@ -545,8 +542,6 @@ class Footer extends React.Component {
                       }
                     />
               }
-            </View>
-            </KeyboardAwareScrollView>
             {(this.state.text !== '' || this.state.uploaded) &&
             <Button
               round

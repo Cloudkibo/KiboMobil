@@ -1,5 +1,6 @@
 import React from 'react'
 import { Block, Text, Button } from 'galio-framework'
+import { KeyboardAvoidingView } from 'react-native'
 import { materialTheme } from '../../../constants/'
 import { displayDate, showDate } from '../../../screens/LiveChat/utilities'
 import moment from 'moment'
@@ -31,6 +32,13 @@ class Chat extends React.Component {
 
   render () {
     return (
+      <KeyboardAvoidingView
+        keyboardVerticalOffset = {100}
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={{
+          flex: 1
+        }}
+      >
       <Block flex>
         <BODY
           userChat={this.props.userChat}
@@ -92,6 +100,8 @@ class Chat extends React.Component {
             />
         }
       </Block>
+
+      </KeyboardAvoidingView>
     )
   }
 }
