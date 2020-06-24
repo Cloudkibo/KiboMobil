@@ -59,7 +59,7 @@ class DrawerItem extends React.Component {
         return (
           <Icon
             size={16}
-            name='add-user'
+            name='text-document-inverted'
             family='entypo'
             color={focused ? 'white' : materialTheme.COLORS.MUTED}
           />

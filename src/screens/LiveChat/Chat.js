@@ -22,7 +22,6 @@ import {
   updateSessionProfilePicture,
   deletefile
 } from '../../redux/actions/liveChat.actions'
-import { handleSocketEvent } from './socket'
 import { clearSocketData } from '../../redux/actions/socket.actions'
 import { loadTeamsList } from '../../redux/actions/teams.actions'
 import { loadMembersList } from '../../redux/actions/members.actions'
@@ -38,9 +37,10 @@ class LiveChat extends React.Component {
       userChat: [],
       smpStatus: [],
       height: 0,
-      activeSession: props.route.params.activeSession
+      activeSession: props.route.params.activeSession,
+      sessions: props.route.params.sessions,
+      tabValue: props.route.params.tabValue
     }
-
     this.isSMPApproved = this.isSMPApproved.bind(this)
     this.setMessageData = this.setMessageData.bind(this)
     this.performAction = this.performAction.bind(this)
@@ -63,7 +63,9 @@ class LiveChat extends React.Component {
   updateState (state, callback) {
     if (state.reducer) {
       const data = {
-        userChat: state.userChat
+        userChat: state.userChat,
+        openSessions: this.state.tabValue === 'open' ? state.sessions : this.props.openSessions,
+        closeSessions: this.state.tabValue === 'close' ? state.sessions : this.props.closeSessions
       }
       this.props.updateLiveChatInfo(data)
     } else {
@@ -90,9 +92,10 @@ class LiveChat extends React.Component {
       } else if (nextProps.userChat.length === 0) {
         state.loadingChat = false
       }
-      if (this.state.activeSession.unreadCount && this.state.activeSession.unreadCount > 0) {
-        this.props.markRead(this.state.activeSession._id)
-      }
+      // if (this.state.activeSession.unreadCount && this.state.activeSession.unreadCount > 0) {
+      //   console.log('in markread')
+      //   this.props.markRead(this.state.activeSession._id)
+      // }
     }
 
     this.setState({
@@ -241,7 +244,11 @@ function mapStateToProps (state) {
     user: (state.basicInfo.user),
     // members: (state.membersInfo.members),
     // teams: (state.teamsInfo.teams),
-    socketData: (state.socketInfo.socketData)
+    socketData: (state.socketInfo.socketData),
+    openSessions: (state.liveChat.openSessions),
+    openCount: (state.liveChat.openCount),
+    closeCount: (state.liveChat.closeCount),
+    closeSessions: (state.liveChat.closeSessions)
   }
 }
 

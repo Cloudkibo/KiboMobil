@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, Platform } from 'react-native'
 import { Block, Text } from 'galio-framework'
 import Icon from '../../../components/Icon'
 import * as FileSystem from 'expo-file-system'
 import * as MediaLibrary from 'expo-media-library'
 import * as Permissions from 'expo-permissions'
-import Toast from 'react-native-tiny-toast'
+import AndroidToast from 'react-native-simple-toast'
+import IOSToast from 'react-native-tiny-toast'
 
 class File extends React.Component {
   constructor (props, context) {
@@ -31,7 +32,9 @@ class File extends React.Component {
       const asset = await MediaLibrary.createAssetAsync(fileUri)
       let response = await MediaLibrary.createAlbumAsync('Download', asset, false)
       if (response) {
-        Toast.show('File Saved Successfully!')
+        Platform.OS === 'ios'
+          ? IOSToast.show('File Saved Successfully!')
+          : AndroidToast.show('File Saved Successfully!')
       }
     }
   }

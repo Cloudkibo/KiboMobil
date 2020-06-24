@@ -23,15 +23,16 @@ export function fetchPages (callback) {
     })
   }
 }
-export function disconnectPage (page) {
+export function disconnectPage (page, showSucessMessage) {
   return (dispatch) => {
     callApi('pages/disable', 'post', page)
       .then(res => {
+        showSucessMessage('Disconnected Sucessfully')
         dispatch(fetchPages())
       })
   }
 }
-export function connectPage (page, showErrorDialog) {
+export function connectPage (page, showErrorDialog, showSucessMessage) {
   return (dispatch) => {
     callApi(`pages/enable/`, 'post', page)
       .then(res => {
@@ -42,6 +43,7 @@ export function connectPage (page, showErrorDialog) {
         } else if (res.payload && res.payload.msg) {
           showErrorDialog(res.payload.msg)
         } else {
+          showSucessMessage('Connected Sucessfully')
           dispatch(fetchPages())
         }
       })
