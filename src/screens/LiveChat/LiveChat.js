@@ -7,7 +7,7 @@ import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
-import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo} from '../../redux/actions/liveChat.actions'
+import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead} from '../../redux/actions/liveChat.actions'
 import { updatePicture } from '../../redux/actions/subscribers.actions'
 import { handleSocketEvent } from './socket'
 import { clearSocketData } from '../../redux/actions/socket.actions'
@@ -29,7 +29,9 @@ class LiveChat extends React.Component {
       filterPage: '',
       filterPending: false,
       filterUnread: false,
-      activeSession: {}
+      activeSession: {},
+      typing: false,
+      typingTimeout: 0
     }
 
     this.loadMore = this.loadMore.bind(this)
@@ -41,17 +43,24 @@ class LiveChat extends React.Component {
     this.getChatPreview = this.getChatPreview.bind(this)
     this.profilePicError = this.profilePicError.bind(this)
     this.changeActiveSession = this.changeActiveSession.bind(this)
+    this.handleSearch = this.handleSearch.bind(this)
+
+    this.fetchSessions(true, 'none', true)
   }
 
   changeActiveSession (session) {
+    if (session.unreadCount && session.unreadCount > 0) {
+      session.unreadCount = 0
+      this.props.markRead(session._id)
+    }
     this.setState({activeSession: session})
-    this.props.navigation.navigate('Chat', { activeSession: session })
+    this.props.navigation.navigate('Chat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
+    session.unreadCount = 0
   }
 
   componentDidMount () {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.setState({loading: true, activeSession: {}})
-      this.fetchSessions(true, 'none', true)
+      this.setState({activeSession: {}})
     })
   }
 
@@ -162,21 +171,6 @@ class LiveChat extends React.Component {
     }
   }
 
-  // componentDidMount () {
-  // let typingTimer
-  // let doneTypingInterval = this.state.typingInterval
-  // let input = document.getElementById(`generalSearch`)
-  // input.addEventListener('keyup', () => {
-  //   clearTimeout(typingTimer)
-  //   typingTimer = setTimeout(() => {
-  //     this.setState({loading: true}, () => {
-  //       this.fetchSessions(true, 'none')
-  //     })
-  //   }, doneTypingInterval)
-  // })
-  // input.addEventListener('keydown', () => { clearTimeout(typingTimer) })
-  // }
-
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
@@ -191,8 +185,18 @@ class LiveChat extends React.Component {
   }
 
   handleSearch (value) {
-    this.setState({loading: true, filterSearch: value}, () => {
-      this.fetchSessions(true, 'none')
+    const self = this
+
+    if (self.state.typingTimeout) {
+      clearTimeout(self.state.typingTimeout)
+    }
+    self.setState({
+      filterSearch: value,
+      typing: false,
+      typingTimeout: setTimeout(function () {
+        self.setState({loading: true})
+        self.fetchSessions(true, 'none', true)
+      }, 1000)
     })
   }
 
@@ -255,6 +259,7 @@ class LiveChat extends React.Component {
             iconContent={<Icon size={25} color={theme.COLORS.MUTED} name='search' family='feather' />}
             value={this.state.filterSearch}
             onChangeText={text => this.handleSearch(text)}
+            id='generalSearch'
           />
           {this.state.loading
             ? <Block flex={0.8} middle><ActivityIndicator size='large' /></Block>
@@ -304,7 +309,8 @@ function mapDispatchToProps (dispatch) {
     updateSessionProfilePicture,
     updatePicture,
     clearSocketData,
-    updateLiveChatInfo
+    updateLiveChatInfo,
+    markRead
   }, dispatch)
 }
 

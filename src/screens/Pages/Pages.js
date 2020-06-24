@@ -1,9 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { StyleSheet, Dimensions, Image, FlatList, Alert, ActivityIndicator } from 'react-native'
+import { StyleSheet, Dimensions, Image, FlatList, Alert, ActivityIndicator, Platform } from 'react-native'
 import { Button, Block, Text, theme } from 'galio-framework'
 import { connectPage, disconnectPage, fetchPages } from '../../redux/actions/pages.actions'
+import AndroidToast from 'react-native-simple-toast'
+import IOSToast from 'react-native-tiny-toast'
 
 import { materialTheme } from '../../constants/'
 
@@ -39,6 +41,12 @@ class Pages extends React.Component {
     this.setState({loading: false})
   }
 
+  showSucessMessage (message) {
+    Platform.OS === 'ios'
+      ? IOSToast.show(message)
+      : AndroidToast.show(message)
+  }
+
   renderPage ({ item }) {
     return (
       <Block flex row style={styles.page}>
@@ -52,14 +60,14 @@ class Pages extends React.Component {
               round
               textStyle={{color: theme.COLORS.ERROR}}
               style={[styles.optionsButton, {borderColor: theme.COLORS.ERROR}]}
-              onPress={() => this.props.disconnectPage(item)}>
+              onPress={() => this.props.disconnectPage(item, this.showSucessMessage)}>
               Disconnect
             </Button>
             : <Button
               round
               textStyle={{color: theme.COLORS.SUCCESS}}
               style={[styles.optionsButton, {borderColor: theme.COLORS.SUCCESS}]}
-              onPress={() => this.props.connectPage(item, this.showErrorDialog)}>Connect
+              onPress={() => this.props.connectPage(item, this.showErrorDialog, this.showSucessMessage)}>Connect
             </Button>
           }
         </Block>

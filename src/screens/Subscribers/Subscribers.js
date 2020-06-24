@@ -18,7 +18,9 @@ class Subscribers extends React.Component {
       pageSelected: 0,
       onEndReachedCalledDuringMomentum: true,
       lastLoadCount: 0,
-      loading: true
+      loading: true,
+      typing: false,
+      typingTimeout: 0
     }
     this.loadSubscribers = this.loadSubscribers.bind(this)
     this.loadMore = this.loadMore.bind(this)
@@ -43,8 +45,19 @@ class Subscribers extends React.Component {
   }
 
   changeSearchValue (value) {
-    this.setState({searchValue: value, pageSelected: 0}, () => {
-      this.loadSubscribers()
+    const self = this
+
+    if (self.state.typingTimeout) {
+      clearTimeout(self.state.typingTimeout)
+    }
+    self.setState({
+      searchValue: value,
+      pageSelected: 0,
+      typing: false,
+      typingTimeout: setTimeout(function () {
+        self.setState({loading: true})
+        self.loadSubscribers()
+      }, 1000)
     })
   }
 

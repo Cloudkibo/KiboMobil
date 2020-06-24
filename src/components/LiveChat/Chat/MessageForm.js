@@ -201,19 +201,19 @@ class Footer extends React.Component {
 
   updateChatData (data, payload) {
     data._id = new Date().getTime()
-    // let sessions = this.props.sessions
-    // let session = this.props.activeSession
-    // let index = sessions.findIndex((s) => s._id === session._id)
-    // sessions.splice(index, 1)
-    // session.lastPayload = payload
-    // session.lastRepliedBy = data.replied_by
-    // session.pendingResponse = false
-    // session.last_activity_time = new Date()
+    let sessions = this.props.sessions
+    let session = this.props.activeSession
+    let index = sessions.findIndex((s) => s._id === session._id)
+    sessions.splice(index, 1)
+    session.lastPayload = payload
+    session.lastRepliedBy = data.replied_by
+    session.pendingResponse = false
+    session.last_activity_time = new Date()
     this.props.updateNewMessage(true)
     this.props.updateState({
       reducer: true,
-      userChat: [...this.props.userChat, data]
-      // sessions: [session, ...sessions]
+      userChat: [...this.props.userChat, data],
+      sessions: [session, ...sessions]
     })
   }
 
@@ -472,7 +472,7 @@ class Footer extends React.Component {
     return (
       <Block>
         <Block style={styles.messageFormContainer}>
-          <Block flex row middle space='between'> 
+          <Block flex row middle space='between'>
               {
                 this.state.uploadingFile
                 ? <Input
@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  
+
   messageFormContainer: {
     height: 70,
     marginHorizontal: 16
