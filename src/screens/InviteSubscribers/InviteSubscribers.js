@@ -4,11 +4,16 @@ import { bindActionCreators } from 'redux'
 import { fetchConnectedPages } from '../../redux/actions/pages.actions'
 import { StyleSheet, Dimensions, FlatList, Clipboard, ActivityIndicator, Platform } from 'react-native'
 import { Button, Block, Text, theme, Input } from 'galio-framework'
-import AndroidToast from 'react-native-simple-toast'
-import IOSToast from 'react-native-tiny-toast'
 import { Select } from '../../components/'
 
 const { width } = Dimensions.get('screen')
+
+let Toast = null
+if (Platform.OS === 'ios') {
+  Toast = require('react-native-tiny-toast')
+} else {
+  Toast = require('react-native-simple-toast')
+}
 
 class InviteSubscribers extends React.Component {
   constructor (props, context) {
@@ -63,9 +68,7 @@ class InviteSubscribers extends React.Component {
   async writeToClipboard () {
     await Clipboard.setString(this.getMessengerLink())
     this.setState({showToast: true})
-    Platform.OS === 'ios'
-      ? IOSToast.show('Link Copied Successfully!')
-      : AndroidToast.show('Link Copied Successfully!')
+    Toast.default.show('Link Copied Successfully!')
   }
 
   renderList () {

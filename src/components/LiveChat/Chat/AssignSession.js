@@ -5,10 +5,15 @@ import { Button, Block, Text } from 'galio-framework'
 import Tabs from '../../Tabs'
 import { materialTheme } from '../../../constants/'
 import { CheckBox } from 'react-native-elements'
-import AndroidToast from 'react-native-simple-toast'
-import IOSToast from 'react-native-tiny-toast'
 
 const { height } = Dimensions.get('screen')
+
+let Toast = null
+if (Platform.OS === 'ios') {
+  Toast = require('react-native-tiny-toast')
+} else {
+  Toast = require('react-native-simple-toast')
+}
 
 class AssignSession extends React.Component {
   constructor (props, context) {
@@ -94,13 +99,9 @@ class AssignSession extends React.Component {
         let activeSession = this.props.activeSession
         activeSession.is_assigned = false
         this.props.handleAssignment(activeSession)
-        Platform.OS === 'ios'
-          ? IOSToast.show('Agent unassigned succesfully')
-          : AndroidToast.show('Agent unassigned succesfully')
+        Toast.default.show('Agent unassigned succesfully')
       } else {
-        Platform.OS === 'ios'
-          ? IOSToast.show('Agent was unable to be unassigned')
-          : AndroidToast.show('Agent was unable to be unassigned')
+        Toast.default.show('Agent was unable to be unassigned')
       }
     })
     // if (this.props.activeSession.assigned_to.id !== this.props.user._id) {
@@ -127,13 +128,9 @@ class AssignSession extends React.Component {
         let activeSession = this.props.activeSession
         activeSession.is_assigned = false
         this.props.handleAssignment(activeSession)
-        Platform.OS === 'ios'
-          ? IOSToast.show('Team unassigned succesfully')
-          : AndroidToast.show('Team unassigned succesfully')
+        Toast.default.show('Team unassigned succesfully')
       } else {
-        Platform.OS === 'ios'
-          ? IOSToast.show('Team was unable to be unassigned')
-          : AndroidToast.show('Team was unable to be unassigned')
+        Toast.default.show('Team was unable to be unassigned')
       }
     })
   }
@@ -155,13 +152,9 @@ class AssignSession extends React.Component {
           type: 'agent'
         }
         this.props.handleAssignment(activeSession)
-        Platform.OS === 'ios'
-          ? IOSToast.show('Agent assigned succesfully')
-          : AndroidToast.show('Agent assigned succesfully')
+        Toast.default.show('Agent assigned succesfully')
       } else {
-        Platform.OS === 'ios'
-          ? IOSToast.show('Agent was unable to be assigned')
-          : AndroidToast.show('Agent was unable to be assigned')
+        Toast.default.show('Agent was unable to be assigned')
       }
     })
     // if (this.state.currentSelected.value !== this.props.user._id) {
@@ -193,13 +186,9 @@ class AssignSession extends React.Component {
           type: 'agent'
         }
         this.props.handleAssignment(activeSession)
-        Platform.OS === 'ios'
-          ? IOSToast.show('Team assigned succesfully')
-          : AndroidToast.show('Team assigned succesfully')
+        Toast.default.show('Team assigned succesfully')
       } else {
-        Platform.OS === 'ios'
-          ? IOSToast.show('Team was unable to be assigned')
-          : AndroidToast.show('Team was unable to be assigned')
+        Toast.default.show('Team was unable to be assigned')
       }
     })
   }
