@@ -4,12 +4,17 @@ import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, Image, FlatList, Alert, ActivityIndicator, Platform } from 'react-native'
 import { Button, Block, Text, theme } from 'galio-framework'
 import { connectPage, disconnectPage, fetchPages } from '../../redux/actions/pages.actions'
-import AndroidToast from 'react-native-simple-toast'
-import IOSToast from 'react-native-tiny-toast'
 
 import { materialTheme } from '../../constants/'
 
 const { width } = Dimensions.get('screen')
+
+let Toast = null
+if (Platform.OS === 'ios') {
+  Toast = require('react-native-tiny-toast')
+} else {
+  Toast = require('react-native-simple-toast')
+}
 
 class Pages extends React.Component {
   constructor (props, context) {
@@ -42,9 +47,7 @@ class Pages extends React.Component {
   }
 
   showSucessMessage (message) {
-    Platform.OS === 'ios'
-      ? IOSToast.show(message)
-      : AndroidToast.show(message)
+    Toast.default.show(message)
   }
 
   renderPage ({ item }) {

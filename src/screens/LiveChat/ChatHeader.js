@@ -3,8 +3,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { TouchableOpacity, StyleSheet, Platform, Dimensions, Image } from 'react-native'
 import { Button, Block, NavBar, Text, theme } from 'galio-framework'
-import AndroidToast from 'react-native-simple-toast'
-import IOSToast from 'react-native-tiny-toast'
 import Icon from '../../components/Icon'
 import ASSIGNSESSION from '../../components/LiveChat/Chat/AssignSession'
 
@@ -12,6 +10,13 @@ import { changeStatus, fetchTeamAgents, assignToTeam, assignToAgent } from '../.
 
 const { height, width } = Dimensions.get('window')
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896)
+
+let Toast = null
+if (Platform.OS === 'ios') {
+  Toast = require('react-native-tiny-toast')
+} else {
+  Toast = require('react-native-simple-toast')
+}
 
 class Header extends React.Component {
   constructor (props, context) {
@@ -126,9 +131,7 @@ class Header extends React.Component {
     let activeSession = this.state.activeSession
     activeSession.status = status
     this.setState({activeSession: activeSession})
-    Platform.OS === 'ios'
-      ? IOSToast.show(message)
-      : AndroidToast.show(message)
+    Toast.default.show(message)
   }
 
   handleAssignment (activeSession) {
@@ -141,9 +144,7 @@ class Header extends React.Component {
     if (data.isAllowed) {
       this.props.changeStatus({_id: session._id, status: status}, () => this.handleStatusChange(session, status))
     } else {
-      Platform.OS === 'ios'
-        ? IOSToast.show(data.errorMsg)
-        : AndroidToast.show(data.errorMsg)
+      Toast.default.show(data.errorMsg)
     }
   }
 

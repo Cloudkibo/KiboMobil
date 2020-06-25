@@ -6,8 +6,13 @@ import Icon from '../../../components/Icon'
 import * as FileSystem from 'expo-file-system'
 import * as MediaLibrary from 'expo-media-library'
 import * as Permissions from 'expo-permissions'
-import AndroidToast from 'react-native-simple-toast'
-import IOSToast from 'react-native-tiny-toast'
+
+let Toast = null
+if (Platform.OS === 'ios') {
+  Toast = require('react-native-tiny-toast')
+} else {
+  Toast = require('react-native-simple-toast')
+}
 
 class File extends React.Component {
   constructor (props, context) {
@@ -32,9 +37,7 @@ class File extends React.Component {
       const asset = await MediaLibrary.createAssetAsync(fileUri)
       let response = await MediaLibrary.createAlbumAsync('Download', asset, false)
       if (response) {
-        Platform.OS === 'ios'
-          ? IOSToast.show('File Saved Successfully!')
-          : AndroidToast.show('File Saved Successfully!')
+        Toast.default.show('File Saved Successfully!')
       }
     }
   }
