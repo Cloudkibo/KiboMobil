@@ -5,6 +5,7 @@ import { TouchableOpacity, StyleSheet, Platform, Dimensions, Image } from 'react
 import { Button, Block, NavBar, Text, theme } from 'galio-framework'
 import Icon from '../../components/Icon'
 import ASSIGNSESSION from '../../components/LiveChat/Chat/AssignSession'
+import { updatePicture } from '../../redux/actions/subscribers.actions'
 
 import { changeStatus, fetchTeamAgents, assignToTeam, assignToAgent } from '../../redux/actions/liveChat.actions'
 
@@ -37,6 +38,17 @@ class Header extends React.Component {
     this.fetchTeamAgents = this.fetchTeamAgents.bind(this)
     this.handleAgents = this.handleAgents.bind(this)
     this.handleAssignment = this.handleAssignment.bind(this)
+    this.profilePicError = this.profilePicError.bind(this)
+  }
+
+  profilePicError (subscriber) {
+    this.props.updatePicture({ subscriber }, (newProfilePic) => {
+      if (newProfilePic) {
+        let session = this.state.activeSession
+        session.profilePic = newProfilePic
+        this.setState({activeSession :session})
+      }
+    })
   }
 
   /* eslint-disable */
@@ -197,7 +209,7 @@ class Header extends React.Component {
     return (<Block row flex middle style={{marginLeft: -30, paddingBottom: 10}}>
       <Block flex={0.2}>
         <Image
-          onError={({ nativeEvent: {error} }) => console.log(error)}
+          onError={() => this.profilePicError(activeSession)}
           source={{uri: activeSession.profilePic}}
           style={styles.avatar} />
       </Block>
@@ -258,7 +270,8 @@ function mapDispatchToProps (dispatch) {
     changeStatus,
     fetchTeamAgents,
     assignToTeam,
-    assignToAgent
+    assignToAgent,
+    updatePicture,
   }, dispatch)
 }
 
