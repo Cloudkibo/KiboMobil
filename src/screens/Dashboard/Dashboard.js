@@ -57,6 +57,7 @@ class Dashboard extends React.Component {
       if(!user.expoListToken.includes(token)) {
         user.expoListToken.push(token)
         this.props.saveNotificationToken(user)
+        user.currentDeviceToken = token
       } else {
         console.log('token already exist in database')
       }

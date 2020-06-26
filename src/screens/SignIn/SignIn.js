@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { saveNotificationToken } from '../../redux/actions/basicInfo.actions'
 import { StyleSheet, Dimensions, Platform, Image, TouchableOpacity, Text, AsyncStorage } from 'react-native'
 import { Block, Button, Input, theme } from 'galio-framework'
 import { useFocusEffect } from '@react-navigation/native';
@@ -12,6 +13,7 @@ import { HeaderHeight } from '../../constants/utils'
 
 import { signIn } from '../../redux/actions/signIn.actions'
 import { logOut } from '../../redux/actions/logOut.actions'
+import { Notifications } from 'expo'
 
 const { width } = Dimensions.get('window')
 
@@ -32,9 +34,19 @@ class SignIn extends React.Component {
     this.handleResponse = this.handleResponse.bind(this)
   }
 
+  removeExpoToken = async () => {
+    let currentDeviceToken = await Notifications.getExpoPushTokenAsync();
+    let user = this.props.user
+    if(user) {
+      let expoListToken = user.expoListToken.filter(expoToken => expoToken !== currentDeviceToken)
+      user.expoListToken = expoListToken
+      this.props.saveNotificationToken(user, this.props.logOut)
+    }
+  }
+
   componentDidMount () {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.props.logOut()
+      this.removeExpoToken()
     })
   }
   componentWillUnmount () {
@@ -142,11 +154,12 @@ class SignIn extends React.Component {
 }
 function mapStateToProps (state) {
   return {
+    user: (state.basicInfo.user)
   }
 }
 function mapDispatchToProps (dispatch) {
   return bindActionCreators(
-    {signIn, logOut},
+    {signIn, logOut, saveNotificationToken},
     dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn)
