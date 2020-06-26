@@ -47,6 +47,7 @@ function CustomDrawerContent ({
           showsVerticalScrollIndicator={false}
         >
           {screens.map((item, index) => {
+            console.log('state', state.index)
             return (
               <DrawerCustomItem
                 title={item}

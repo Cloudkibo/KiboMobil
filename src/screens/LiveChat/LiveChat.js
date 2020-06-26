@@ -45,7 +45,7 @@ class LiveChat extends React.Component {
     this.changeActiveSession = this.changeActiveSession.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
 
-    this.fetchSessions(true, 'none', true)
+    // this.fetchSessions(true, 'none', true)
   }
 
   changeActiveSession (session) {
@@ -60,7 +60,8 @@ class LiveChat extends React.Component {
 
   componentDidMount () {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.setState({activeSession: {}})
+      this.setState({loading: true, activeSession: {}})
+      this.fetchSessions(true, 'none', true)
     })
   }
 
