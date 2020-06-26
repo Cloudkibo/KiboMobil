@@ -192,21 +192,6 @@ function DashboardStack (props) {
           }
         }}
       />
-      <Stack.Screen
-        name='Live Chat'
-        component={LiveChatSessionScreen}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              search
-              options
-              title='Live Chat'
-              navigation={navigation}
-              scene={scene}
-            />
-          )
-        }}
-      />
     </Stack.Navigator>
   )
 }

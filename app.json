@@ -10,7 +10,7 @@
       "android"
     ],
     "entryPoint": "./src/App.js",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/appstore.png",
     "splash": {
@@ -27,7 +27,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.cloudkibo.kibopush",
-      "buildNumber": "1.0.1"
+      "buildNumber": "1.0.2"
     },
     "android": {
       "package": "com.cloudkibo.kibopush",
