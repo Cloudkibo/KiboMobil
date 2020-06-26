@@ -8,6 +8,7 @@ class Dashboard extends React.Component {
   UNSAFE_componentWillMount () {
   /* eslint-enable */
     this.props.logOut()
+    console.log('UNSAFE_componentWillMount called')
   }
 
   render () {

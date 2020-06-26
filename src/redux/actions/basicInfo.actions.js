@@ -32,10 +32,13 @@ export function getuserdetails (callback, joinRoom) {
   }
 }
 
-export function saveNotificationToken(user) {
+export function saveNotificationToken(user, logOut) {
   return (dispatch) => {
     callApi(`companyUsers/update/${user._id}`, 'post', {expoListToken: user.expoListToken}).then(res => {
       if (res.status === 'success') {
+        if(logOut){
+          logOut()
+        }
         dispatch(showuserdetails(user))
       }
     })

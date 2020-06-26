@@ -14,10 +14,8 @@
     "orientation": "portrait",
     "icon": "./assets/images/appstore.png",
     "notification": {
-      "icon": "/assets/images/appstore.png",
-      "color": "#800000",
-      "androidMode": "default",
-      "androidCollapsedTitle": "My Title"
+      "icon": "./assets/images/notification.png",
+      "androidMode": "default"
       },
     "splash": {
       "image": "./assets/images/splash.png",
