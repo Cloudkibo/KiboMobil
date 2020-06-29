@@ -1,11 +1,9 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { saveNotificationToken } from '../../redux/actions/basicInfo.actions'
-import { StyleSheet, Dimensions, Platform, Image, TouchableOpacity, Text, AsyncStorage } from 'react-native'
+import { StyleSheet, Dimensions, Platform, Image, TouchableOpacity, Text, AsyncStorage, KeyboardAvoidingView } from 'react-native'
 import { Block, Button, Input, theme } from 'galio-framework'
-import { useFocusEffect } from '@react-navigation/native';
-import { withNavigation } from "react-navigation";
 
 import { LinearGradient } from 'expo-linear-gradient'
 import { materialTheme } from '../../constants/'
@@ -34,10 +32,10 @@ class SignIn extends React.Component {
     this.handleResponse = this.handleResponse.bind(this)
   }
 
-  removeExpoToken = async () => {
-    let currentDeviceToken = await Notifications.getExpoPushTokenAsync();
+  async removeExpoToken () {
+    let currentDeviceToken = await Notifications.getExpoPushTokenAsync()
     let user = this.props.user
-    if(user) {
+    if (user) {
       let expoListToken = user.expoListToken.filter(expoToken => expoToken !== currentDeviceToken)
       user.expoListToken = expoListToken
       this.props.saveNotificationToken(user, this.props.logOut)
@@ -100,52 +98,60 @@ class SignIn extends React.Component {
             <Image source={require('../../../assets/images/logo.png')} style={styles.image} />
           </Block>
           <Block flex={0.5} middle>
-            <Block center>
-              <Input
-                borderless
-                color='black'
-                placeholder='Email'
-                type='email-address'
-                autoCapitalize='none'
-                bgColor='transparent'
-                onBlur={() => this.toggleActive('email')}
-                onFocus={() => this.toggleActive('email')}
-                placeholderTextColor={materialTheme.COLORS.PLACEHOLDER}
-                value={this.state.email}
-                onChangeText={text => this.handleChange('email', text)}
-                style={styles.input}
-              />
-              <Input
-                password
-                viewPass
-                borderless
-                color='black'
-                autoCapitalize='none'
-                iconColor={materialTheme.COLORS.PLACEHOLDER}
-                placeholder='Password'
-                bgColor='transparent'
-                onBlur={() => this.toggleActive('password')}
-                onFocus={() => this.toggleActive('password')}
-                placeholderTextColor={materialTheme.COLORS.PLACEHOLDER}
-                value={this.state.password}
-                onChangeText={text => this.handleChange('password', text)}
-                style={styles.input}
-              />
-              {this.state.errorMessage &&
-                <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
-              }
-            </Block>
-            <Block flex top style={{ marginTop: 50 }}>
-              <TouchableOpacity disabled={this.state.password === '' || this.state.email === ''}>
-                <Button
-                  shadowless
-                  style={{ height: 48 }}
-                  onPress={this.login}
-                >
-                    SIGN IN
-                </Button>
-              </TouchableOpacity>
-            </Block>
+            <KeyboardAvoidingView
+              keyboardVerticalOffset={100}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={{
+                flex: 1
+              }}
+            >
+              <Block center>
+                <Input
+                  borderless
+                  color='black'
+                  placeholder='Email'
+                  type='email-address'
+                  autoCapitalize='none'
+                  bgColor='transparent'
+                  onBlur={() => this.toggleActive('email')}
+                  onFocus={() => this.toggleActive('email')}
+                  placeholderTextColor={materialTheme.COLORS.PLACEHOLDER}
+                  value={this.state.email}
+                  onChangeText={text => this.handleChange('email', text)}
+                  style={styles.input}
+                />
+                <Input
+                  password
+                  viewPass
+                  borderless
+                  color='black'
+                  autoCapitalize='none'
+                  iconColor={materialTheme.COLORS.PLACEHOLDER}
+                  placeholder='Password'
+                  bgColor='transparent'
+                  onBlur={() => this.toggleActive('password')}
+                  onFocus={() => this.toggleActive('password')}
+                  placeholderTextColor={materialTheme.COLORS.PLACEHOLDER}
+                  value={this.state.password}
+                  onChangeText={text => this.handleChange('password', text)}
+                  style={styles.input}
+                />
+                {this.state.errorMessage &&
+                  <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
+                }
+              </Block>
+              <Block flex top style={{ marginTop: 50 }}>
+                <TouchableOpacity disabled={this.state.password === '' || this.state.email === ''}>
+                  <Button
+                    shadowless
+                    style={{ height: 48 }}
+                    onPress={this.login}
+                  >
+                      SIGN IN
+                  </Button>
+                </TouchableOpacity>
+              </Block>
+            </KeyboardAvoidingView>
           </Block>
         </Block>
       </LinearGradient>
