@@ -22,6 +22,7 @@ import {
   updateSessionProfilePicture,
   deletefile
 } from '../../redux/actions/liveChat.actions'
+import {loadcannedResponses}  from '../../redux/actions/settings.action'
 import { clearSocketData } from '../../redux/actions/socket.actions'
 import { loadTeamsList } from '../../redux/actions/teams.actions'
 import { loadMembersList } from '../../redux/actions/members.actions'
@@ -39,7 +40,8 @@ class LiveChat extends React.Component {
       height: 0,
       activeSession: props.route.params.activeSession,
       sessions: props.route.params.sessions,
-      tabValue: props.route.params.tabValue
+      tabValue: props.route.params.tabValue,
+      cannedResponses: []
     }
     this.isSMPApproved = this.isSMPApproved.bind(this)
     this.setMessageData = this.setMessageData.bind(this)
@@ -48,7 +50,7 @@ class LiveChat extends React.Component {
     this.fetchTeamAgents = this.fetchTeamAgents.bind(this)
     this.updateState = this.updateState.bind(this)
     this.handleSMPStatus = this.handleSMPStatus.bind(this)
-
+    this.props.loadcannedResponses()
     this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
     props.getSMPStatus(this.handleSMPStatus)
     // if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
@@ -85,6 +87,9 @@ class LiveChat extends React.Component {
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
     let state = {}
+    if (nextProps.cannedResponses !== this.props.cannedResponses) {
+      this.setState({ cannedResponses: nextProps.cannedResponses})
+    }
     if (nextProps.userChat) {
       if (nextProps.userChat.length > 0) {
         state.userChat = nextProps.userChat
@@ -199,6 +204,7 @@ class LiveChat extends React.Component {
       <Block flex style={styles.block}>
         <Block shadow flex>
           <CHAT
+            cannedResponses = {this.state.cannedResponses}
             userChat={this.state.userChat}
             chatCount={this.props.chatCount}
             sessions={this.state.sessions}
@@ -248,7 +254,9 @@ function mapStateToProps (state) {
     openSessions: (state.liveChat.openSessions),
     openCount: (state.liveChat.openCount),
     closeCount: (state.liveChat.closeCount),
-    closeSessions: (state.liveChat.closeSessions)
+    closeSessions: (state.liveChat.closeSessions),
+    cannedResponses: state.settingsInfo.cannedResponses
+    
   }
 }
 
@@ -273,7 +281,8 @@ function mapDispatchToProps (dispatch) {
     // urlMetaData,
     getSMPStatus,
     updateSessionProfilePicture,
-    deletefile
+    deletefile,
+    loadcannedResponses
   }, dispatch)
 }
 
