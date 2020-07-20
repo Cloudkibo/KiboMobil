@@ -54,3 +54,5 @@ export const SHOW_TEAMS_LIST = 'SHOW_TEAMS_LIST'
 export const SET_SOCKET_STATUS = 'SET_SOCKET_STATUS'
 export const SOCKET_EVENT = 'SOCKET_EVENT'
 export const CLEAR_SOCKET_DATA = 'CLEAR_SOCKET_DATA'
+// constants for Scanned Responses
+export const GET_CANNED_RESPONSES = 'GET_CANNED_RESPONSES'

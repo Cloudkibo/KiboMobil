@@ -8,6 +8,8 @@ import {liveChat} from './liveChat.reducer.js'
 import {membersInfo} from './members.reducer.js'
 import {teamsInfo} from './teams.reducer.js'
 import {socketInfo} from './socket.reducer'
+import {settingsInfo} from './settings.reducer'
+
 
 const appReducer = combineReducers({
   dashboardInfo,
@@ -17,7 +19,8 @@ const appReducer = combineReducers({
   liveChat,
   membersInfo,
   teamsInfo,
-  socketInfo
+  socketInfo,
+  settingsInfo,
 })
 
 export default appReducer

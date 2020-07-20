@@ -34,7 +34,7 @@ class Chat extends React.Component {
     return (
       <KeyboardAvoidingView
         keyboardVerticalOffset={100}
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        behavior={Platform.OS == "ios" ? "padding" : null}
         style={{
           flex: 1
         }}
@@ -72,6 +72,7 @@ class Chat extends React.Component {
                 </Button>
               </Block>
               : <FOOTER
+                cannedResponses = {this.props.cannedResponses}
                 performAction={this.props.performAction}
                 activeSession={this.props.activeSession}
                 user={this.props.user}
