@@ -42,9 +42,6 @@ class Footer extends React.Component {
       gifSearchValue: '',
       gifs: [],
       loadingGif: false,
-      cannedMessages: [],
-      dataForSearch: [],
-      showCannedMessages: false
     }
 
     this.recordingSettings = JSON.parse(JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY))
@@ -78,12 +75,6 @@ class Footer extends React.Component {
     this.fetchGifs()
   }
 
-  UNSAFE_componentWillReceiveProps (nextProps) {
-
-    if (nextProps.cannedResponses) {
-      this.setState({ cannedMessages: nextProps.cannedResponses, dataForSearch: nextProps.cannedResponses })
-    }
-  }
   handleMessageResponse (res, data, payload) {
     if (res.status === 'success') {
       data.format = 'convos'
@@ -228,29 +219,30 @@ class Footer extends React.Component {
   }
 
   search (value) {
-    if (this.state.dataForSearch.length > 0) {
+    if ( this.props.cannedResponsesAll.length > 0) {
       let searchArray = []
       if (value !== '/') {
         let text = value.slice(1)
         console.log('text in search', value)
-        this.state.dataForSearch.forEach(element => {
+        this.props.cannedResponsesAll.forEach(element => {
           if (element.responseCode.toLowerCase().includes(text.toLowerCase())) searchArray.push(element)
         })
-        this.setState({ cannedMessages: searchArray })
+        this.props.saveCannedResponses(searchArray)
       } else {
-        let dataForSearch = this.state.dataForSearch
-        this.setState({ cannedMessages: dataForSearch })
+        this.props.saveCannedResponses(this.props.cannedResponsesAll)
       }
-    }
   }
+}
 
   onInputChange (text) {
     console.log('text', text)
     if (text[0] === '/') {
-      this.setState({ showCannedMessages: true, text: text})
+      this.setState({ text: text})
+      this.props.showCannResponse(true)
       this.search(text)
     } else {
-      this.setState({ showCannedMessages: false, text: text})
+      this.setState({text: text})
+      this.props.showCannResponse(false)
     }
   }
 
@@ -549,7 +541,7 @@ class Footer extends React.Component {
                     />
                     : 
                     <View>
-                    {this.state.showCannedMessages && <View style={{maxHeight:230, marginTop: -220}}>
+                    {/* {this.state.showCannedMessages && <View style={{maxHeight:230}}>
                     <ScrollView>
                     {
                       this.state.cannedMessages.map((l, i) => (
@@ -566,7 +558,7 @@ class Footer extends React.Component {
                     }
                     </ScrollView>
                     </View>
-                    }
+                    } */}
                       <Input
                       onFocus={this.hidePickers}
                       borderless
@@ -722,7 +714,7 @@ const styles = StyleSheet.create({
   input: {
     height: theme.SIZES.BASE * 3,
     backgroundColor: theme.COLORS.WHITE,
-    borderRadius: 30
+    borderRadius: 30,
   },
   view: {
     height: 250,

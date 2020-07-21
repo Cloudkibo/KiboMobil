@@ -1,6 +1,7 @@
 import React from 'react'
 import { Block, Text, Button } from 'galio-framework'
-import { KeyboardAvoidingView } from 'react-native'
+import { KeyboardAvoidingView, View, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+import {ListItem, Card } from 'react-native-elements'
 import { materialTheme } from '../../../constants/'
 import { displayDate, showDate } from '../../../screens/LiveChat/utilities'
 import moment from 'moment'
@@ -11,15 +12,63 @@ class Chat extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
+      cannedResponsesAll: [],
+      cannedResponses: [],
+      showCannedMessages: false,
+      selectedCannedResponse: null
     }
     this.overrideUserInput = this.overrideUserInput.bind(this)
     this.updateNewMessage = this.updateNewMessage.bind(this)
+    this.showCannResponse = this.showCannResponse.bind(this)
+    this.saveCannedResponses =this.saveCannedResponses.bind(this)
+    this.selectCannedResponse= this.selectCannedResponse.bind(this)
+    this.onCannedMessageChange = this.onCannedMessageChange.bind(this)
 
     this.newMessage = false
   }
 
+  onCannedMessageChange (value) {
+    let cannResponse = this.state.selectedCannedResponse
+    cannResponse.responseMessage = value
+    this.setState({selectedCannedResponse: cannResponse})
+  }
+
+  selectCannedResponse (selectedcannResponse) {
+    let cannResponse = {...selectedcannResponse}
+    let activeSession = this.props.activeSession
+    if (cannResponse.responseMessage.includes('{{user_full_name}}')) {
+      cannResponse.responseMessage = cannResponse.responseMessage.replace(
+        '{{user_full_name}}', activeSession.firstName + ' ' + activeSession.lastName)
+    }
+    if (cannResponse.responseMessage.includes('{{user_first_name}}')) {
+      cannResponse.responseMessage = cannResponse.responseMessage.replace(
+        '{{user_first_name}}', activeSession.firstName)
+    }
+    if (cannResponse.responseMessage.includes('{{user_last_name}}')) {
+      cannResponse.responseMessage = cannResponse.responseMessage.replace(
+        '{{user_last_name}}', activeSession.lastName)
+    }
+    this.setState({selectedCannedResponse: cannResponse})
+  }
+
   updateNewMessage (value) {
     this.newMessage = value
+  }
+
+  saveCannedResponses (cannedResponses) {
+    console.log('cannedResponses.length', cannedResponses.length)
+    this.setState({cannedResponses: cannedResponses})
+  }
+
+  showCannResponse (cannResponse) {
+    this.setState({showCannedMessages: cannResponse})
+  }
+
+  UNSAFE_componentWillReceiveProps (nextProps) {
+
+    if (nextProps.cannedResponses) {
+      this.setState({ cannedResponses: nextProps.cannedResponses, cannedResponsesAll:nextProps.cannedResponses })
+    }
   }
 
   overrideUserInput () {
@@ -40,6 +89,7 @@ class Chat extends React.Component {
         }}
       >
         <Block flex>
+          <View style= {{flex:1}}>
           <BODY
             userChat={this.props.userChat}
             chatCount={this.props.chatCount}
@@ -54,6 +104,46 @@ class Chat extends React.Component {
             newMessage={this.newMessage}
             updateNewMessage={this.updateNewMessage}
           />
+           {(this.state.showCannedMessages && !this.state.selectedCannedResponse && this.state.cannedResponses.length > 0) ? <View style={{maxHeight: 150, marginLeft: 25, marginRight: 50}}>
+             <ScrollView
+              showsVerticalScrollIndicator = {true}
+              persistentScrollbar={true}
+             > 
+           {this.state.cannedResponses.map((cannedResponse, i) => (
+            <TouchableOpacity  onPress={() => this.selectCannedResponse(cannedResponse)}>
+            <ListItem 
+            key={i}
+            title={cannedResponse.responseCode}
+            subtitle={cannedResponse.responseMessage}
+            containerStyle = {{height: 50}}
+            bottomDivider
+          />
+          </TouchableOpacity>
+        ))}
+        </ScrollView>
+        </View>
+        : this.state.selectedCannedResponse &&
+        <View>
+        <Card title = {this.state.selectedCannedResponse.responseCode} >
+        <ScrollView
+        style= {{maxHeight: 80}}
+        showsVerticalScrollIndicator = {true}
+        persistentScrollbar={true}
+        >
+        {/*react-native-elements Card*/}
+        <TextInput
+        style= {{textAlignVertical: 'top'}}
+        multiline = {true}
+        numberOfLines = {4}
+        onChangeText={text => this.onCannedMessageChange(text)}
+        value=  {this.state.selectedCannedResponse.responseMessage}
+     />
+     </ScrollView>
+        </Card>
+      </View>
+        } 
+          </View>
+          
           {!moment(this.props.activeSession.lastMessagedAt).isAfter(moment().subtract(24, 'hours')) && !this.props.isSMPApproved
             ? <Block row style={{backgroundColor: materialTheme.COLORS.ERROR, margin: 10, borderRadius: 10}}>
               <Text style={{color: 'white', marginVertical: 5, marginHorizontal: 10}}>
@@ -72,7 +162,10 @@ class Chat extends React.Component {
                 </Button>
               </Block>
               : <FOOTER
-                cannedResponses = {this.props.cannedResponses}
+                showCannResponse = {this.showCannResponse}
+                selectedCannedResponse = {this.state.selectedCannedResponse}
+                saveCannedResponses= {this.saveCannedResponses}
+                cannedResponsesAll = {this.state.cannedResponsesAll}
                 performAction={this.props.performAction}
                 activeSession={this.props.activeSession}
                 user={this.props.user}
@@ -109,5 +202,6 @@ class Chat extends React.Component {
 Chat.defaultProps = {
   showTemplates: false
 }
+
 
 export default Chat
