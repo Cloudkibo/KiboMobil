@@ -23,8 +23,17 @@ class Chat extends React.Component {
     this.saveCannedResponses =this.saveCannedResponses.bind(this)
     this.selectCannedResponse= this.selectCannedResponse.bind(this)
     this.onCannedMessageChange = this.onCannedMessageChange.bind(this)
+    this.setCannedResponse = this.setCannedResponse.bind(this)
 
     this.newMessage = false
+  }
+
+  setCannedResponse (cannResponse) {
+    if(cannResponse) {
+      this.selectCannedResponse(cannResponse)
+    } else {
+      this.setState({selectedCannedResponse: cannResponse})
+    }
   }
 
   onCannedMessageChange (value) {
@@ -56,7 +65,6 @@ class Chat extends React.Component {
   }
 
   saveCannedResponses (cannedResponses) {
-    console.log('cannedResponses.length', cannedResponses.length)
     this.setState({cannedResponses: cannedResponses})
   }
 
@@ -163,6 +171,7 @@ class Chat extends React.Component {
               </Block>
               : <FOOTER
                 showCannResponse = {this.showCannResponse}
+                setCannedResponse = {this.setCannedResponse}
                 selectedCannedResponse = {this.state.selectedCannedResponse}
                 saveCannedResponses= {this.saveCannedResponses}
                 cannedResponsesAll = {this.state.cannedResponsesAll}

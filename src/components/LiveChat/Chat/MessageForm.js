@@ -75,6 +75,14 @@ class Footer extends React.Component {
     this.fetchGifs()
   }
 
+  UNSAFE_componentWillReceiveProps (nextProps) {
+    if(nextProps.selectedCannedResponse) {
+      if(!this.state.text.includes(nextProps.selectedCannedResponse.responseCode)) {
+        this.setState({text: `/${nextProps.selectedCannedResponse.responseCode}`})
+      }
+    }
+  }
+
   handleMessageResponse (res, data, payload) {
     if (res.status === 'success') {
       data.format = 'convos'
@@ -221,7 +229,19 @@ class Footer extends React.Component {
   search (value) {
     if ( this.props.cannedResponsesAll.length > 0) {
       let searchArray = []
-      if (value !== '/') {
+      if (value[value.length-1] === ' ') {
+        let text = value.trim().slice(1)
+        this.props.cannedResponsesAll.forEach(element => {
+          if (element.responseCode.toLowerCase() === text.toLowerCase()) {
+            if(!this.props.selectedCannedResponse || (this.props.selectedCannedResponse.responseCode !== element.responseCode)) {
+            this.props.setCannedResponse(element)
+            }
+            searchArray.push(element)
+        }
+      })
+          this.props.saveCannedResponses(searchArray)
+    }
+      else if (value !== '/') {
         let text = value.slice(1)
         console.log('text in search', value)
         this.props.cannedResponsesAll.forEach(element => {
@@ -243,7 +263,22 @@ class Footer extends React.Component {
     } else {
       this.setState({text: text})
       this.props.showCannResponse(false)
+      this.props.setCannedResponse(null)
     }
+    if(this.props.selectedCannedResponse) {
+      if (/\s/.test(text)) {
+        var regex = new RegExp("^/" + this.props.selectedCannedResponse.responseCode, "g")
+        if(!text.match(regex)) {
+          this.props.setCannedResponse(null)
+          this.search(text)
+        }
+     } else {
+       if(text !== `/${this.props.selectedCannedResponse.responseCode}`) {
+        this.props.setCannedResponse(null)
+        this.search(text)
+      }
+    }
+   }
   }
 
   sendMessage () {
@@ -251,7 +286,27 @@ class Footer extends React.Component {
     if (data.isAllowed) {
       let payload = {}
       let data = {}
-      if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
+      if(this.props.selectedCannedResponse) {
+        let selectedCannedResponse = this.props.selectedCannedResponse
+        if(selectedCannedResponse.responseMessage === '') {
+          // this.props.alertMsg.error('Canned Message response cannot be empty')
+        } else {
+          let text = this.state.text
+          if(text.includes(selectedCannedResponse.responseCode)) {
+            text = text.replace(`/${selectedCannedResponse.responseCode}`, selectedCannedResponse.responseMessage)
+            let payload = {
+              componentType: 'text',
+              text: text
+            }
+              data = this.props.setMessageData(this.props.activeSession, payload)
+              this.props.sendChatMessage(data)
+              data.format = 'convos'
+              this.updateChatData(data, payload)
+              this.setState({text: ''})
+          }
+      }
+    }
+      else if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
         payload = this.setDataPayload('text')
         data = this.props.setMessageData(this.props.activeSession, payload)
         this.props.sendChatMessage(data)
@@ -274,6 +329,8 @@ class Footer extends React.Component {
         { cancelable: true }
       )
     }
+    this.props.setCannedResponse(null)
+    this.props.showCannResponse(false)   
   }
 
   setDataPayload (component) {
