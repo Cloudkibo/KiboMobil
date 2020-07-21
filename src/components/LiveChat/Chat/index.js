@@ -104,7 +104,7 @@ class Chat extends React.Component {
             newMessage={this.newMessage}
             updateNewMessage={this.updateNewMessage}
           />
-           {(this.state.showCannedMessages && !this.state.selectedCannedResponse && this.state.cannedResponses.length > 0) ? <View style={{maxHeight: 150, marginLeft: 25, marginRight: 50}}>
+           {(this.state.showCannedMessages && !this.state.selectedCannedResponse && this.state.cannedResponses.length > 0) ? <View style={{maxHeight: 150, marginLeft: 25, marginRight: 25}}>
              <ScrollView
               showsVerticalScrollIndicator = {true}
               persistentScrollbar={true}
