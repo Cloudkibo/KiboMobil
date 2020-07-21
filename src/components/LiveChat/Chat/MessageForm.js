@@ -15,6 +15,12 @@ import { Audio } from 'expo-av'
 import StickerMenu from '../../StickerPicker/stickers'
 
 const { width } = Dimensions.get('screen')
+let Toast = null
+if (Platform.OS === 'ios') {
+  Toast = require('react-native-tiny-toast')
+} else {
+  Toast = require('react-native-simple-toast')
+}
 
 class Footer extends React.Component {
   constructor (props, context) {
@@ -289,7 +295,7 @@ class Footer extends React.Component {
       if(this.props.selectedCannedResponse) {
         let selectedCannedResponse = this.props.selectedCannedResponse
         if(selectedCannedResponse.responseMessage === '') {
-          // this.props.alertMsg.error('Canned Message response cannot be empty')
+          Toast.default.show('Canned Message response cannot be empty')
         } else {
           let text = this.state.text
           if(text.includes(selectedCannedResponse.responseCode)) {
@@ -303,6 +309,8 @@ class Footer extends React.Component {
               data.format = 'convos'
               this.updateChatData(data, payload)
               this.setState({text: ''})
+              this.props.setCannedResponse(null)
+              this.props.showCannResponse(false)
           }
       }
     }
@@ -313,6 +321,8 @@ class Footer extends React.Component {
         this.setState({ text: '', urlmeta: {}, currentUrl: '', selectedPicker: '', showPickers: false })
         data.format = 'convos'
         this.updateChatData(data, payload)
+        this.props.setCannedResponse(null)
+        this.props.showCannResponse(false) 
       } else if (this.state.attachment && this.state.attachment.name) {
         this.setState({loading: true})
         payload = this.setDataPayload('attachment')
@@ -328,9 +338,7 @@ class Footer extends React.Component {
         ],
         { cancelable: true }
       )
-    }
-    this.props.setCannedResponse(null)
-    this.props.showCannResponse(false)   
+    }  
   }
 
   setDataPayload (component) {

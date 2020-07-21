@@ -8,6 +8,7 @@ import moment from 'moment'
 import BODY from './Body'
 import FOOTER from './MessageForm'
 
+
 class Chat extends React.Component {
   constructor (props, context) {
     super(props, context)
@@ -122,7 +123,7 @@ class Chat extends React.Component {
             <ListItem 
             key={i}
             title={cannedResponse.responseCode}
-            subtitle={cannedResponse.responseMessage}
+            subtitle={cannedResponse.responseMessage.length > 40 ? cannedResponse.responseMessage.substring(0, 40) + "……": cannedResponse.responseMessage}
             containerStyle = {{height: 50}}
             bottomDivider
           />
