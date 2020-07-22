@@ -90,24 +90,24 @@ class SignIn extends React.Component {
 
   render () {
     return (
-      <LinearGradient
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0.25, y: 1.1 }}
-        locations={[0.2, 1]}
-        colors={['#fff', '#fff']}
-        style={[styles.signin, {flex: 1, paddingTop: theme.SIZES.BASE * 4}]}>
-        <Block flex middle>
-          <Block flex={0.2} middle>
-            <Image source={require('../../../assets/images/logo.png')} style={styles.image} />
-          </Block>
-          <Block flex={0.5} middle>
-            <KeyboardAvoidingView
-              keyboardVerticalOffset={100}
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={{
-                flex: 1
-              }}
-            >
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={100}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'null'}
+        style={{
+          flex: 1
+        }}
+      >
+        <LinearGradient
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.25, y: 1.1 }}
+          locations={[0.2, 1]}
+          colors={['#fff', '#fff']}
+          style={[styles.signin, {flex: 1, paddingTop: theme.SIZES.BASE * 4}]}>
+          <Block flex middle>
+            <Block flex={0.2} middle>
+              <Image source={require('../../../assets/images/logo.png')} style={styles.image} />
+            </Block>
+            <Block flex={0.5} middle>
               <Block center>
                 <Input
                   borderless
@@ -143,7 +143,7 @@ class SignIn extends React.Component {
                   <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
                 }
               </Block>
-              <Block flex top style={{ marginTop: 50 }}>
+              <Block flex top style={{ marginTop: 30 }}>
                 <TouchableOpacity disabled={this.state.password === '' || this.state.email === ''}>
                   <Button
                     loading={this.state.loading}
@@ -155,10 +155,10 @@ class SignIn extends React.Component {
                   </Button>
                 </TouchableOpacity>
               </Block>
-            </KeyboardAvoidingView>
+            </Block>
           </Block>
-        </Block>
-      </LinearGradient>
+        </LinearGradient>
+      </KeyboardAvoidingView>
     )
   }
 }
