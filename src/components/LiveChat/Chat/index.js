@@ -1,6 +1,6 @@
 import React from 'react'
 import { Block, Text, Button } from 'galio-framework'
-import { KeyboardAvoidingView, View, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+import { KeyboardAvoidingView, View, ScrollView, TouchableOpacity, StyleSheet, TextInput} from 'react-native'
 import {ListItem, Card } from 'react-native-elements'
 import { materialTheme } from '../../../constants/'
 import { displayDate, showDate } from '../../../screens/LiveChat/utilities'
@@ -123,7 +123,7 @@ class Chat extends React.Component {
             <ListItem 
             key={i}
             title={cannedResponse.responseCode}
-            subtitle={cannedResponse.responseMessage.length > 40 ? cannedResponse.responseMessage.substring(0, 40) + "……": cannedResponse.responseMessage}
+            subtitle={cannedResponse.responseMessage.length > 33 ? cannedResponse.responseMessage.substring(0, 33) + "……": cannedResponse.responseMessage}
             containerStyle = {{height: 50}}
             bottomDivider
           />
