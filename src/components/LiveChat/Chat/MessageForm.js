@@ -560,7 +560,7 @@ class Footer extends React.Component {
 
   render () {
     return (
-      <Block style={{paddingBottom: 5}}>
+      <Block style={{paddingBottom: 10}}>
         <Block style={styles.messageFormContainer}>
           <Block flex row middle space='between'>
             { this.state.uploadingFile

@@ -79,8 +79,8 @@ class SignIn extends React.Component {
   }
 
   async handleResponse (res) {
+    this.setState({loading: false})
     if (res.status === 'success') {
-      this.setState({loading: false})
       await AsyncStorage.setItem('token', res.token)
       this.props.navigation.navigate('App Loading')
     } else if (res.status === 'failed') {

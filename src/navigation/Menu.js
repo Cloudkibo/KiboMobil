@@ -61,7 +61,7 @@ function CustomDrawerContent ({
       {profile &&
         <Block style={styles.footer}>
           <Profile profile={profile} />
-          <Block style={{paddingHorizontal: 6, paddingBottom: 10}}>
+          <Block style={{paddingHorizontal: 6, paddingBottom: 15}}>
             <DrawerCustomItem
               title='Log Out'
               key={screens.length}
