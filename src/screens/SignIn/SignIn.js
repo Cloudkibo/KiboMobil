@@ -25,7 +25,8 @@ class SignIn extends React.Component {
         email: false,
         password: false,
         errorMessage: ''
-      }
+      },
+      loading: false
     }
     this.handleChange = this.handleChange.bind(this)
     this.login = this.login.bind(this)
@@ -72,12 +73,14 @@ class SignIn extends React.Component {
     } else if (this.state.password === '') {
       this.setState({errorMessage: 'Password is required'})
     } else {
+      this.setState({loading: true})
       this.props.signIn({email: this.state.email, password: this.state.password}, this.handleResponse)
     }
   }
 
   async handleResponse (res) {
     if (res.status === 'success') {
+      this.setState({loading: false})
       await AsyncStorage.setItem('token', res.token)
       this.props.navigation.navigate('App Loading')
     } else if (res.status === 'failed') {
@@ -143,6 +146,7 @@ class SignIn extends React.Component {
               <Block flex top style={{ marginTop: 50 }}>
                 <TouchableOpacity disabled={this.state.password === '' || this.state.email === ''}>
                   <Button
+                    loading={this.state.loading}
                     shadowless
                     style={{ height: 48 }}
                     onPress={this.login}

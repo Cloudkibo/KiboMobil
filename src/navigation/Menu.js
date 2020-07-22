@@ -59,9 +59,9 @@ function CustomDrawerContent ({
         </ScrollView>
       </Block>
       {profile &&
-        <Block flex={0.23} style={styles.footer}>
+        <Block style={styles.footer}>
           <Profile profile={profile} />
-          <Block style={{paddingHorizontal: 6, paddingBottom: 0}}>
+          <Block style={{paddingHorizontal: 6, paddingBottom: 10}}>
             <DrawerCustomItem
               title='Log Out'
               key={screens.length}
@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   footer: {
-    justifyContent: 'flex-end',
     backgroundColor: '#2c2e3e'
   },
   profile: {

@@ -322,7 +322,7 @@ class Footer extends React.Component {
         data.format = 'convos'
         this.updateChatData(data, payload)
         this.props.setCannedResponse(null)
-        this.props.showCannResponse(false) 
+        this.props.showCannResponse(false)
       } else if (this.state.attachment && this.state.attachment.name) {
         this.setState({loading: true})
         payload = this.setDataPayload('attachment')
@@ -338,7 +338,7 @@ class Footer extends React.Component {
         ],
         { cancelable: true }
       )
-    }  
+    }
   }
 
   setDataPayload (component) {
@@ -560,58 +560,56 @@ class Footer extends React.Component {
 
   render () {
     return (
-      <Block>
+      <Block style={{paddingBottom: 5}}>
         <Block style={styles.messageFormContainer}>
           <Block flex row middle space='between'>
-              {
-                this.state.uploadingFile
+            { this.state.uploadingFile
+              ? <Input
+                borderless
+                color='black'
+                style={[styles.input, {width: width * 0.92}]}
+                value='Uploading...'
+                editable={false}
+              />
+              : this.state.uploaded && this.state.attachment.name
                 ? <Input
                   borderless
                   color='black'
-                  style={[styles.input, {width: width * 0.92}]}
-                  value='Uploading...'
+                  style={[styles.input, {width: width * 0.8}]}
+                  value={`Attachment: ${this.state.attachment.name.length > 15 ? this.state.attachment.name.substring(0, 15) + '...' : this.state.attachment.name}`}
+                  right
                   editable={false}
+                  iconContent={
+                    <Block row>
+                      <TouchableOpacity onPress={this.removeAttachment}>
+                        <Icon size={20} color={theme.COLORS.MUTED} name='trash' family='entypo' />
+                      </TouchableOpacity>
+                    </Block>
+                  }
                 />
-                : this.state.uploaded && this.state.attachment.name
+                : this.state.isRecording
                   ? <Input
                     borderless
                     color='black'
-                    style={[styles.input, {width: width * 0.8}]}
-                    value={`Attachment: ${this.state.attachment.name.length > 15 ? this.state.attachment.name.substring(0, 15) + '...' : this.state.attachment.name}`}
-                    right
+                    style={[styles.input, {width: width * 0.92}]}
+                    value={`Recording... ${this._getRecordingTimestamp()}`}
                     editable={false}
+                    right
                     iconContent={
                       <Block row>
-                        <TouchableOpacity onPress={this.removeAttachment}>
-                          <Icon size={20} color={theme.COLORS.MUTED} name='trash' family='entypo' />
+                        <TouchableOpacity onPress={this.onRecordPress}>
+                          <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='stop-circle' family='feather' />
                         </TouchableOpacity>
                       </Block>
                     }
                   />
-                  : this.state.isRecording
-                    ? <Input
-                      borderless
-                      color='black'
-                      style={[styles.input, {width: width * 0.92}]}
-                      value={`Recording... ${this._getRecordingTimestamp()}`}
-                      editable={false}
-                      right
-                      iconContent={
-                        <Block row>
-                          <TouchableOpacity onPress={this.onRecordPress}>
-                            <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='stop-circle' family='feather' />
-                          </TouchableOpacity>
-                        </Block>
-                      }
-                    />
-                    : 
-                    <View>
+                  : <View>
                     {/* {this.state.showCannedMessages && <View style={{maxHeight:230}}>
                     <ScrollView>
                     {
                       this.state.cannedMessages.map((l, i) => (
                         <TouchableOpacity >
-                        <ListItem 
+                        <ListItem
                           key={i}
                           title={l.responseCode}
                           subtitle={l.responseMessage}
@@ -624,7 +622,7 @@ class Footer extends React.Component {
                     </ScrollView>
                     </View>
                     } */}
-                      <Input
+                    <Input
                       onFocus={this.hidePickers}
                       borderless
                       color='black'
@@ -651,8 +649,8 @@ class Footer extends React.Component {
                         </Block>
                       }
                     />
-                </View>
-              }
+                  </View>
+            }
             {(this.state.text !== '' || this.state.uploaded) &&
             <Button
               round
