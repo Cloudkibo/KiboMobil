@@ -50,6 +50,9 @@ class LiveChat extends React.Component {
     this.fetchTeamAgents = this.fetchTeamAgents.bind(this)
     this.updateState = this.updateState.bind(this)
     this.handleSMPStatus = this.handleSMPStatus.bind(this)
+    // if( props.route.params && !props.route.params.sessions) {
+
+    // }
     this.props.loadcannedResponses()
     this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
     props.getSMPStatus(this.handleSMPStatus)
@@ -85,6 +88,10 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
+
+    if (nextProps.openSessions && !this.state.sessions) {
+      this.setState({sessions:nextProps.openSessions})
+    }
   /* eslint-enable */
     let state = {}
     if (nextProps.cannedResponses !== this.props.cannedResponses) {
@@ -255,7 +262,7 @@ function mapStateToProps (state) {
     openCount: (state.liveChat.openCount),
     closeCount: (state.liveChat.closeCount),
     closeSessions: (state.liveChat.closeSessions),
-    cannedResponses: state.settingsInfo.cannedResponses
+    cannedResponses: state.settingsInfo.cannedResponses,
     
   }
 }

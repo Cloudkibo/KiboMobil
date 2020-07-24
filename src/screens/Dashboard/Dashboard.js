@@ -24,21 +24,21 @@ class Dashboard extends React.Component {
 
   componentDidMount () {
     this.registerForPushNotificationsAsync()
-    this._notificationSubscription = Notifications.addListener(this._handleNotification)
+    // this._notificationSubscription = Notifications.addListener(this._handleNotification)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.props.loadDashboardData()
     })
   }
 
-  _handleNotification = notification => {
-    Vibration.vibrate();
-    console.log('notification', notification);
-    this.setState({ notification: notification })
-    console.log('this.props.navigation', this.props.navigation)
-    if(notification.origin === 'selected') {
-    this.props.navigation.navigate('Chat', { activeSession: notification.data })
-    }
-  };
+  // _handleNotification = notification => {
+  //   Vibration.vibrate();
+  //   console.log('notification', notification);
+  //   this.setState({ notification: notification })
+  //   console.log('this.props.navigation', this.props.navigation)
+  //   if(notification.origin === 'selected') {
+  //   this.props.navigation.navigate('Live Chat', { activeSession: notification.data})
+  //   }
+  // };
   registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
       const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
@@ -65,14 +65,14 @@ class Dashboard extends React.Component {
       alert('Must use physical device for Push Notifications');
     }
 
-    if (Platform.OS === 'android') {
-      Notifications.createChannelAndroidAsync('default', {
-        name: 'default',
-        sound: true,
-        priority: 'max',
-        vibrate: [0, 250, 250, 250],
-      });
-    }
+    // if (Platform.OS === 'android') {
+    //   Notifications.createChannelAndroidAsync('default', {
+    //     name: 'default',
+    //     sound: true,
+    //     priority: 'max',
+    //     vibrate: [0, 250, 250, 250],
+    //   });
+    // }
   }
   componentWillUnmount () {
     this._unsubscribe()

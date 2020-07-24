@@ -5,6 +5,8 @@ import { getuserdetails } from '../../redux/actions/basicInfo.actions'
 import { AppLoading } from 'expo'
 import { Image, AsyncStorage, ActivityIndicator } from 'react-native'
 import { Asset } from 'expo-asset'
+import { Notifications } from 'expo'
+
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
 
@@ -33,9 +35,19 @@ class Loading extends React.Component {
     this.handleResponse = this.handleResponse.bind(this)
     this._loadResourcesAsync = this._loadResourcesAsync.bind(this)
     this.cacheImages = this.cacheImages.bind(this)
+    this._handleNotification = this._handleNotification.bind(this)
   }
 
   componentDidMount () {
+    if (Platform.OS === 'android') {
+      Notifications.createChannelAndroidAsync('default', {
+        name: 'default',
+        sound: true,
+        priority: 'max',
+        vibrate: [0, 250, 250, 250],
+      });
+    }
+    this._notificationSubscription = Notifications.addListener(this._handleNotification)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
         if (token) {
@@ -46,6 +58,14 @@ class Loading extends React.Component {
       })
     })
   }
+    _handleNotification = notification => {
+    // Vibration.vibrate();
+    console.log('notification', notification);
+    // this.setState({ notification: notification })
+    if(notification.origin === 'selected') {
+    this.props.navigation.navigate('Live Chat', { activeSession: notification.data})
+    }
+  };
   componentWillUnmount () {
     this._unsubscribe()
   }

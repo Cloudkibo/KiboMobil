@@ -63,6 +63,9 @@ class LiveChat extends React.Component {
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
     })
+    if (this.props.route.params && this.props.route.params.activeSession){
+      this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
+    }
   }
 
   componentWillUnmount () {
@@ -71,9 +74,12 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
+
+    
   /* eslint-enable */
     let state = {}
     if (nextProps.openSessions || nextProps.closeSessions) {
+      
       state.loading = false
       state.sessionsLoading = false
       let sessions = this.state.tabValue === 'open' ? nextProps.openSessions : nextProps.closeSessions
@@ -174,6 +180,12 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillMount () {
+
+
+    // console.log('this.props.route.params', this.props.route)
+    // if (this.props.route.params && this.props.route.params.activeSession){
+    //   this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession})
+    // }
   /* eslint-enable */
   // console.log('props.route.params.activeSession',this.props.route.params.activeSession)
     // this.props.navigation.dispatch(
