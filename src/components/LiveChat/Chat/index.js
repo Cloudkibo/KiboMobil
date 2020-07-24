@@ -44,6 +44,7 @@ class Chat extends React.Component {
   }
 
   selectCannedResponse (selectedcannResponse) {
+    console.log('selectCannedResponse called')
     let cannResponse = {...selectedcannResponse}
     let activeSession = this.props.activeSession
     if (cannResponse.responseMessage.includes('{{user_full_name}}')) {
@@ -115,13 +116,15 @@ class Chat extends React.Component {
           />
            {(this.state.showCannedMessages && !this.state.selectedCannedResponse && this.state.cannedResponses.length > 0) ? <View style={{maxHeight: 150, marginLeft: 25, marginRight: 25}}>
              <ScrollView
+              keyboardShouldPersistTaps = {'always'}
               showsVerticalScrollIndicator = {true}
               persistentScrollbar={true}
              > 
            {this.state.cannedResponses.map((cannedResponse, i) => (
-            <TouchableOpacity  onPress={() => this.selectCannedResponse(cannedResponse)}>
+            <TouchableOpacity  key={`touch${i}`} onPress={() => this.selectCannedResponse(cannedResponse)}>
             <ListItem 
-            key={i}
+            key={`list${i}`}
+            onPress={() => this.selectCannedResponse(cannedResponse)}
             title={cannedResponse.responseCode}
             subtitle={cannedResponse.responseMessage.length > 33 ? cannedResponse.responseMessage.substring(0, 33) + "……": cannedResponse.responseMessage}
             containerStyle = {{height: 50}}
