@@ -43,39 +43,6 @@ export default function OnboardingStack (props) {
           headerTransparent: true
         }}
       />
-         <Stack.Screen
-        name='Live Chat'
-        component={LiveChatSessionScreen}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              search
-              options
-              title='Live Chat'
-              navigation={navigation}
-              scene={scene}
-            />
-          )
-        }}
-      />
-      <Stack.Screen
-        name='Chat'
-        component={ChatScreen}
-        options={{
-          header: ({ navigation, scene }) => {
-            const activeSession = scene.__memo[0].params.activeSession
-            return (
-              <ChatHeader
-                back
-                activeSession={activeSession}
-                title={`${activeSession.firstName} ${activeSession.lastName}`}
-                navigation={navigation}
-                scene={scene}
-              />
-            )
-          }
-        }}
-      />
       <Stack.Screen name='App'>
         {(props) => <AppStack {...props} user={user} />}
       </Stack.Screen>

@@ -63,8 +63,11 @@ class LiveChat extends React.Component {
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
     })
+    console.log('this.props.route.params', this.props.route)
     if (this.props.route.params && this.props.route.params.activeSession){
+      this.props.markRead(this.props.route.params.activeSession._id)
       this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
+      this.props.route.params = null
     }
   }
 
@@ -75,6 +78,11 @@ class LiveChat extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
 
+    if (this.props.route.params && this.props.route.params.activeSession){
+      this.props.markRead(this.props.route.params.activeSession._id)
+      this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
+      this.props.route.params = null
+    }
     
   /* eslint-enable */
     let state = {}

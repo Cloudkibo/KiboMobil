@@ -6,7 +6,7 @@ import { AppLoading } from 'expo'
 import { Image, AsyncStorage, ActivityIndicator } from 'react-native'
 import { Asset } from 'expo-asset'
 import { Notifications } from 'expo'
-
+import { NavigationActions } from 'react-navigation'
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
 
@@ -59,13 +59,14 @@ class Loading extends React.Component {
     })
   }
     _handleNotification = notification => {
-    // Vibration.vibrate();
-    console.log('notification', notification);
-    // this.setState({ notification: notification })
+    console.log('notification', notification)
     if(notification.origin === 'selected') {
-    this.props.navigation.navigate('Live Chat', { activeSession: notification.data})
+      this.props.navigation.navigate('Live Chat', {
+        screen: 'Live Chat',
+        params: {activeSession: notification.data},
+      });
     }
-  };
+  }
   componentWillUnmount () {
     this._unsubscribe()
   }
