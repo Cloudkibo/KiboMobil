@@ -1,10 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
+import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator, Platform } from 'react-native'
 import { Block, Text, theme, Input } from 'galio-framework'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
+import * as Notifications from 'expo-notifications'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
 import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead} from '../../redux/actions/liveChat.actions'
@@ -58,6 +59,13 @@ class LiveChat extends React.Component {
     session.unreadCount = 0
   }
 
+  getPushNotificationsAsync = async () => {
+    // console.log('Notifications in Livechat', Notifications)
+    // let notification =  Notifications.getPresentedNotificationsAsync()
+    // console.log('notification in Live chat', notification)
+
+  }
+
   componentDidMount () {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({loading: true, activeSession: {}})
@@ -69,6 +77,7 @@ class LiveChat extends React.Component {
       this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
       this.props.route.params = null
     }
+      this.getPushNotificationsAsync()
   }
 
   componentWillUnmount () {
