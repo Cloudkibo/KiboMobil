@@ -92,72 +92,65 @@ class SignIn extends React.Component {
     return (
       <KeyboardAvoidingView
         keyboardVerticalOffset={100}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'null'}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{
           flex: 1
         }}
       >
-        <LinearGradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0.25, y: 1.1 }}
-          locations={[0.2, 1]}
-          colors={['#fff', '#fff']}
-          style={[styles.signin, {flex: 1, paddingTop: theme.SIZES.BASE * 4}]}>
-          <Block flex middle>
-            <Block flex={0.2} middle>
-              <Image source={require('../../../assets/images/logo.png')} style={styles.image} />
+        <Block flex middle>
+          <Block flex={0.3} middle>
+            <Image source={require('../../../assets/images/logo.png')} style={styles.image} />
+          </Block>
+          <Block flex={0.7} middle>
+            <Block center>
+              <Input
+                borderless
+                color='black'
+                placeholder='Email'
+                type='email-address'
+                autoCapitalize='none'
+                bgColor='transparent'
+                onBlur={() => this.toggleActive('email')}
+                onFocus={() => this.toggleActive('email')}
+                placeholderTextColor={materialTheme.COLORS.PLACEHOLDER}
+                value={this.state.email}
+                onChangeText={text => this.handleChange('email', text)}
+                style={styles.input}
+              />
+              <Input
+                password
+                viewPass
+                borderless
+                color='black'
+                autoCapitalize='none'
+                iconColor={materialTheme.COLORS.PLACEHOLDER}
+                placeholder='Password'
+                bgColor='transparent'
+                onBlur={() => this.toggleActive('password')}
+                onFocus={() => this.toggleActive('password')}
+                placeholderTextColor={materialTheme.COLORS.PLACEHOLDER}
+                value={this.state.password}
+                onChangeText={text => this.handleChange('password', text)}
+                style={styles.input}
+              />
+              {this.state.errorMessage &&
+                <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
+              }
             </Block>
-            <Block flex={0.5} middle>
-              <Block center>
-                <Input
-                  borderless
-                  color='black'
-                  placeholder='Email'
-                  type='email-address'
-                  autoCapitalize='none'
-                  bgColor='transparent'
-                  onBlur={() => this.toggleActive('email')}
-                  onFocus={() => this.toggleActive('email')}
-                  placeholderTextColor={materialTheme.COLORS.PLACEHOLDER}
-                  value={this.state.email}
-                  onChangeText={text => this.handleChange('email', text)}
-                  style={styles.input}
-                />
-                <Input
-                  password
-                  viewPass
-                  borderless
-                  color='black'
-                  autoCapitalize='none'
-                  iconColor={materialTheme.COLORS.PLACEHOLDER}
-                  placeholder='Password'
-                  bgColor='transparent'
-                  onBlur={() => this.toggleActive('password')}
-                  onFocus={() => this.toggleActive('password')}
-                  placeholderTextColor={materialTheme.COLORS.PLACEHOLDER}
-                  value={this.state.password}
-                  onChangeText={text => this.handleChange('password', text)}
-                  style={styles.input}
-                />
-                {this.state.errorMessage &&
-                  <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
-                }
-              </Block>
-              <Block flex top style={{ marginTop: 30 }}>
-                <TouchableOpacity disabled={this.state.password === '' || this.state.email === ''}>
-                  <Button
-                    loading={this.state.loading}
-                    shadowless
-                    style={{ height: 48 }}
-                    onPress={this.login}
-                  >
-                      SIGN IN
-                  </Button>
-                </TouchableOpacity>
-              </Block>
+            <Block flex top style={{ marginTop: 30 }}>
+              <TouchableOpacity disabled={this.state.password === '' || this.state.email === ''}>
+                <Button
+                  loading={this.state.loading}
+                  shadowless
+                  style={{ height: 48 }}
+                  onPress={this.login}
+                >
+                    SIGN IN
+                </Button>
+              </TouchableOpacity>
             </Block>
           </Block>
-        </LinearGradient>
+        </Block>
       </KeyboardAvoidingView>
     )
   }
