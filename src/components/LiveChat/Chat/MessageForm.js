@@ -581,9 +581,11 @@ class Footer extends React.Component {
                   editable={false}
                   iconContent={
                     <Block row>
-                      <TouchableOpacity onPress={this.removeAttachment}>
-                        <Icon size={20} color={theme.COLORS.MUTED} name='trash' family='entypo' />
-                      </TouchableOpacity>
+                      {!this.state.loading &&
+                        <TouchableOpacity onPress={this.removeAttachment}>
+                          <Icon size={20} color={theme.COLORS.MUTED} name='trash' family='entypo' />
+                        </TouchableOpacity>
+                      }
                     </Block>
                   }
                 />
@@ -653,6 +655,7 @@ class Footer extends React.Component {
             }
             {(this.state.text !== '' || this.state.uploaded) &&
             <Button
+              loading={this.state.loading}
               round
               shadowless
               radius={28}

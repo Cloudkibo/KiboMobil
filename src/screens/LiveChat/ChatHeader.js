@@ -214,7 +214,7 @@ class Header extends React.Component {
           style={styles.avatar} />
       </Block>
       <Block flex={0.8}>
-        <Text size={16} style={{marginLeft: 5}}>
+        <Text size={16} style={{marginLeft: 5, color: 'black'}}>
           {`${activeSession.firstName} ${activeSession.lastName}`}
         </Text>
         {(this.props.user.currentPlan.unique_ID === 'plan_C' || this.props.user.currentPlan.unique_ID === 'plan_D') &&
