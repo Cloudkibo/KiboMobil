@@ -233,7 +233,7 @@ class Header extends React.Component {
       <Block>
         <NavBar
           back={back}
-          title={this.renderTitle(this.state.activeSession)}
+          title={'Anisha'}
           style={styles.navbar}
           transparent={transparent}
           right={this.renderRight(this.state.activeSession)}

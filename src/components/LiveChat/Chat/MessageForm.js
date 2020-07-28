@@ -655,6 +655,7 @@ class Footer extends React.Component {
             }
             {(this.state.text !== '' || this.state.uploaded) &&
             <Button
+              disabled={this.state.loading}
               loading={this.state.loading}
               round
               shadowless
