@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { TouchableOpacity, StyleSheet, Platform, Dimensions, Image } from 'react-native'
-import { Button, Block, NavBar, Text, theme } from 'galio-framework'
+import { Button, Block, NavBar, Text, theme, Input } from 'galio-framework'
 import Icon from '../../components/Icon'
 import ASSIGNSESSION from '../../components/LiveChat/Chat/AssignSession'
 import { updatePicture } from '../../redux/actions/subscribers.actions'
@@ -46,7 +46,7 @@ class Header extends React.Component {
       if (newProfilePic) {
         let session = this.state.activeSession
         session.profilePic = newProfilePic
-        this.setState({activeSession :session})
+        this.setState({activeSession: session})
       }
     })
   }
@@ -214,15 +214,33 @@ class Header extends React.Component {
           style={styles.avatar} />
       </Block>
       <Block flex={0.8}>
-        <Text size={16} style={{marginLeft: 5, color: 'black'}}>
+        <Input
+          borderless
+          editable={false}
+          color='black'
+          value={`${activeSession.firstName} ${activeSession.lastName}`}
+          style={{height: 15, marginTop: -5, fontSize: '30px'}}
+        />
+      {/*<Text size={16} style={{marginLeft: 5}}>
           {`${activeSession.firstName} ${activeSession.lastName}`}
         </Text>
+        */}
         {(this.props.user.currentPlan.unique_ID === 'plan_C' || this.props.user.currentPlan.unique_ID === 'plan_D') &&
+        <Input
+          borderless
+          editable={false}
+          color='grey'
+          size='18'
+          value={activeSession.is_assigned ? 'Assigned' : 'Unassigned'}
+          style={{height: 15}}
+        />
+        }
+        {/*(this.props.user.currentPlan.unique_ID === 'plan_C' || this.props.user.currentPlan.unique_ID === 'plan_D') &&
         (['admin', 'buyer'].includes(this.props.user.role)) &&
           <Text size={12} style={{marginLeft: 5}}>
             {activeSession.is_assigned ? 'Assigned' : 'Unassigned'}
           </Text>
-        }
+        */}
       </Block>
     </Block>)
   }
@@ -233,7 +251,7 @@ class Header extends React.Component {
       <Block>
         <NavBar
           back={back}
-          title={'Anisha'}
+          title={this.renderTitle(this.state.activeSession)}
           style={styles.navbar}
           transparent={transparent}
           right={this.renderRight(this.state.activeSession)}
@@ -242,10 +260,6 @@ class Header extends React.Component {
           leftIconName='arrowleft'
           leftIconFamily='AntDesign'
           leftIconColor={white ? theme.COLORS.WHITE : theme.COLORS.ICON}
-          titleStyle={[
-            styles.title,
-            { color: theme.COLORS[white ? 'WHITE' : 'ICON'] }
-          ]}
           onLeftPress={this.handleLeftPress} />
       </Block>
     )
@@ -271,7 +285,7 @@ function mapDispatchToProps (dispatch) {
     fetchTeamAgents,
     assignToTeam,
     assignToAgent,
-    updatePicture,
+    updatePicture
   }, dispatch)
 }
 
