@@ -236,7 +236,7 @@ class LiveChat extends React.Component {
             showThumbsUp
             setMessageData={this.setMessageData}
             filesAccepted={'image/*, audio/*, video/*, application/*, text/*'}
-            showZoom={(this.props.zoomIntegrations.length === 0 ? (this.props.user.role === 'admin' || this.props.user.role === 'buyer') ? true : false : true)}
+            showZoom={(this.props.zoomIntegrations.length && this.props.zoomIntegrations.length === 0 ? (this.props.user.role === 'admin' || this.props.user.role === 'buyer') ? true : false : true)}
             zoomIntegrations={this.props.zoomIntegrations}
             createZoomMeeting={this.props.createZoomMeeting}
           />
@@ -259,8 +259,8 @@ function mapStateToProps (state) {
     openCount: (state.liveChat.openCount),
     closeCount: (state.liveChat.closeCount),
     closeSessions: (state.liveChat.closeSessions),
-    cannedResponses: state.settingsInfo.cannedResponses
-
+    cannedResponses: state.settingsInfo.cannedResponses,
+    zoomIntegrations: (state.settingsInfo.zoomIntegrations)
   }
 }
 
