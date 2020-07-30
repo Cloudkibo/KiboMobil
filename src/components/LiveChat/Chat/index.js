@@ -1,13 +1,14 @@
 import React from 'react'
 import { Block, Text, Button } from 'galio-framework'
-import { KeyboardAvoidingView, View, ScrollView, TouchableOpacity, StyleSheet, TextInput} from 'react-native'
+import { KeyboardAvoidingView, View, ScrollView, TouchableOpacity, StyleSheet, TextInput, Dimensions} from 'react-native'
 import {ListItem, Card } from 'react-native-elements'
 import { materialTheme } from '../../../constants/'
 import { displayDate, showDate } from '../../../screens/LiveChat/utilities'
 import moment from 'moment'
 import BODY from './Body'
 import FOOTER from './MessageForm'
-
+import ZOOMMODAL from './ZoomModal'
+const { height } = Dimensions.get('screen')
 
 class Chat extends React.Component {
   constructor (props, context) {
@@ -98,6 +99,7 @@ class Chat extends React.Component {
           flex: 1
         }}
       >
+        <ZOOMMODAL />
         <Block flex>
           <View style= {{flex:1}}>
           <BODY
@@ -119,10 +121,10 @@ class Chat extends React.Component {
               keyboardShouldPersistTaps = {'always'}
               showsVerticalScrollIndicator = {true}
               persistentScrollbar={true}
-             > 
+             >
            {this.state.cannedResponses.map((cannedResponse, i) => (
             <TouchableOpacity  key={`touch${i}`} onPress={() => this.selectCannedResponse(cannedResponse)}>
-            <ListItem 
+            <ListItem
             key={`list${i}`}
             onPress={() => this.selectCannedResponse(cannedResponse)}
             title={cannedResponse.responseCode}
@@ -153,9 +155,9 @@ class Chat extends React.Component {
      </ScrollView>
         </Card>
       </View>
-        } 
+        }
           </View>
-          
+
           {!moment(this.props.activeSession.lastMessagedAt).isAfter(moment().subtract(24, 'hours')) && !this.props.isSMPApproved
             ? <Block row style={{backgroundColor: materialTheme.COLORS.ERROR, margin: 10, borderRadius: 10}}>
               <Text style={{color: 'white', marginVertical: 5, marginHorizontal: 10}}>
@@ -204,6 +206,9 @@ class Chat extends React.Component {
                 showThumbsUp={this.props.showThumbsUp}
                 setMessageData={this.props.setMessageData}
                 filesAccepted={this.props.filesAccepted}
+                showZoom={this.props.showZoom}
+                zoomIntegrations={this.props.zoomIntegrations}
+                createZoomMeeting={this.props.createZoomMeeting}
               />
           }
         </Block>

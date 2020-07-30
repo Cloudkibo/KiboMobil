@@ -22,7 +22,7 @@ import {
   updateSessionProfilePicture,
   deletefile
 } from '../../redux/actions/liveChat.actions'
-import {loadcannedResponses}  from '../../redux/actions/settings.action'
+import {getZoomIntegrations, createZoomMeeting, loadcannedResponses} from '../../redux/actions/settings.action'
 import { clearSocketData } from '../../redux/actions/socket.actions'
 import { loadTeamsList } from '../../redux/actions/teams.actions'
 import { loadMembersList } from '../../redux/actions/members.actions'
@@ -53,6 +53,7 @@ class LiveChat extends React.Component {
     this.props.loadcannedResponses()
     this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
     props.getSMPStatus(this.handleSMPStatus)
+    props.getZoomIntegrations()
     // if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
     //   this.props.markRead(props.route.params.activeSession._id)
     // }
@@ -204,7 +205,7 @@ class LiveChat extends React.Component {
       <Block flex style={styles.block}>
         <Block shadow flex>
           <CHAT
-            cannedResponses = {this.state.cannedResponses}
+            cannedResponses={this.state.cannedResponses}
             userChat={this.state.userChat}
             chatCount={this.props.chatCount}
             sessions={this.state.sessions}
@@ -235,6 +236,9 @@ class LiveChat extends React.Component {
             showThumbsUp
             setMessageData={this.setMessageData}
             filesAccepted={'image/*, audio/*, video/*, application/*, text/*'}
+            showZoom={(this.props.zoomIntegrations.length && this.props.zoomIntegrations.length === 0 ? (this.props.user.role === 'admin' || this.props.user.role === 'buyer') ? true : false : true)}
+            zoomIntegrations={this.props.zoomIntegrations}
+            createZoomMeeting={this.props.createZoomMeeting}
           />
         </Block>
       </Block>
@@ -255,8 +259,8 @@ function mapStateToProps (state) {
     openCount: (state.liveChat.openCount),
     closeCount: (state.liveChat.closeCount),
     closeSessions: (state.liveChat.closeSessions),
-    cannedResponses: state.settingsInfo.cannedResponses
-    
+    cannedResponses: state.settingsInfo.cannedResponses,
+    zoomIntegrations: (state.settingsInfo.zoomIntegrations)
   }
 }
 
@@ -282,7 +286,9 @@ function mapDispatchToProps (dispatch) {
     getSMPStatus,
     updateSessionProfilePicture,
     deletefile,
-    loadcannedResponses
+    loadcannedResponses,
+    getZoomIntegrations,
+    createZoomMeeting
   }, dispatch)
 }
 

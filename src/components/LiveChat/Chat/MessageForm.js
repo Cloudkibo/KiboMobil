@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, ScrollView, View} from 'react-native'
-import {ListItem } from 'react-native-elements'
+import {StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, View} from 'react-native'
 import Icon from '../../../components/Icon'
 import { materialTheme } from '../../../constants/'
 import { Input, Block, Button, theme } from 'galio-framework'
@@ -13,8 +12,8 @@ import * as Permissions from 'expo-permissions'
 import * as FileSystem from 'expo-file-system'
 import { Audio } from 'expo-av'
 import StickerMenu from '../../StickerPicker/stickers'
-
 const { width } = Dimensions.get('screen')
+
 let Toast = null
 if (Platform.OS === 'ios') {
   Toast = require('react-native-tiny-toast')
@@ -47,7 +46,7 @@ class Footer extends React.Component {
       recordingPermissionGranted: false,
       gifSearchValue: '',
       gifs: [],
-      loadingGif: false,
+      loadingGif: false
     }
 
     this.recordingSettings = JSON.parse(JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY))
@@ -75,6 +74,7 @@ class Footer extends React.Component {
     this.fetchGifs = this.fetchGifs.bind(this)
     this.sendGif = this.sendGif.bind(this)
     this.changeGifSearchValue = this.changeGifSearchValue.bind(this)
+    this.addNewLine = this.addNewLine.bind(this)
   }
 
   componentDidMount () {
@@ -82,8 +82,8 @@ class Footer extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
-    if(nextProps.selectedCannedResponse) {
-      if(!this.state.text.includes(nextProps.selectedCannedResponse.responseCode)) {
+    if (nextProps.selectedCannedResponse) {
+      if (!this.state.text.includes(nextProps.selectedCannedResponse.responseCode)) {
         this.setState({text: `/${nextProps.selectedCannedResponse.responseCode}`})
       }
     }
@@ -233,21 +233,20 @@ class Footer extends React.Component {
   }
 
   search (value) {
-    if ( this.props.cannedResponsesAll.length > 0) {
+    if (this.props.cannedResponsesAll.length > 0) {
       let searchArray = []
-      if (value[value.length-1] === ' ') {
+      if (value[value.length - 1] === ' ') {
         let text = value.trim().slice(1)
         this.props.cannedResponsesAll.forEach(element => {
           if (element.responseCode.toLowerCase() === text.toLowerCase()) {
-            if(!this.props.selectedCannedResponse || (this.props.selectedCannedResponse.responseCode !== element.responseCode)) {
-            this.props.setCannedResponse(element)
+            if (!this.props.selectedCannedResponse || (this.props.selectedCannedResponse.responseCode !== element.responseCode)) {
+              this.props.setCannedResponse(element)
             }
             searchArray.push(element)
-        }
-      })
-          this.props.saveCannedResponses(searchArray)
-    }
-      else if (value !== '/') {
+          }
+        })
+        this.props.saveCannedResponses(searchArray)
+      } else if (value !== '/') {
         let text = value.slice(1)
         console.log('text in search', value)
         this.props.cannedResponsesAll.forEach(element => {
@@ -257,13 +256,21 @@ class Footer extends React.Component {
       } else {
         this.props.saveCannedResponses(this.props.cannedResponsesAll)
       }
+    }
   }
-}
+
+  addNewLine (e) {
+    if (e.nativeEvent.key === 'Enter') {
+      let text = this.state.text
+      text = text + '\n'
+      this.setState({text: text})
+    }
+  }
 
   onInputChange (text) {
     console.log('text', text)
     if (text[0] === '/') {
-      this.setState({ text: text})
+      this.setState({text: text})
       this.props.showCannResponse(true)
       this.search(text)
     } else {
@@ -271,20 +278,20 @@ class Footer extends React.Component {
       this.props.showCannResponse(false)
       this.props.setCannedResponse(null)
     }
-    if(this.props.selectedCannedResponse) {
+    if (this.props.selectedCannedResponse) {
       if (/\s/.test(text)) {
-        var regex = new RegExp("^/" + this.props.selectedCannedResponse.responseCode, "g")
-        if(!text.match(regex)) {
+        var regex = new RegExp('^/' + this.props.selectedCannedResponse.responseCode, 'g')
+        if (!text.match(regex)) {
           this.props.setCannedResponse(null)
           this.search(text)
         }
-     } else {
-       if(text !== `/${this.props.selectedCannedResponse.responseCode}`) {
-        this.props.setCannedResponse(null)
-        this.search(text)
+      } else {
+        if (text !== `/${this.props.selectedCannedResponse.responseCode}`) {
+          this.props.setCannedResponse(null)
+          this.search(text)
+        }
       }
     }
-   }
   }
 
   sendMessage () {
@@ -292,28 +299,28 @@ class Footer extends React.Component {
     if (data.isAllowed) {
       let payload = {}
       let data = {}
-      if(this.props.selectedCannedResponse) {
+      if (this.props.selectedCannedResponse) {
         let selectedCannedResponse = this.props.selectedCannedResponse
-        if(selectedCannedResponse.responseMessage === '') {
+        if (selectedCannedResponse.responseMessage === '') {
           Toast.default.show('Canned Message response cannot be empty')
         } else {
           let text = this.state.text
-          if(text.includes(selectedCannedResponse.responseCode)) {
+          if (text.includes(selectedCannedResponse.responseCode)) {
             text = text.replace(`/${selectedCannedResponse.responseCode}`, selectedCannedResponse.responseMessage)
             let payload = {
               componentType: 'text',
               text: text
             }
-              data = this.props.setMessageData(this.props.activeSession, payload)
-              this.props.sendChatMessage(data)
-              data.format = 'convos'
-              this.updateChatData(data, payload)
-              this.setState({text: ''})
-              this.props.setCannedResponse(null)
-              this.props.showCannResponse(false)
+            data = this.props.setMessageData(this.props.activeSession, payload)
+            this.props.sendChatMessage(data)
+            data.format = 'convos'
+            this.updateChatData(data, payload)
+            this.setState({text: ''})
+            this.props.setCannedResponse(null)
+            this.props.showCannResponse(false)
           }
+        }
       }
-    }
       else if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
         payload = this.setDataPayload('text')
         data = this.props.setMessageData(this.props.activeSession, payload)
@@ -625,16 +632,17 @@ class Footer extends React.Component {
                     </View>
                     } */}
                     <Input
+                      multiline
+                      numberOfLines={3}
                       onFocus={this.hidePickers}
                       borderless
                       color='black'
-                      blurOnSubmit
                       style={[styles.input, {width: this.state.text === '' ? width * 0.92 : width * 0.8}]}
                       placeholder='Type a message...'
-                      returnKeyType='send'
-                      textContentType='none'
+                      returnKeyType='none'
                       placeholderTextColor='#9fa5aa'
                       value={this.state.text}
+                      onKeyPress={(keyPress) => this.addNewLine(keyPress)}
                       onChangeText={text => this.onInputChange(text)}
                       right
                       iconContent={
@@ -648,6 +656,15 @@ class Footer extends React.Component {
                           <TouchableOpacity onPress={this.onRecordPress}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
                           </TouchableOpacity>
+                          {this.props.showZoom &&
+                            <TouchableOpacity onPress={this.onRecordPress}>
+                              <Image
+                                source={{ uri: 'https://cdn.cloudkibo.com/public/img/zoom.png' }}
+                                style={{height: 25, width: 25, marginLeft: 5}}
+                                alt='Zoom'
+                              />
+                            </TouchableOpacity>
+                          }
                         </Block>
                       }
                     />
@@ -779,9 +796,10 @@ const styles = StyleSheet.create({
     marginLeft: 6
   },
   input: {
-    height: theme.SIZES.BASE * 3,
+    height: 'auto',
     backgroundColor: theme.COLORS.WHITE,
     borderRadius: 30,
+    paddingVertical: 5
   },
   view: {
     height: 250,
