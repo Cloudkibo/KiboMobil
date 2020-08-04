@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import CardBox from '../../components/Dashboard/CardBox'
 import { saveNotificationToken } from '../../redux/actions/basicInfo.actions'
+import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
 import { loadDashboardData} from '../../redux/actions/dashboard.actions'
 import { Text, View, Button, Vibration, Platform } from 'react-native'
 import { Notifications } from 'expo'
@@ -13,20 +14,47 @@ import Constants from 'expo-constants';
 const { width } = Dimensions.get('screen')
 
 class Dashboard extends React.Component {
-  state = {
-    expoPushToken: '',
-    notification: {},
-  }
+  constructor (props, context) {
+    super(props, context)
+    state = {
+      expoPushToken: '',
+      notification: {},
+    }
+    this._loadData = this._loadData.bind(this)
+}
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
   }
 
+  _loadData (user) {
+    if(user.platform === 'messenger') {
+      this.props.loadDashboardData()
+    } else {
+      this.props.loadCardBoxesDataWhatsApp()
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps (nextProps) {
+    // console.log('nextProps.user in Dashboard', nextProps.user)
+    // console.log('this.props.user.Platform in Dashboard',this.props.user)
+    if(nextProps.user && this.props.user && this.props.user.platform !== nextProps.user.platform) {
+     this._loadData(nextProps.user)
+    } else if(nextProps.user && !this.props.user) {
+      this._loadData(nextProps.user)
+    }
+  }
   componentDidMount () {
     this.registerForPushNotificationsAsync()
     this._notificationSubscription = Notifications.addListener(this._handleNotification)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.props.loadDashboardData()
+      if(this.props.user) {
+        if(this.props.user.platform === 'messenger') {
+          this.props.loadDashboardData()
+        } else {
+          this.props.loadCardBoxesDataWhatsApp()
+        }
+      }
     })
   }
 
@@ -79,6 +107,7 @@ class Dashboard extends React.Component {
   }
 
   render () {
+    console.log('cardBoxesData', this.props.cardBoxesData)
     return (
       <Block flex center style={styles.home}>
         <ScrollView
@@ -86,6 +115,8 @@ class Dashboard extends React.Component {
           contentContainerStyle={styles.products}>
           {this.props.dashboard &&
             <Block middle flex>
+             {
+              this.props.user && this.props.user.platform === 'messenger' &&
               <Block flex row middle>
                 <CardBox
                   title={this.props.dashboard.totalPages}
@@ -100,14 +131,15 @@ class Dashboard extends React.Component {
                   navigateTo='Pages'
                 />
               </Block>
+              }
               <Block flex row>
                 <CardBox
-                  title={this.props.dashboard.subscribers}
+                  title={this.props.user && this.props.user.platform === 'messenger' ? this.props.dashboard.subscribers: this.props.cardBoxesData ? this.props.cardBoxesData.subscribers: 0}
                   subtitle='Subscribers'
                   style={{ borderBottomColor: theme.COLORS.ERROR, marginRight: theme.SIZES.BASE }}
                   navigateTo='Subscribers'
                 />
-                <CardBox title={this.props.dashboard.unreadCount}
+                <CardBox title={this.props.user && this.props.user.platform === 'messenger' ? this.props.dashboard.unreadCount: this.props.cardBoxesData  ? this.props.cardBoxesData.chats: 0}
                   subtitle='New Messages'
                   style={{ borderBottomColor: theme.COLORS.INFO }}
                   navigateTo='Live Chat'
@@ -125,12 +157,14 @@ function mapStateToProps (state) {
   return {
     dashboard: (state.dashboardInfo.dashboard),
     user: (state.basicInfo.user),
+    cardBoxesData: (state.smsWhatsAppDashboardInfo.cardBoxesData),
   }
 }
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     loadDashboardData,
-    saveNotificationToken},
+    saveNotificationToken,
+    loadCardBoxesDataWhatsApp},
     dispatch)
 }
 
