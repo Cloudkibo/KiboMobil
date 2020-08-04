@@ -57,3 +57,15 @@ export function updatePicture (data, callback) {
       })
   }
 }
+
+export function updatePlatform (data) {
+  return (dispatch) => {
+    callApi('users/updatePlatform', 'post', data).then(res => {
+      if (res.status === 'success') {
+        dispatch(getuserdetails())
+      } else {
+        console.log('Failed to update platform', res)
+      }
+    })
+  }
+}

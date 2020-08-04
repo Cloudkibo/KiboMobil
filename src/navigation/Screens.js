@@ -15,6 +15,7 @@ import SubscribersScreen from '../screens/Subscribers/Subscribers'
 import InviteSubscribersScreen from '../screens/InviteSubscribers/InviteSubscribers'
 import LiveChatSessionScreen from '../screens/LiveChat/LiveChat'
 import ChatScreen from '../screens/LiveChat/Chat'
+import DashboardHeader from '../screens/Dashboard/DashboardHeader'
 import ChatHeader from '../screens/LiveChat/ChatHeader'
 import SignInScreen from '../screens/SignIn/SignIn'
 
@@ -164,7 +165,7 @@ function DashboardStack (props) {
         component={DashboardScreen}
         options={{
           header: ({ navigation, scene }) => (
-            <Header
+            <DashboardHeader
               search
               options
               title='Dashboard'
