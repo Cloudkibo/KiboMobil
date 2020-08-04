@@ -73,7 +73,7 @@ class DashboardHeader extends React.Component {
         size={20}
         name='dots-three-vertical'
         family='Entypo'
-        style={{marginLeft: 30, marginTop: 6}}
+        style={{marginLeft: 40, marginTop: 6}}
     />
     </TouchableOpacity>
          <SelectPlatform
