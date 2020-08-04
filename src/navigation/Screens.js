@@ -199,6 +199,7 @@ function DashboardStack (props) {
 
 function AppStack (props, param) {
   let user = props.user
+  console.log('user in App stack', user)
   return (
     <Drawer.Navigator
       style={{ flex: 1 }}
@@ -272,6 +273,7 @@ function AppStack (props, param) {
           )
         }}
       />
+      {user && user.platform === 'messenger' &&
       <Drawer.Screen
         name='Pages'
         component={PagesStack}
@@ -287,6 +289,8 @@ function AppStack (props, param) {
           )
         }}
       />
+      }
+      {user && user.platform === 'messenger' &&
       <Drawer.Screen
         name='Invite Subscribers'
         component={InviteSubscribersStack}
@@ -301,6 +305,7 @@ function AppStack (props, param) {
           )
         }}
       />
+      }
       <Drawer.Screen
         name='Log Out'
         component={SignInScreen}
