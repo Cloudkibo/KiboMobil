@@ -14,6 +14,7 @@ import PagesScreen from '../screens/Pages/Pages'
 import SubscribersScreen from '../screens/Subscribers/Subscribers'
 import InviteSubscribersScreen from '../screens/InviteSubscribers/InviteSubscribers'
 import LiveChatSessionScreen from '../screens/LiveChat/LiveChat'
+import WhatsappLiveChatSessionScreen from '../screens/WhatsappLivechat/WhatsappLiveChat'
 import ChatScreen from '../screens/LiveChat/Chat'
 import DashboardHeader from '../screens/Dashboard/DashboardHeader'
 import ChatHeader from '../screens/LiveChat/ChatHeader'
@@ -101,6 +102,46 @@ function LiveChatStack (props) {
       <Stack.Screen
         name='Live Chat'
         component={LiveChatSessionScreen}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              search
+              options
+              title='Live Chat'
+              navigation={navigation}
+              scene={scene}
+            />
+          )
+        }}
+      />
+      <Stack.Screen
+        name='Chat'
+        component={ChatScreen}
+        options={{
+          header: ({ navigation, scene }) => {
+            const activeSession = scene.__memo[0].params.activeSession
+            return (
+              <ChatHeader
+                back
+                activeSession={activeSession}
+                title={`${activeSession.firstName} ${activeSession.lastName}`}
+                navigation={navigation}
+                scene={scene}
+              />
+            )
+          }
+        }}
+      />
+    </Stack.Navigator>
+  )
+}
+
+function WhatsappLivechat (props) {
+  return (
+    <Stack.Navigator mode='card' headerMode='screen'>
+      <Stack.Screen
+        name='Live Chat'
+        component={WhatsappLiveChatSessionScreen}
         options={{
           header: ({ navigation, scene }) => (
             <Header
@@ -246,7 +287,7 @@ function AppStack (props, param) {
       />
       <Drawer.Screen
         name='Live Chat'
-        component={LiveChatStack}
+        component={user ? user.platform === 'messenger' ? LiveChatStack : WhatsappLivechat : LiveChatStack}
         options={{
           drawerIcon: ({ focused }) => (
             <Icon
