@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
 import { Block, Text, theme, Input } from 'galio-framework'
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
@@ -284,6 +285,9 @@ class LiveChat extends React.Component {
               onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
             />
           }
+              <Block>
+          <MaterialCommunityIcons name="tooltip-plus-outline"  size={50} color="blue" />
+          </Block>
         </Block>
       </Block>
     )
