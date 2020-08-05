@@ -107,16 +107,16 @@ class Dashboard extends React.Component {
   }
 
   render () {
-    console.log('cardBoxesData', this.props.cardBoxesData)
+    console.log('this.props.dashboard', this.props.dashboard )
     return (
       <Block flex center style={styles.home}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.products}>
-          {this.props.dashboard &&
+          {(this.props.dashboard || this.props.cardBoxesData) &&
             <Block middle flex>
              {
-              this.props.user && this.props.user.platform === 'messenger' &&
+              this.props.user && this.props.user.platform === 'messenger' && this.props.dashboard &&
               <Block flex row middle>
                 <CardBox
                   title={this.props.dashboard.totalPages}
@@ -134,12 +134,12 @@ class Dashboard extends React.Component {
               }
               <Block flex row>
                 <CardBox
-                  title={this.props.user && this.props.user.platform === 'messenger' ? this.props.dashboard.subscribers: this.props.cardBoxesData ? this.props.cardBoxesData.subscribers: 0}
+                  title={this.props.user && this.props.user.platform === 'messenger' ? this.props.dashboard ? this.props.dashboard.subscribers: 0: this.props.cardBoxesData ? this.props.cardBoxesData.subscribers: 0}
                   subtitle='Subscribers'
                   style={{ borderBottomColor: theme.COLORS.ERROR, marginRight: theme.SIZES.BASE }}
                   navigateTo='Subscribers'
                 />
-                <CardBox title={this.props.user && this.props.user.platform === 'messenger' ? this.props.dashboard.unreadCount: this.props.cardBoxesData  ? this.props.cardBoxesData.chats: 0}
+                <CardBox title={this.props.user && this.props.user.platform === 'messenger' ? this.props.dashboard ? this.props.dashboard.unreadCount:0 : this.props.cardBoxesData  ? this.props.cardBoxesData.chats: 0}
                   subtitle='New Messages'
                   style={{ borderBottomColor: theme.COLORS.INFO }}
                   navigateTo='Live Chat'
