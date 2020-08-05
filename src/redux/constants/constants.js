@@ -58,3 +58,6 @@ export const CLEAR_SOCKET_DATA = 'CLEAR_SOCKET_DATA'
 // constants for Settings
 export const GET_CANNED_RESPONSES = 'GET_CANNED_RESPONSES'
 export const UPDATE_ZOOM_INTEGRATIONS = 'UPDATE_ZOOM_INTEGRATIONS'
+
+// constants for smsWhatsAppDashboard
+export const SHOW_CARDBOXES_DATA = 'SHOW_CARDBOXES_DATA'
