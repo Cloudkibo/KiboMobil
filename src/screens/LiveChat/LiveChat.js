@@ -285,9 +285,7 @@ class LiveChat extends React.Component {
               onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
             />
           }
-              <Block>
-          <MaterialCommunityIcons name="tooltip-plus-outline"  size={50} color="blue" />
-          </Block>
+        <MaterialCommunityIcons name="tooltip-plus-outline"  size={50} color="blue" style={{ margin: 20, position: "absolute", bottom: 0,right: 0}}/>
         </Block>
       </Block>
     )
