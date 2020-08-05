@@ -31,13 +31,13 @@ class SessionsListItem extends React.Component {
         <Block flex row style={{paddingVertical: 20}}>
           <Block center flex={0.3}>
             <Image
-              onError={() => this.props.profilePicError(session)}
+              onError={(e) => this.props.profilePicError(session, e)}
               source={{uri: session.profilePic}}
               style={styles.avatar} />
           </Block>
           <Block flex={0.7}>
             <Text size={16} style={{marginBottom: 3}}>
-              {`${session.firstName} ${session.lastName}`}
+              {session.name ? session.name : `${session.firstName} ${session.lastName}`}
             </Text>
             <Text h7 muted style={{marginBottom: 5}} numberOfLines={1}>
               {session.lastPayload
@@ -46,6 +46,7 @@ class SessionsListItem extends React.Component {
               }
             </Text>
             <Block flex row>
+            { session.pageId &&
               <Icon
                 size={16}
                 name='facebook'
@@ -53,9 +54,12 @@ class SessionsListItem extends React.Component {
                 color={materialTheme.COLORS.MUTED}
                 style={{marginRight: 5}}
               />
+            } 
+              { session.pageId &&
               <Text h7 muted style={{marginRight: 10, width: width / 4}} numberOfLines={1}>
                 {session.pageId.pageName}
               </Text>
+              }
               <Icon
                 size={16}
                 name='calendar'
