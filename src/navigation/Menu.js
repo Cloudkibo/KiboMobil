@@ -19,7 +19,9 @@ function CustomDrawerContent ({
   const insets = useSafeArea()
   const screens = profile && profile.platform === 'whatsApp' ? [
     'Dashboard',
-    'User Guide'
+    'Live Chat'
+    'Invite Subscribers',
+    'User Guide',
   ] :[
     'Dashboard',
     'Live Chat',
