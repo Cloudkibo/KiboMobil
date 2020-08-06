@@ -181,8 +181,7 @@ function WhatsappLivechat (props) {
         options={{
           header: ({ navigation, scene }) => (
             <Header
-              search
-              options
+              back
               title='send Message'
               navigation={navigation}
               scene={scene}
