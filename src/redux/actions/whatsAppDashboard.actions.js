@@ -8,6 +8,12 @@ export function showCardBoxesData (data) {
     }
   }
 
+export function clearWhatsappDashboardData() {
+  return (dispatch) => {
+    dispatch(showCardBoxesData(null))
+  }
+}
+
 export function loadCardBoxesDataWhatsApp () {
     return (dispatch) => {
       callApi('whatsAppDashboard')
