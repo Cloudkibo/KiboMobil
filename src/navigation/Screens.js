@@ -15,6 +15,7 @@ import SubscribersScreen from '../screens/Subscribers/Subscribers'
 import InviteSubscribersScreen from '../screens/InviteSubscribers/InviteSubscribers'
 import LiveChatSessionScreen from '../screens/LiveChat/LiveChat'
 import WhatsappLiveChatSessionScreen from '../screens/WhatsappLivechat/WhatsappLiveChat'
+import WhatsappTemplateMessage from '../screens/WhatsappLivechat/WhatsappTemplateMessage'
 import ChatScreen from '../screens/LiveChat/Chat'
 import DashboardHeader from '../screens/Dashboard/DashboardHeader'
 import ChatHeader from '../screens/LiveChat/ChatHeader'
@@ -132,6 +133,8 @@ function LiveChatStack (props) {
           }
         }}
       />
+
+      
     </Stack.Navigator>
   )
 }
@@ -170,6 +173,21 @@ function WhatsappLivechat (props) {
               />
             )
           }
+        }}
+      />
+        <Stack.Screen
+        name='WhatsappTemplateMessage'
+        component={WhatsappTemplateMessage}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              search
+              options
+              title='send Message'
+              navigation={navigation}
+              scene={scene}
+            />
+          )
         }}
       />
     </Stack.Navigator>

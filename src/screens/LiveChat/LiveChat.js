@@ -2,8 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
-import { Block, Text, theme, Input } from 'galio-framework'
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { Block, Text, theme, Input, Button } from 'galio-framework'
+import { MaterialIcons } from '@expo/vector-icons'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
@@ -285,7 +285,10 @@ class LiveChat extends React.Component {
               onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
             />
           }
-        <MaterialCommunityIcons name="tooltip-plus-outline"  size={50} color="blue" style={{ margin: 20, position: "absolute", bottom: 0,right: 0}}/>
+              {/* <Button
+              style={styles.myButton}
+              onPress={this.assign}><MaterialIcons name="message"  size={30} color="white"/></Button> */}
+        {/* <MaterialCommunityIcons name="tooltip-plus-outline"  size={50} color="blue" style={{ margin: 20, position: "absolute", bottom: 0,right: 0}}/> */}
         </Block>
       </Block>
     )
@@ -343,5 +346,17 @@ const styles = StyleSheet.create({
   empty: {
     marginHorizontal: 16,
     marginVertical: 20
+  },
+  myButton:{
+    padding: 5,
+    height: 50,
+    width: 50,  //The Width must be the same as the height
+    borderRadius:120, //Then Make the Border Radius twice the size of width or Height   
+    backgroundColor:'#716aca',
+    alignItems: 'center',
+    margin: 20,
+    position: "absolute", 
+    bottom: 0,
+    right: 0
   }
 })
