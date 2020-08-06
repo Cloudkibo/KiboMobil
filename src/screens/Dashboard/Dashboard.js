@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Dimensions, ScrollView } from 'react-native'
+import { StyleSheet, Dimensions, ScrollView, ActivityIndicator } from 'react-native'
 import { Block, theme } from 'galio-framework'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -110,6 +110,10 @@ class Dashboard extends React.Component {
     console.log('this.props.dashboard', this.props.dashboard )
     return (
       <Block flex center style={styles.home}>
+      {
+        this.props.user && ((this.props.user.platform === 'messenger' && !this.props.dashboard) || (this.props.user.platform === 'whatsApp' && !this.props.cardBoxesData)) ?
+        <Block flex={0.8} middle><ActivityIndicator size='large' /></Block>
+        :
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.products}>
@@ -148,6 +152,7 @@ class Dashboard extends React.Component {
             </Block>
           }
         </ScrollView>
+      }
       </Block>
     )
   }
