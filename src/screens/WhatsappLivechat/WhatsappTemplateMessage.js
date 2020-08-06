@@ -29,6 +29,17 @@ class WhatsappTemplateMessage extends React.Component {
     this.renderItem = this.renderItem.bind(this)
     this.onInputPhoneChange = this.onInputPhoneChange.bind(this)
     this.changeSelected = this.changeSelected.bind(this)
+    this.reset = this.reset.bind(this)
+    this.cancel = this.cancel.bind(this)
+  }
+
+  cancel () {
+    this.props.navigation.navigate('Live Chat')
+  }
+
+  reset () {
+    console.log('called reset')
+    this.setState({number: '', selectedTemplate: this.props.whatsAppMessageTemplates[0], isPhoneNumberValid:false})
   }
 
   changeSelected (item) {
@@ -78,14 +89,12 @@ class WhatsappTemplateMessage extends React.Component {
               <TextInput
                 style={{height: 40, width: 300, marginHorizontal: 25,  borderColor: 'gray', borderWidth: 1}}
                 onChangeText={(text) => this.setState({text})}
-                value={this.state.text}
+                value={this.state.number}
                 onChangeText={text => this.onInputPhoneChange(text)}
               />
-              {!this.state.isPhoneNumberValid &&
-              <Text style={{marginHorizontal: 25,fontWeight: "bold", color: 'red'}}>
+              <Text style={{marginHorizontal: 25,fontWeight: "bold", color: this.state.isPhoneNumberValid ? 'white': 'red'}}>
                  invalid phone number
               </Text>
-              }
               </View>
               <Text style={{marginHorizontal: 25, marginTop:5, fontWeight: "bold" }}>
                 Select Template:
@@ -96,7 +105,7 @@ class WhatsappTemplateMessage extends React.Component {
               renderItem={this.renderItem}
               keyExtractor={(item) => item.name} />
               <ScrollView
-              style= {{maxHeight: 80, margin: 10, marginHorizontal: 25}}
+              style= {{marginTop: 10,  marginHorizontal: 25, height:80}}
               showsVerticalScrollIndicator = {true}
               persistentScrollbar={true}
               >
@@ -113,10 +122,10 @@ class WhatsappTemplateMessage extends React.Component {
             <View style={styles.container}>
               <Button radius={10}
                 style={styles.button}
-                onPress={this.assign}>Reset</Button>
+                onPress={this.reset}>Reset</Button>
               <Button radius={10}
                 style={styles.button}
-                onPress={this.assign}>Cancel</Button>
+                onPress={this.cancel}>Cancel</Button>
               <Button radius={10}
                 style={styles.button}
                 onPress={this.assign}>Send</Button>
@@ -183,7 +192,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 100,
     marginHorizontal: 10,
-    marginVertical: 20
+    marginVertical: 25
   },
   container: {
     flex: 1,
