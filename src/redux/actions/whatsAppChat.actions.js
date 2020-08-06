@@ -3,6 +3,7 @@ import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 import { AsyncStorage } from 'react-native'
 
+
 export function showOpenSessions (data) {
     let openSessions = data.openSessions.map((s) => {
       let name = s.name.split(' ')
@@ -66,3 +67,5 @@ export function fetchOpenSessions (data) {
       })
     }
   }
+
+  

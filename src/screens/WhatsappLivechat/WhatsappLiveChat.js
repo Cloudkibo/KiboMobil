@@ -8,6 +8,7 @@ import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
+import {getWhatsAppMessageTemplates} from '../../redux/actions/settings.action'
 import {fetchOpenSessions, fetchCloseSessions, markRead} from '../../redux/actions/whatsAppChat.actions'
 // import { CommonActions } from '@react-navigation/native'
 
@@ -44,6 +45,7 @@ class WhastappLiveChat extends React.Component {
     this.handleSearch = this.handleSearch.bind(this)
     this.openTemplatePage = this.openTemplatePage.bind(this)
     // this.fetchSessions(true, 'none', true)
+    this.props.getWhatsAppMessageTemplates()
   }
   openTemplatePage () {
     this.props.navigation.navigate('WhatsappTemplateMessage')
@@ -280,6 +282,7 @@ function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     fetchOpenSessions,
     fetchCloseSessions,
+    getWhatsAppMessageTemplates,
     markRead
   }, dispatch)
 }

@@ -14,6 +14,10 @@ export function settingsInfo (state = initialState, action) {
       return Object.assign({}, state, {
         zoomIntegrations: action.data
       })
+    case ActionTypes.UPDATE_WHATSAPP_MESSAGE_TEMPLATES:
+    return Object.assign({}, state, {
+      whatsAppMessageTemplates: action.data
+    })
     default:
       return state
   }
