@@ -46,6 +46,11 @@ class SelectPlatform extends React.Component {
       console.log('this.state.currentSelectedValue.value', this.state.currentSelectedValue.value)
       this.props.updatePlatform({platform :this.state.currentSelectedValue.value})
       this.props.toggleAssignmentModal(false)
+      if(this.state.currentSelectedValue.value ==='messenger') {
+        this.props.clearDashboardData()
+      } else {
+        this.props.clearWhatsappDashboardData()
+      }
   }
 
   renderItem ({ item }) {

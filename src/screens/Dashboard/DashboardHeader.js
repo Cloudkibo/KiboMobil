@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { withNavigation } from '@react-navigation/compat';
 import { updatePlatform } from '../../redux/actions/basicInfo.actions'
+import { clearWhatsappDashboardData } from '../../redux/actions/whatsAppDashboard.actions'
+import { clearDashboardData} from '../../redux/actions/dashboard.actions'
 import { TouchableOpacity, StyleSheet, Platform, Dimensions,View } from 'react-native';
 import { Button, Block, NavBar, Input, Text, theme } from 'galio-framework';
 import {ListItem, Card } from 'react-native-elements'
@@ -81,6 +83,8 @@ class DashboardHeader extends React.Component {
           toggleAssignmentModal={this.toggleAssignmentModal}
           user = {this.props.user}
           updatePlatform = {this.props.updatePlatform}
+          clearWhatsappDashboardData = {this.props.clearWhatsappDashboardData}
+          clearDashboardData = {this.props.clearDashboardData}
         />
     </Block>
     )
@@ -193,7 +197,9 @@ function mapStateToProps (state) {
 
   function mapDispatchToProps (dispatch) {
     return bindActionCreators({
-        updatePlatform: updatePlatform
+        updatePlatform: updatePlatform,
+        clearWhatsappDashboardData: clearWhatsappDashboardData,
+        clearDashboardData: clearDashboardData
     }, dispatch)
   }
 
