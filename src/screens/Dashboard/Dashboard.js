@@ -36,8 +36,6 @@ class Dashboard extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
-    // console.log('nextProps.user in Dashboard', nextProps.user)
-    // console.log('this.props.user.Platform in Dashboard',this.props.user)
     if(nextProps.user && this.props.user && this.props.user.platform !== nextProps.user.platform) {
      this._loadData(nextProps.user)
     } else if(nextProps.user && !this.props.user) {
@@ -60,9 +58,7 @@ class Dashboard extends React.Component {
 
   _handleNotification = notification => {
     Vibration.vibrate();
-    console.log('notification', notification);
     this.setState({ notification: notification })
-    console.log('this.props.navigation', this.props.navigation)
     if(notification.origin === 'selected') {
     this.props.navigation.navigate('Chat', { activeSession: notification.data })
     }
@@ -107,7 +103,6 @@ class Dashboard extends React.Component {
   }
 
   render () {
-    console.log('this.props.dashboard', this.props.dashboard )
     return (
       <Block flex center style={styles.home}>
       {

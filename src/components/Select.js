@@ -14,7 +14,7 @@ export default class DropDown extends React.Component {
       <ModalDropdown
         style={[styles.qty, style]}
         onSelect={this.props.onSelect}
-        dropdownStyle={styles.dropdown}
+        dropdownStyle={[styles.dropdown, this.props.dropDownStyle]}
         dropdownTextStyle={{ paddingLeft: theme.SIZES.BASE, fontSize: 12, color: 'black' }}
         {...props}>
         <Block flex row middle space='between'>
@@ -42,6 +42,5 @@ const styles = StyleSheet.create({
   dropdown: {
     height: 'auto',
     marginLeft: -theme.SIZES.BASE,
-    width: width * 0.5
   }
 })

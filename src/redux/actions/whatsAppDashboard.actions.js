@@ -18,7 +18,6 @@ export function loadCardBoxesDataWhatsApp () {
     return (dispatch) => {
       callApi('whatsAppDashboard')
         .then(res => {
-          console.log('response from loadCardBoxesData', res)
           if (res.status === 'success') {
             dispatch(showCardBoxesData(res.payload))
           }

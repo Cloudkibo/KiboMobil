@@ -233,16 +233,6 @@ export function emptySocketData () {
   }
 }
 
-// export function fetchSessions () {
-//   return (dispatch) => {
-//     callApi('sessions')
-//       .then(res => {
-//         console.log('fetchSessions response', res)
-//         dispatch(showChatSessions(res.payload))
-//       })
-//   }
-// }
-
 export function clearData () {
   return (dispatch) => {
     dispatch(clearUserChat())
@@ -303,7 +293,6 @@ export function uploadRecording (fileData, handleUpload) {
             'Authorization': `Bearer ${token}`
           })
         }).then((res) => res.json()).then((res) => res).then(res => {
-          console.log('respone', res)
           handleUpload(res)
         })
           .catch((err) => {
@@ -329,7 +318,6 @@ export function uploadAttachment (fileData, handleUpload) {
             'Authorization': `Bearer ${token}`
           })
         }).then((res) => res.json()).then((res) => res).then(res => {
-          console.log('respone', res)
           handleUpload(res)
         })
           .catch((err) => {

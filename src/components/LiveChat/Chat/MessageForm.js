@@ -248,7 +248,6 @@ class Footer extends React.Component {
         this.props.saveCannedResponses(searchArray)
       } else if (value !== '/') {
         let text = value.slice(1)
-        console.log('text in search', value)
         this.props.cannedResponsesAll.forEach(element => {
           if (element.responseCode.toLowerCase().includes(text.toLowerCase())) searchArray.push(element)
         })
@@ -268,7 +267,6 @@ class Footer extends React.Component {
   }
 
   onInputChange (text) {
-    console.log('text', text)
     if (text[0] === '/') {
       this.setState({text: text})
       this.props.showCannResponse(true)
@@ -470,7 +468,6 @@ class Footer extends React.Component {
       // Do nothing -- we are already unloaded.
     }
     const info = await FileSystem.getInfoAsync(this.recording.getURI())
-    console.log(`FILE INFO: ${JSON.stringify(info)}`)
     this.setState({
       isLoading: false
     })
@@ -657,7 +654,7 @@ class Footer extends React.Component {
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
                           </TouchableOpacity>
                           {this.props.showZoom &&
-                            <TouchableOpacity onPress={this.onRecordPress}>
+                            <TouchableOpacity onPress={this.props.setZoomModal}>
                               <Image
                                 source={{ uri: 'https://cdn.cloudkibo.com/public/img/zoom.png' }}
                                 style={{height: 25, width: 25, marginLeft: 5}}

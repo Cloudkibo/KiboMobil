@@ -64,7 +64,6 @@ export function updatePlatform (data) {
       if (res.status === 'success') {
         dispatch(getuserdetails())
       } else {
-        console.log('Failed to update platform', res)
       }
     })
   }
