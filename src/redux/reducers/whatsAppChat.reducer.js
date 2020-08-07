@@ -10,6 +10,20 @@ export function whatsAppChatInfo (state = initialState, action) {
   let openSessions = state.openSessions
   let closeSessions = state.closeSessions
   switch (action.type) {
+    case ActionTypes.UPDATE_WHATSAPP_OPEN_SESSION:
+      let newSession = action.data
+      newSession.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
+      newSession.firstName = newSession.name
+      let openSessions = state.openSessions
+      let updatedOpenSessions = [newSession, ...openSessions]
+      let data = {
+        openSessions: updatedOpenSessions,
+        openCount: state.openCount ? state.openCount + 1 : 1
+      }
+      return Object.assign({}, state, {
+        openSessions: action.openSessions,
+        openCount: action.openCount
+      })
     case ActionTypes.FETCH_WHATSAPP_OPEN_SESSIONS:
       return Object.assign({}, state, {
         openSessions: action.openSessions,

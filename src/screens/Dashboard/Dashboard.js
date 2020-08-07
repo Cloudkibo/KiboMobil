@@ -4,7 +4,7 @@ import { Block, theme } from 'galio-framework'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import CardBox from '../../components/Dashboard/CardBox'
-import { saveNotificationToken } from '../../redux/actions/basicInfo.actions'
+import { saveNotificationToken, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
 import { loadDashboardData} from '../../redux/actions/dashboard.actions'
 import { Text, View, Button, Vibration, Platform } from 'react-native'
@@ -45,6 +45,7 @@ class Dashboard extends React.Component {
     }
   }
   componentDidMount () {
+    this.props.getAutomatedOptions()
     this.registerForPushNotificationsAsync()
     this._notificationSubscription = Notifications.addListener(this._handleNotification)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
@@ -169,6 +170,7 @@ function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     loadDashboardData,
     saveNotificationToken,
+    getAutomatedOptions,
     loadCardBoxesDataWhatsApp},
     dispatch)
 }

@@ -9,6 +9,14 @@ export function setSocketStatus (data) {
   }
 }
 
+export function showAutomatedOptions (data) {
+  console.log(data)
+  return {
+    type: ActionTypes.GET_AUTOMATED_OPTIONS,
+    data
+  }
+}
+
 export function showuserdetails (data) {
   // NOTE: don't remove following auth method call
   // auth.putUserId(data._id)
@@ -67,5 +75,11 @@ export function updatePlatform (data) {
         console.log('Failed to update platform', res)
       }
     })
+  }
+}
+
+export function getAutomatedOptions () {
+  return (dispatch) => {
+    callApi('company/getAutomatedOptions').then(res => dispatch(showAutomatedOptions(res.payload)))
   }
 }

@@ -47,6 +47,9 @@ class WhastappLiveChat extends React.Component {
     // this.fetchSessions(true, 'none', true)
     this.props.getWhatsAppMessageTemplates()
   }
+
+
+
   openTemplatePage () {
     this.props.navigation.navigate('WhatsappTemplateMessage')
   }
@@ -274,7 +277,9 @@ function mapStateToProps (state) {
     openCount: (state.whatsAppChatInfo.openCount),
     closeCount: (state.whatsAppChatInfo.closeCount),
     closeSessions: (state.whatsAppChatInfo.closeSessions),
-    user: (state.basicInfo.user)
+    user: (state.basicInfo.user),
+    automated_options: (state.basicInfo.automated_options),
+    
   }
 }
 

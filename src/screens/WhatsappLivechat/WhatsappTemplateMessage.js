@@ -2,12 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import {validatePhoneNumber} from '../../utility/utils'
-import { StyleSheet, Dimensions, Image, FlatList, Alert, ActivityIndicator, Platform, TextInput,ScrollView, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, Dimensions, Image, FlatList, Alert, ActivityIndicator, Platform, TextInput,ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
 import { Button, Block, Text, theme } from 'galio-framework'
 import { CheckBox } from 'react-native-elements'
-
+import {createNewContact, sendChatMessage} from '../../redux/actions/whatsAppChat.actions'
 import { materialTheme } from '../../constants/'
 import { View } from 'react-native-animatable';
+import { HitTestResultTypes } from 'expo/build/AR'
 
 const { width } = Dimensions.get('screen')
 
@@ -22,15 +23,112 @@ class WhatsappTemplateMessage extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
+      isTemplateValid: true,
       number: '',
       isPhoneNumberValid: false,
-      selectedTemplate: this.props.whatsAppMessageTemplates ? this.props.whatsAppMessageTemplates[0]: null
+      isButtonDisabled: true,
+      selectedTemplate: this.props.whatsAppMessageTemplates ? {...this.props.whatsAppMessageTemplates[0]}: null
     }
     this.renderItem = this.renderItem.bind(this)
     this.onInputPhoneChange = this.onInputPhoneChange.bind(this)
+    this.sendTemplate = this.sendTemplate.bind(this)
     this.changeSelected = this.changeSelected.bind(this)
     this.reset = this.reset.bind(this)
     this.cancel = this.cancel.bind(this)
+    this.onTextChange = this.onTextChange.bind(this)
+    this.validateTemplate = this.validateTemplate.bind(this)
+    this._sendTemplate = this._sendTemplate.bind(this)
+    this.sendTemplate = this.sendTemplate.bind(this)
+    this._setMessageData = this._setMessageData.bind(this)
+    this.showErrorDialog = this.showErrorDialog.bind(this)
+  }
+
+  showErrorDialog (message) {
+    Alert.alert(
+      'ERROR!',
+      message,
+      [
+        { text: 'OK' }
+      ],
+      { cancelable: true }
+    )
+  }
+
+  sendTemplate () {
+    if(!this.state.isButtonDisabled) {
+      this.setState({sendingTemplate: true})
+        this.props.createNewContact({
+          number: '+' + this.state.number.replace(/\D/g, '')
+        }, (res) => {
+            this._sendTemplate(res.payload)
+        })
+      }
+    }
+  _sendTemplate(session) {
+    let payload = {
+      componentType: 'text',
+      text: this.state.selectedTemplate.text,
+      buttons: this.state.selectedTemplate.button,
+      templateArguments: this.state.selectedTemplate.templateArguments,
+      templateName: this.state.selectedTemplate.name
+    }
+    let data = this._setMessageData(session, payload)
+    this.props.sendChatMessage(data, (res) => {
+      if (res.status === 'success') {
+        Toast.default.show('Message send successfully')
+        this.reset()
+        this.props.navigation.navigate('Live Chat')
+      } else {
+        this.showErrorDialog(res.payload)
+     }
+    })
+    }
+    _setMessageData(session, payload, urlMeta) {
+      const data = {
+        senderNumber: this.props.automated_options.flockSendWhatsApp.number,
+        recipientNumber: session.number,
+        contactId: session._id,
+        payload,
+        datetime: new Date().toString(),
+        repliedBy: {
+          id: this.props.user._id,
+          name: this.props.user.name,
+          type: 'agent'
+        },
+        url_meta: urlMeta
+      }
+      return data
+    }
+  onTextChange (text) {
+    let selectedTemplate = this.state.selectedTemplate
+    selectedTemplate.text =  text
+    this.setState({
+      selectedTemplate: selectedTemplate
+    })
+    this.validateTemplate(text)
+  }
+
+  validateTemplate(msg) {
+    let regex = new RegExp(this.state.selectedTemplate.regex)
+    let templateArguments = this.state.selectedTemplate.templateArguments
+    let isValid = regex.test(msg)
+    if (isValid) {
+      let matches = regex.exec(msg)
+      for (let i = 1; i < matches.length; i++) {
+        if (!matches[i]) {
+          isValid = false
+        }
+      }
+      templateArguments = matches.slice(1).join(',')
+    }
+    let buttonDisabled = true
+    if(this.state.isPhoneNumberValid && isValid) {
+      buttonDisabled = false
+    } 
+    this.setState({
+      isTemplateValid: isValid,
+      isButtonDisabled: buttonDisabled
+    })
   }
 
   cancel () {
@@ -39,24 +137,30 @@ class WhatsappTemplateMessage extends React.Component {
 
   reset () {
     console.log('called reset')
-    this.setState({number: '', selectedTemplate: this.props.whatsAppMessageTemplates[0], isPhoneNumberValid:false})
+    this.setState({number: '', selectedTemplate: {...this.props.whatsAppMessageTemplates[0]}, isPhoneNumberValid:false, isTemplateValid: true, isButtonDisabled: true})
   }
 
   changeSelected (item) {
-   this.setState({selectedTemplate: item})
+   this.setState({isTemplateValid: true, selectedTemplate: {...item}})
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
     if(nextProps.whatsAppMessageTemplates && !this.state.selectedTemplate) {
-      this.setState({selectedTemplate: whatsAppMessageTemplates[0]})
+      this.setState({selectedTemplate: {...this.props.whatsAppMessageTemplates[0]}})
     }
   }
 
   onInputPhoneChange (text) {
+    let isPhoneNumberValid = validatePhoneNumber(text)
+    let buttonDisabled = true
+    if(this.state.isTemplateValid && isPhoneNumberValid) {
+      buttonDisabled = false
+    }
     this.setState({
       number: text,
-      isPhoneNumberValid: validatePhoneNumber(text)
-    })
+      isPhoneNumberValid: isPhoneNumberValid,
+      isButtonDisabled: buttonDisabled
+    }) 
   }
   renderItem ({ item }) {
     return (
@@ -70,7 +174,7 @@ class WhatsappTemplateMessage extends React.Component {
     )
   }
   render () {
-    console.log('whatsAppMessageTemplates', this.props.whatsAppMessageTemplates)
+    console.log('this.state.isButtonDisabled', this.state.isButtonDisabled)
       return (
         <ScrollView >
         <KeyboardAvoidingView        
@@ -88,7 +192,6 @@ class WhatsappTemplateMessage extends React.Component {
               <View style={{marginTop:5}}>
               <TextInput
                 style={{height: 40, width: 300, marginHorizontal: 25,  borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(text) => this.setState({text})}
                 value={this.state.number}
                 onChangeText={text => this.onInputPhoneChange(text)}
               />
@@ -114,8 +217,14 @@ class WhatsappTemplateMessage extends React.Component {
                 multiline = {true}
                 numberOfLines = {4}
                 value={this.state.selectedTemplate ? this.state.selectedTemplate.text: ''}
+                onChangeText={text => this.onTextChange(text)}
                 />
               </ScrollView>
+              {!this.state.isTemplateValid && 
+              <Text style={{marginHorizontal: 25,fontWeight: "bold", color: 'red'}}>
+                 Message template format cann't be changed.
+              </Text>
+              }
               <Text style={{marginHorizontal: 25}}>
               {'Each variable "{{x}}" can be replaced with text that contains letters, digits, special characters or spaces.'}
             </Text>
@@ -127,8 +236,9 @@ class WhatsappTemplateMessage extends React.Component {
                 style={styles.button}
                 onPress={this.cancel}>Cancel</Button>
               <Button radius={10}
-                style={styles.button}
-                onPress={this.assign}>Send</Button>
+                style={this.state.isButtonDisabled ? [styles.button, {backgroundColor:'#CE9DD9'}]: [styles.button]}
+                onPress={this.sendTemplate}
+                >Send</Button>
             </View>
             </Block>
           </Block>
@@ -142,12 +252,16 @@ class WhatsappTemplateMessage extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    whatsAppMessageTemplates: (state.settingsInfo.whatsAppMessageTemplates)
+    whatsAppMessageTemplates: (state.settingsInfo.whatsAppMessageTemplates),
+    automated_options: (state.basicInfo.automated_options),
+    user: (state.basicInfo.user),
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
+    createNewContact,
+    sendChatMessage
   }, dispatch)
 }
 
@@ -192,7 +306,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 100,
     marginHorizontal: 10,
-    marginVertical: 25
+    marginVertical: 15,
   },
   container: {
     flex: 1,
