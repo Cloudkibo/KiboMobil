@@ -9,7 +9,7 @@ import {createNewContact, sendChatMessage} from '../../redux/actions/whatsAppCha
 import { materialTheme } from '../../constants/'
 import { View } from 'react-native-animatable';
 import { HitTestResultTypes } from 'expo/build/AR'
-
+import Perview from './Preview'
 const { width } = Dimensions.get('screen')
 
 let Toast = null
@@ -23,6 +23,7 @@ class WhatsappTemplateMessage extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
+      showAssignmentModal: false,
       isTemplateValid: true,
       number: '',
       isPhoneNumberValid: false,
@@ -34,13 +35,18 @@ class WhatsappTemplateMessage extends React.Component {
     this.sendTemplate = this.sendTemplate.bind(this)
     this.changeSelected = this.changeSelected.bind(this)
     this.reset = this.reset.bind(this)
-    this.cancel = this.cancel.bind(this)
+    this.Preview = this.Preview.bind(this)
     this.onTextChange = this.onTextChange.bind(this)
     this.validateTemplate = this.validateTemplate.bind(this)
     this._sendTemplate = this._sendTemplate.bind(this)
     this.sendTemplate = this.sendTemplate.bind(this)
     this._setMessageData = this._setMessageData.bind(this)
     this.showErrorDialog = this.showErrorDialog.bind(this)
+    this.toggleAssignmentModal = this.toggleAssignmentModal.bind(this)
+  }
+
+  toggleAssignmentModal (value) {
+    this.setState({showAssignmentModal: false})
   }
 
   showErrorDialog (message) {
@@ -131,10 +137,9 @@ class WhatsappTemplateMessage extends React.Component {
     })
   }
 
-  cancel () {
-    this.props.navigation.navigate('Live Chat')
+  Preview () {
+    this.setState({showAssignmentModal: true})
   }
-
   reset () {
     console.log('called reset')
     this.setState({number: '', selectedTemplate: {...this.props.whatsAppMessageTemplates[0]}, isPhoneNumberValid:false, isTemplateValid: true, isButtonDisabled: true})
@@ -234,12 +239,19 @@ class WhatsappTemplateMessage extends React.Component {
                 onPress={this.reset}>Reset</Button>
               <Button radius={10}
                 style={styles.button}
-                onPress={this.cancel}>Cancel</Button>
+                onPress={this.Preview}>Preview</Button>
               <Button radius={10}
                 style={this.state.isButtonDisabled ? [styles.button, {backgroundColor:'#CE9DD9'}]: [styles.button]}
                 onPress={this.sendTemplate}
                 >Send</Button>
             </View>
+
+          <Perview
+          showModal={this.state.showAssignmentModal}
+          toggleAssignmentModal={this.toggleAssignmentModal}
+          user = {this.props.user}
+          selectedTemplate = {this.state.selectedTemplate}
+          />
             </Block>
           </Block>
         </KeyboardAvoidingView>
