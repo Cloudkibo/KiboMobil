@@ -650,9 +650,11 @@ class Footer extends React.Component {
                           <TouchableOpacity onPress={this.selectAttachment}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='attachment' family='entypo' />
                           </TouchableOpacity>
+                           {!this.props.isWhatspModule &&
                           <TouchableOpacity onPress={this.onRecordPress}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
                           </TouchableOpacity>
+                           }
                           {this.props.showZoom &&
                             <TouchableOpacity onPress={this.props.setZoomModal}>
                               <Image
