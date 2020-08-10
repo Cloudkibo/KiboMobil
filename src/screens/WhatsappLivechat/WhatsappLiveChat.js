@@ -59,7 +59,7 @@ class WhastappLiveChat extends React.Component {
       this.props.markRead(session._id)
     }
     this.setState({activeSession: session})
-    // this.props.navigation.navigate('Chat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
+    this.props.navigation.navigate('WhatsappChat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
     // session.unreadCount = 0
   }
 

@@ -96,6 +96,7 @@ class Chat extends React.Component {
   }
 
   render () {
+    console.log('this.props.activeSession.lastMessagedAt', this.props.activeSession.lastMessagedAt)
     return (
       <KeyboardAvoidingView
         keyboardVerticalOffset={100}
@@ -179,7 +180,7 @@ class Chat extends React.Component {
         }
           </View>
 
-          {!moment(this.props.activeSession.lastMessagedAt).isAfter(moment().subtract(24, 'hours')) && !this.props.isSMPApproved
+          {!moment(this.props.activeSession.lastMessagedAt).isAfter(moment().subtract(24, 'hours')) && (!this.props.isSMPApproved || this.props.isWhatspModule)
             ? <Block row style={{backgroundColor: materialTheme.COLORS.ERROR, margin: 10, borderRadius: 10}}>
               <Text style={{color: 'white', marginVertical: 5, marginHorizontal: 10}}>
                 Chat's 24 hours window session has been expired for this subscriber. You cannot send a message to this subscriber until they message you.
@@ -197,6 +198,7 @@ class Chat extends React.Component {
                 </Button>
               </Block>
               : <FOOTER
+                isWhatspModule = {this.props.isWhatspModule}
                 showCannResponse = {this.showCannResponse}
                 setCannedResponse = {this.setCannedResponse}
                 selectedCannedResponse = {this.state.selectedCannedResponse}
