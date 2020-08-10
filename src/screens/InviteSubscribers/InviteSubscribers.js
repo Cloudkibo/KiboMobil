@@ -78,6 +78,7 @@ class InviteSubscribers extends React.Component {
           <Block flex={0.3} middle><Text size={16}> Select Page:</Text></Block>
           <Block flex={0.7} middle>
             <Select
+              dropDownStyle={{width: width * 0.5}}
               style={{width: width * 0.5}}
               value={this.state.selectedPage.pageName}
               options={this.getPageOptions()}

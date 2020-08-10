@@ -6,7 +6,6 @@ const initialState = {
 }
 
 export function whatsAppChatInfo (state = initialState, action) {
-  console.log('whatsapp reducer', action)
   let openSessions = state.openSessions
   let closeSessions = state.closeSessions
   switch (action.type) {
@@ -48,7 +47,6 @@ export function whatsAppChatInfo (state = initialState, action) {
         sessions: action.sessions
       })
     case ActionTypes.UPDATE_WHATSAPP_CHAT:
-      console.log('UPDATE_WHATSAPP_CHAT', action.chat)
       return Object.assign({}, state, {
         chat: action.chat
       })
