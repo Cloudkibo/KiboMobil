@@ -1,11 +1,17 @@
 import React from 'react';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
+import { updatePlatform } from '../../redux/actions/basicInfo.actions'
+import { clearWhatsappDashboardData } from '../../redux/actions/whatsAppDashboard.actions'
+import { clearDashboardData} from '../../redux/actions/dashboard.actions'
+import { TouchableOpacity, StyleSheet, Platform, Dimensions,View } from 'react-native';
 import { Button, Block, NavBar, Input, Text, theme } from 'galio-framework';
-
-import Icon from './Icon';
-import materialTheme from '../constants/Theme';
-import Tabs from './Tabs';
+import {ListItem, Card } from 'react-native-elements'
+import Icon from '../../components/Icon';
+import materialTheme from '../../constants/Theme';
+import Tabs from '../../components/Tabs';
+import SelectPlatform from './SelectPlatform'
 
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
@@ -45,53 +51,43 @@ const SearchButton = ({isWhite, style, navigation}) => (
   </TouchableOpacity>
 );
 
-class Header extends React.Component {
+class DashboardHeader extends React.Component {
+    constructor (props, context) {
+        super(props, context)
+        this.state = {
+            showAssignmentModal: false
+          }
+          this.toggleAssignmentModal = this.toggleAssignmentModal.bind(this)
+    }
   handleLeftPress = () => {
     const { back, navigation } = this.props;
     return (back ? navigation.goBack() : navigation.openDrawer());
   }
-
+  toggleAssignmentModal (value) {
+    this.setState({showAssignmentModal: false})
+  }
   renderRight = () => {
     const { white, title, navigation, scene } = this.props;
-    // const { options } = scene.descriptor;
-    // const routeName = options.headerTitle; // wip
-
-    if (title ===  'Title') {
-      return ([
-        <ChatButton key='chat-search' navigation={navigation} isWhite={white} />,
-        <BasketButton key='basket-search' navigation={navigation} isWhite={white} />
-      ]);
-    }
-
-    switch (title) {
-      case 'About':
-      case 'Agreement':
-      case 'Cart':
-      case 'Categories':
-      case 'Category':
-      case 'Deals':
-      case 'Home':
-      case 'Woman':
-      case 'Man':
-      case 'Kids':
-      case 'NewCollection':
-      case 'Notifications':
-      case 'Privacy':
-      case 'Profile':
-      case 'Search':
-      case 'Settings':
-        return ([
-          <ChatButton key='chat-search' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-search' navigation={navigation} isWhite={white} />
-        ]);
-      case 'Product':
-        return ([
-          <SearchButton key='search-product' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-product' navigation={navigation} isWhite={white} />
-        ]);
-      default:
-        break;
-    }
+    return (
+    <Block flex={0.8} row >
+    <TouchableOpacity onPress={() => this.setState({showAssignmentModal: true})}>
+    <Icon
+        size={20}
+        name='dots-three-vertical'
+        family='Entypo'
+        style={{marginLeft: 40, marginTop: 6}}
+    />
+    </TouchableOpacity>
+         <SelectPlatform
+          showModal={this.state.showAssignmentModal}
+          toggleAssignmentModal={this.toggleAssignmentModal}
+          user = {this.props.user}
+          updatePlatform = {this.props.updatePlatform}
+          clearWhatsappDashboardData = {this.props.clearWhatsappDashboardData}
+          clearDashboardData = {this.props.clearDashboardData}
+        />
+    </Block>
+    )
   }
 
   renderSearch = () => {
@@ -178,8 +174,8 @@ class Header extends React.Component {
           right={this.renderRight()}
           rightStyle={{ alignItems: 'center' }}
           leftStyle={{ paddingTop: 3, flex: 0.3 }}
-          leftIconName={back ? 'arrowleft' : "navicon"}
-          leftIconFamily={back ? 'AntDesign' : null}
+          leftIconName={back ? null : "navicon"}
+          // leftIconFamily="font-awesome"
           leftIconColor={white ? theme.COLORS.WHITE : theme.COLORS.ICON}
           titleStyle={[
             styles.title,
@@ -192,7 +188,22 @@ class Header extends React.Component {
   }
 }
 
-export default withNavigation(Header);
+function mapStateToProps (state) {
+    return {
+      user: (state.basicInfo.user),
+      // socketData: (state.socketInfo.socketData)
+    }
+  }
+
+  function mapDispatchToProps (dispatch) {
+    return bindActionCreators({
+        updatePlatform: updatePlatform,
+        clearWhatsappDashboardData: clearWhatsappDashboardData,
+        clearDashboardData: clearDashboardData
+    }, dispatch)
+  }
+
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardHeader)
 
 const styles = StyleSheet.create({
   button: {

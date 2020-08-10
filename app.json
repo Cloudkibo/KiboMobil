@@ -10,7 +10,7 @@
       "android"
     ],
     "entryPoint": "./src/App.js",
-    "version": "1.0.3",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/appstore.png",
     "notification": {
@@ -31,11 +31,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.cloudkibo.kibopush",
-      "buildNumber": "1.0.3"
+      "buildNumber": "1.0.6",
+      "usesIcloudStorage": true
     },
     "android": {
       "package": "com.cloudkibo.kibopush",
-      "versionCode": 3
+      "versionCode": 6
     }
   }
 }

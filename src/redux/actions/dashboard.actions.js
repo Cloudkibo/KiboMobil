@@ -16,3 +16,9 @@ export function loadDashboardData () {
       })
   }
 }
+
+export function clearDashboardData() {
+  return (dispatch) => {
+    dispatch(updateDashboard(null))
+  }
+}

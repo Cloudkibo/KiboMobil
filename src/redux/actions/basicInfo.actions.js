@@ -9,6 +9,13 @@ export function setSocketStatus (data) {
   }
 }
 
+export function showAutomatedOptions (data) {
+  return {
+    type: ActionTypes.GET_AUTOMATED_OPTIONS,
+    data
+  }
+}
+
 export function showuserdetails (data) {
   // NOTE: don't remove following auth method call
   // auth.putUserId(data._id)
@@ -55,5 +62,22 @@ export function updatePicture (data, callback) {
           }
         }
       })
+  }
+}
+
+export function updatePlatform (data) {
+  return (dispatch) => {
+    callApi('users/updatePlatform', 'post', data).then(res => {
+      if (res.status === 'success') {
+        dispatch(getuserdetails())
+      } else {
+      }
+    })
+  }
+}
+
+export function getAutomatedOptions () {
+  return (dispatch) => {
+    callApi('company/getAutomatedOptions').then(res => dispatch(showAutomatedOptions(res.payload)))
   }
 }

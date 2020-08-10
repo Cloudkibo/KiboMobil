@@ -99,7 +99,7 @@ class AssignSession extends React.Component {
         let activeSession = this.props.activeSession
         activeSession.is_assigned = false
         this.props.handleAssignment(activeSession)
-        Toast.default.show('Agent unassigned succesfully')
+        Toast.default.show('Agent unassigned successfully')
       } else {
         Toast.default.show('Agent was unable to be unassigned')
       }

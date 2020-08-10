@@ -12,16 +12,12 @@ import {
   assignToTeam,
   assignToAgent,
   sendNotifications,
-  sendChatMessage,
-  uploadAttachment,
-  sendAttachment,
   uploadRecording,
-  markRead,
   updateLiveChatInfo,
   getSMPStatus,
   updateSessionProfilePicture,
-  deletefile
 } from '../../redux/actions/liveChat.actions'
+import {sendChatMessage, uploadAttachment, sendAttachment, deletefile, markRead} from '../../redux/actions/whatsAppChat.actions'
 import {getZoomIntegrations, createZoomMeeting, loadcannedResponses} from '../../redux/actions/settings.action'
 import { clearSocketData } from '../../redux/actions/socket.actions'
 import { loadTeamsList } from '../../redux/actions/teams.actions'
@@ -43,26 +39,20 @@ class LiveChat extends React.Component {
       tabValue: props.route.params.tabValue,
       cannedResponses: []
     }
-    this.isSMPApproved = this.isSMPApproved.bind(this)
     this.setMessageData = this.setMessageData.bind(this)
     this.performAction = this.performAction.bind(this)
     this.handleAgents = this.handleAgents.bind(this)
     this.fetchTeamAgents = this.fetchTeamAgents.bind(this)
     this.updateState = this.updateState.bind(this)
-    this.handleSMPStatus = this.handleSMPStatus.bind(this)
-    // if( props.route.params && !props.route.params.sessions) {
-
-    // }
     this.props.loadcannedResponses()
     this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
-    props.getSMPStatus(this.handleSMPStatus)
     props.getZoomIntegrations()
     // if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
     //   this.props.markRead(props.route.params.activeSession._id)
     // }
     if (this.props.user.currentPlan.unique_ID === 'plan_C' || this.props.user.currentPlan.unique_ID === 'plan_D') {
-      props.loadMembersList()
-      props.loadTeamsList({pageId: props.route.params.activeSession.pageId._id})
+      // props.loadMembersList()
+      // props.loadTeamsList({pageId: props.route.params.activeSession.pageId._id})
     }
   }
 
@@ -80,19 +70,8 @@ class LiveChat extends React.Component {
       })
     }
   }
-
-  handleSMPStatus (res) {
-    if (res.status === 'success') {
-      this.setState({smpStatus: res.payload})
-    }
-  }
-
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
-
-    if (nextProps.openSessions && !this.state.sessions) {
-      this.setState({sessions:nextProps.openSessions})
-    }
   /* eslint-enable */
     let state = {}
     if (nextProps.cannedResponses !== this.props.cannedResponses) {
@@ -127,14 +106,14 @@ class LiveChat extends React.Component {
     // }
   }
 
-  isSMPApproved () {
-    const page = this.state.smpStatus.find((item) => item.pageId === this.state.activeSession.pageId._id)
-    if (page && page.smpStatus === 'approved') {
-      return true
-    } else {
-      return false
-    }
-  }
+  // isSMPApproved () {
+  //   const page = this.state.smpStatus.find((item) => item.pageId === this.state.activeSession.pageId._id)
+  //   if (page && page.smpStatus === 'approved') {
+  //     return true
+  //   } else {
+  //     return false
+  //   }
+  // }
 
   performAction (errorMsg, session) {
     let isAllowed = true
@@ -178,23 +157,19 @@ class LiveChat extends React.Component {
     // }
   }
 
-  setMessageData (session, payload) {
+  setMessageData(session, payload, urlMeta) {
     const data = {
-      sender_id: session.pageId._id,
-      recipient_id: session._id,
-      sender_fb_id: session.pageId.pageId,
-      recipient_fb_id: session.senderId,
-      subscriber_id: session._id,
-      company_id: session.companyId,
-      payload: payload,
-      url_meta: this.state.urlmeta,
+      senderNumber: this.props.automated_options.whatsApp.businessNumber,
+      recipientNumber: this.state.activeSession.number,
+      contactId: session._id,
+      payload,
       datetime: new Date().toString(),
-      status: 'unseen',
-      replied_by: {
-        type: 'agent',
+      repliedBy: {
         id: this.props.user._id,
-        name: this.props.user.name
-      }
+        name: this.props.user.name,
+        type: 'agent'
+      },
+      url_meta: urlMeta
     }
     return data
   }
@@ -225,16 +200,16 @@ class LiveChat extends React.Component {
             performAction={this.performAction}
             alertMsg={this.alertMsg}
             user={this.props.user}
+            isWhatspModule = {true}
             sendChatMessage={this.props.sendChatMessage}
             uploadAttachment={this.props.uploadAttachment}
             sendAttachment={this.props.sendAttachment}
-            uploadRecording={this.props.uploadRecording}
             loadingChat={this.state.loadingChat}
             fetchUserChats={this.props.fetchUserChats}
             markRead={this.props.markRead}
             deletefile={this.props.deletefile}
             fetchUrlMeta={this.props.urlMetaData}
-            isSMPApproved={this.isSMPApproved()}
+            isSMPApproved={false}
             showUploadAttachment
             showRecordAudio
             showSticker
@@ -258,16 +233,17 @@ function mapStateToProps (state) {
     userChat: (state.liveChat.userChat),
     chatCount: (state.liveChat.chatCount),
     pages: (state.pagesInfo.pages),
-    user: (state.basicInfo.user),
     // members: (state.membersInfo.members),
     // teams: (state.teamsInfo.teams),
     socketData: (state.socketInfo.socketData),
-    openSessions: (state.liveChat.openSessions),
-    openCount: (state.liveChat.openCount),
-    closeCount: (state.liveChat.closeCount),
-    closeSessions: (state.liveChat.closeSessions),
+    openSessions: (state.whatsAppChatInfo.openSessions),
+    openCount: (state.whatsAppChatInfo.openCount),
+    closeCount: (state.whatsAppChatInfo.closeCount),
+    closeSessions: (state.whatsAppChatInfo.closeSessions),
+    user: (state.basicInfo.user),
     cannedResponses: state.settingsInfo.cannedResponses,
-    zoomIntegrations: (state.settingsInfo.zoomIntegrations)
+    zoomIntegrations: (state.settingsInfo.zoomIntegrations),
+    automated_options: (state.basicInfo.automated_options),
   }
 }
 

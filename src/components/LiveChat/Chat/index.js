@@ -1,13 +1,14 @@
 import React from 'react'
 import { Block, Text, Button } from 'galio-framework'
-import { KeyboardAvoidingView, View, ScrollView, TouchableOpacity, StyleSheet, TextInput} from 'react-native'
+import { KeyboardAvoidingView, View, ScrollView, TouchableOpacity, StyleSheet, TextInput, Dimensions} from 'react-native'
 import {ListItem, Card } from 'react-native-elements'
 import { materialTheme } from '../../../constants/'
 import { displayDate, showDate } from '../../../screens/LiveChat/utilities'
 import moment from 'moment'
 import BODY from './Body'
 import FOOTER from './MessageForm'
-
+import ZOOMMODAL from './ZoomModal'
+const { height } = Dimensions.get('screen')
 
 class Chat extends React.Component {
   constructor (props, context) {
@@ -16,17 +17,23 @@ class Chat extends React.Component {
       cannedResponsesAll: [],
       cannedResponses: [],
       showCannedMessages: false,
-      selectedCannedResponse: null
+      selectedCannedResponse: null,
+      showZoomModal: false
     }
     this.overrideUserInput = this.overrideUserInput.bind(this)
     this.updateNewMessage = this.updateNewMessage.bind(this)
     this.showCannResponse = this.showCannResponse.bind(this)
-    this.saveCannedResponses =this.saveCannedResponses.bind(this)
-    this.selectCannedResponse= this.selectCannedResponse.bind(this)
+    this.saveCannedResponses = this.saveCannedResponses.bind(this)
+    this.selectCannedResponse = this.selectCannedResponse.bind(this)
     this.onCannedMessageChange = this.onCannedMessageChange.bind(this)
     this.setCannedResponse = this.setCannedResponse.bind(this)
+    this.setZoomModal = this.setZoomModal.bind(this)
 
     this.newMessage = false
+  }
+
+  setZoomModal () {
+    this.setState({showZoomModal: !this.state.showZoomModal})
   }
 
   setCannedResponse (cannResponse) {
@@ -97,6 +104,23 @@ class Chat extends React.Component {
           flex: 1
         }}
       >
+        {this.state.showZoomModal &&
+          <ZOOMMODAL
+            zoomIntegrations={this.props.zoomIntegrations}
+            createZoomMeeting={this.props.createZoomMeeting}
+            setZoomModal={this.setZoomModal}
+            showZoomModal={this.state.showZoomModal}
+            performAction={this.props.performAction}
+            activeSession={this.props.activeSession}
+            user={this.props.user}
+            setMessageData={this.props.setMessageData}
+            sendChatMessage={this.props.sendChatMessage}
+            updateState={this.props.updateState}
+            updateNewMessage={this.updateNewMessage}
+            sessions={this.props.sessions}
+            userChat={this.props.userChat}
+          />
+        }
         <Block flex>
           <View style= {{flex:1}}>
           <BODY
@@ -115,13 +139,15 @@ class Chat extends React.Component {
           />
            {(this.state.showCannedMessages && !this.state.selectedCannedResponse && this.state.cannedResponses.length > 0) ? <View style={{maxHeight: 150, marginLeft: 25, marginRight: 25}}>
              <ScrollView
+              keyboardShouldPersistTaps = {'always'}
               showsVerticalScrollIndicator = {true}
               persistentScrollbar={true}
-             > 
+             >
            {this.state.cannedResponses.map((cannedResponse, i) => (
-            <TouchableOpacity  onPress={() => this.selectCannedResponse(cannedResponse)}>
-            <ListItem 
-            key={i}
+            <TouchableOpacity  key={`touch${i}`} onPress={() => this.selectCannedResponse(cannedResponse)}>
+            <ListItem
+            key={`list${i}`}
+            onPress={() => this.selectCannedResponse(cannedResponse)}
             title={cannedResponse.responseCode}
             subtitle={cannedResponse.responseMessage.length > 33 ? cannedResponse.responseMessage.substring(0, 33) + "……": cannedResponse.responseMessage}
             containerStyle = {{height: 50}}
@@ -150,10 +176,10 @@ class Chat extends React.Component {
      </ScrollView>
         </Card>
       </View>
-        } 
+        }
           </View>
-          
-          {!moment(this.props.activeSession.lastMessagedAt).isAfter(moment().subtract(24, 'hours')) && !this.props.isSMPApproved
+
+          {!moment(this.props.activeSession.lastMessagedAt).isAfter(moment().subtract(24, 'hours')) && (!this.props.isSMPApproved || this.props.isWhatspModule)
             ? <Block row style={{backgroundColor: materialTheme.COLORS.ERROR, margin: 10, borderRadius: 10}}>
               <Text style={{color: 'white', marginVertical: 5, marginHorizontal: 10}}>
                 Chat's 24 hours window session has been expired for this subscriber. You cannot send a message to this subscriber until they message you.
@@ -171,6 +197,7 @@ class Chat extends React.Component {
                 </Button>
               </Block>
               : <FOOTER
+                isWhatspModule = {this.props.isWhatspModule}
                 showCannResponse = {this.showCannResponse}
                 setCannedResponse = {this.setCannedResponse}
                 selectedCannedResponse = {this.state.selectedCannedResponse}
@@ -201,6 +228,10 @@ class Chat extends React.Component {
                 showThumbsUp={this.props.showThumbsUp}
                 setMessageData={this.props.setMessageData}
                 filesAccepted={this.props.filesAccepted}
+                showZoom={this.props.showZoom}
+                zoomIntegrations={this.props.zoomIntegrations}
+                createZoomMeeting={this.props.createZoomMeeting}
+                setZoomModal={this.setZoomModal}
               />
           }
         </Block>

@@ -5,7 +5,7 @@ import io from 'socket.io-client'
 import { setSocketStatus } from '../redux/actions/basicInfo.actions'
 import { socketUpdate, updateSessions } from './../redux/actions/liveChat.actions'
 import { handleSocketEvent } from '../redux/actions/socket.actions'
-
+import { updateWhatspSessions } from './../redux/actions/whatsAppChat.actions'
 const socket = io('https://kibochat.cloudkibo.com')
 let store
 
@@ -48,6 +48,8 @@ socket.on('message', (data) => {
     store.dispatch(handleSocketEvent(data))
   } else if (data.action === 'session_assign') {
     store.dispatch(updateSessions(data.payload.data))
+  } else if(data.action === 'new_session_created_whatsapp') {
+    store.dispatch(updateWhatspSessions(data.payload))
   }
   if (callbacks[data.action]) {
     callbacks[data.action](data.payload)

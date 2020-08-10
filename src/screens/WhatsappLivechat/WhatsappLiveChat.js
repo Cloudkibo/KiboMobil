@@ -1,23 +1,20 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator,Platform } from 'react-native'
-import { Block, Text, theme, Input, Button } from 'galio-framework'
+import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
+import { Block, Text, theme, Input, Button } from 'galio-framework'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
-import * as Notifications from 'expo-notifications'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
-import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead} from '../../redux/actions/liveChat.actions'
-import { updatePicture } from '../../redux/actions/subscribers.actions'
-import { handleSocketEvent } from './socket'
-import { clearSocketData } from '../../redux/actions/socket.actions'
+import {getWhatsAppMessageTemplates} from '../../redux/actions/settings.action'
+import {fetchOpenSessions, fetchCloseSessions, markRead} from '../../redux/actions/whatsAppChat.actions'
 // import { CommonActions } from '@react-navigation/native'
 
 const { width } = Dimensions.get('screen')
 
-class LiveChat extends React.Component {
+class WhastappLiveChat extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
@@ -46,25 +43,24 @@ class LiveChat extends React.Component {
     this.profilePicError = this.profilePicError.bind(this)
     this.changeActiveSession = this.changeActiveSession.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
-
+    this.openTemplatePage = this.openTemplatePage.bind(this)
     // this.fetchSessions(true, 'none', true)
+    this.props.getWhatsAppMessageTemplates()
   }
 
+
+
+  openTemplatePage () {
+    this.props.navigation.navigate('WhatsappTemplateMessage')
+  }
   changeActiveSession (session) {
     if (session.unreadCount && session.unreadCount > 0) {
       session.unreadCount = 0
       this.props.markRead(session._id)
     }
     this.setState({activeSession: session})
-    this.props.navigation.navigate('Chat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
-    session.unreadCount = 0
-  }
-
-  getPushNotificationsAsync = async () => {
-    // console.log('Notifications in Livechat', Notifications)
-    // let notification =  Notifications.getPresentedNotificationsAsync()
-    // console.log('notification in Live chat', notification)
-
+    this.props.navigation.navigate('WhatsappChat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
+    // session.unreadCount = 0
   }
 
   componentDidMount () {
@@ -72,13 +68,6 @@ class LiveChat extends React.Component {
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
     })
-    console.log('this.props.route.params', this.props.route)
-    if (this.props.route.params && this.props.route.params.activeSession){
-      this.props.markRead(this.props.route.params.activeSession._id)
-      this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
-      this.props.route.params = null
-    }
-      this.getPushNotificationsAsync()
   }
 
   componentWillUnmount () {
@@ -87,17 +76,13 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
-
-    if (this.props.route.params && this.props.route.params.activeSession){
-      this.props.markRead(this.props.route.params.activeSession._id)
-      this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
-      this.props.route.params = null
-    }
-    
   /* eslint-enable */
+  if(this.props.route.params && this.props.route.params.activeSession) {
+    this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
+    this.props.route.params = null
+  }
     let state = {}
     if (nextProps.openSessions || nextProps.closeSessions) {
-      
       state.loading = false
       state.sessionsLoading = false
       let sessions = this.state.tabValue === 'open' ? nextProps.openSessions : nextProps.closeSessions
@@ -108,17 +93,6 @@ class LiveChat extends React.Component {
     this.setState({
       ...state
     })
-
-    if (nextProps.socketData) {
-      handleSocketEvent(
-        nextProps.socketData,
-        this.state,
-        this.props,
-        this.props.updateLiveChatInfo,
-        this.props.user,
-        this.props.clearSocketData
-      )
-    }
   }
 
   changeTab (value) {
@@ -129,44 +103,28 @@ class LiveChat extends React.Component {
     })
   }
 
-  profilePicError (subscriber) {
-    this.props.updatePicture({ subscriber }, (newProfilePic) => {
-      if (newProfilePic) {
-        this.props.updateSessionProfilePicture(subscriber, newProfilePic)
-        // e.target.src = newProfilePic
-      }
-    })
+  profilePicError (subscriber, e) {
+    e.persist()
+    e.target.src = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
   }
 
   getChatPreview (message, repliedBy, subscriberName) {
     let chatPreview = ''
-    if (message.componentType) {
+    if (message.format === 'whatsApp') {
+      // subscriber
+      chatPreview = `${subscriberName}`
+      if (message.componentType !== 'text') {
+        chatPreview = `${chatPreview} shared ${message.componentType}`
+      } else {
+        chatPreview = `${chatPreview}: ${message.text}`
+      }
+    } else {
       // agent
       chatPreview = (!repliedBy || (repliedBy.id === this.props.user._id)) ? `You` : `${repliedBy.name}`
       if (message.componentType === 'text') {
         chatPreview = `${chatPreview}: ${message.text}`
       } else {
         chatPreview = `${chatPreview} shared ${message.componentType}`
-      }
-    } else {
-      // subscriber
-      chatPreview = `${subscriberName}`
-      if (message.attachments) {
-        if (message.attachments[0].type === 'template' &&
-          message.attachments[0].payload.template_type === 'generic'
-        ) {
-          chatPreview = message.attachments[0].payload.elements.length > 1 ? `${chatPreview} sent a gallery` : `${chatPreview} sent a card`
-        } else if (message.attachments[0].type === 'template' &&
-          message.attachments[0].payload.template_type === 'media'
-        ) {
-          chatPreview = `${chatPreview} sent a media`
-        } else if (['image', 'audio', 'location', 'video', 'file'].includes(message.attachments[0].type)) {
-          chatPreview = `${chatPreview} shared ${message.attachments[0].type}`
-        } else {
-          chatPreview = `${chatPreview}: ${message.text}`
-        }
-      } else {
-        chatPreview = `${chatPreview}: ${message.text}`
       }
     }
     return chatPreview
@@ -198,12 +156,6 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillMount () {
-
-
-    // console.log('this.props.route.params', this.props.route)
-    // if (this.props.route.params && this.props.route.params.activeSession){
-    //   this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession})
-    // }
   /* eslint-enable */
   // console.log('props.route.params.activeSession',this.props.route.params.activeSession)
     // this.props.navigation.dispatch(
@@ -314,10 +266,9 @@ class LiveChat extends React.Component {
               onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
             />
           }
-              {/* <Button
+           <Button
               style={styles.myButton}
-              onPress={this.assign}><MaterialIcons name="message"  size={30} color="white"/></Button> */}
-        {/* <MaterialCommunityIcons name="tooltip-plus-outline"  size={50} color="blue" style={{ margin: 20, position: "absolute", bottom: 0,right: 0}}/> */}
+              onPress={this.openTemplatePage}><MaterialIcons name="message"  size={30} color="white"/></Button>
         </Block>
       </Block>
     )
@@ -326,14 +277,13 @@ class LiveChat extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    openSessions: (state.liveChat.openSessions),
-    openCount: (state.liveChat.openCount),
-    closeCount: (state.liveChat.closeCount),
-    closeSessions: (state.liveChat.closeSessions),
+    openSessions: (state.whatsAppChatInfo.openSessions),
+    openCount: (state.whatsAppChatInfo.openCount),
+    closeCount: (state.whatsAppChatInfo.closeCount),
+    closeSessions: (state.whatsAppChatInfo.closeSessions),
     user: (state.basicInfo.user),
-    socketData: (state.socketInfo.socketData),
-    userChat: (state.liveChat.userChat),
-    chatCount: (state.liveChat.chatCount)
+    automated_options: (state.basicInfo.automated_options),
+
   }
 }
 
@@ -341,15 +291,12 @@ function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     fetchOpenSessions,
     fetchCloseSessions,
-    updateSessionProfilePicture,
-    updatePicture,
-    clearSocketData,
-    updateLiveChatInfo,
+    getWhatsAppMessageTemplates,
     markRead
   }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LiveChat)
+export default connect(mapStateToProps, mapDispatchToProps)(WhastappLiveChat)
 const styles = StyleSheet.create({
   block: {
     width: width
@@ -380,11 +327,11 @@ const styles = StyleSheet.create({
     padding: 5,
     height: 50,
     width: 50,  //The Width must be the same as the height
-    borderRadius:120, //Then Make the Border Radius twice the size of width or Height   
+    borderRadius:120, //Then Make the Border Radius twice the size of width or Height
     backgroundColor:'#716aca',
     alignItems: 'center',
     margin: 20,
-    position: "absolute", 
+    position: "absolute",
     bottom: 0,
     right: 0
   }
