@@ -91,7 +91,7 @@ class WhatsappTemplateMessage extends React.Component {
     }
     _setMessageData(session, payload, urlMeta) {
       const data = {
-        senderNumber: this.props.automated_options.flockSendWhatsApp.number,
+        senderNumber: this.props.automated_options.whatsApp.businessNumber,
         recipientNumber: session.number,
         contactId: session._id,
         payload,
