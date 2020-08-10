@@ -64,6 +64,7 @@ class WhastappLiveChat extends React.Component {
   }
 
   componentDidMount () {
+    console.log('componentDid mount called')
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
@@ -77,6 +78,11 @@ class WhastappLiveChat extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
+  console.log('props.route.params',this.props.route.params)
+  if(this.props.route.params && this.props.route.params.activeSession) {
+    this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
+    this.props.route.params = null
+  }
     let state = {}
     if (nextProps.openSessions || nextProps.closeSessions) {
       state.loading = false

@@ -169,6 +169,7 @@ function WhatsappLivechat (props) {
               <ChatHeader
                 back
                 activeSession={activeSession}
+                isWhatspHeader = {true}
                 title={activeSession.name}
                 navigation={navigation}
                 scene={scene}
@@ -184,7 +185,7 @@ function WhatsappLivechat (props) {
           header: ({ navigation, scene }) => (
             <Header
               back
-              title='send Message'
+              title='Send Whastapp Message'
               navigation={navigation}
               scene={scene}
             />
