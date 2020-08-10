@@ -45,21 +45,17 @@ export function showOpenSessions (data) {
     }
   }
 export function fetchOpenSessions (data) {
-    console.log('data for fetchOpenSessions', data)
     return (dispatch) => {
       callApi('whatsAppSessions/getOpenSessions', 'post', data)
         .then(res => {
-          console.log('response from fetchSessions', res)
           dispatch(showOpenSessions(res.payload))
         })
     }
   }
   export function fetchCloseSessions (data) {
-    console.log('data for fetchCloseSessions', data)
     return (dispatch) => {
       callApi('whatsAppSessions/getClosedSessions', 'post', data)
         .then(res => {
-          console.log('response from fetchSessions', res)
           dispatch(showCloseChatSessions(res.payload, data.first_page))
         })
     }
@@ -68,7 +64,6 @@ export function fetchOpenSessions (data) {
   export function markRead (sessionid) {
     return (dispatch) => {
       callApi(`whatsAppSessions/markread/${sessionid}`).then(res => {
-        console.log('Mark as read Response', res)
         dispatch(UpdateUnreadCount(sessionid))
       })
     }
@@ -96,5 +91,3 @@ export function fetchOpenSessions (data) {
     }
   }
 
-
-  

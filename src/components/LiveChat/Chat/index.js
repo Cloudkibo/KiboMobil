@@ -17,17 +17,23 @@ class Chat extends React.Component {
       cannedResponsesAll: [],
       cannedResponses: [],
       showCannedMessages: false,
-      selectedCannedResponse: null
+      selectedCannedResponse: null,
+      showZoomModal: false
     }
     this.overrideUserInput = this.overrideUserInput.bind(this)
     this.updateNewMessage = this.updateNewMessage.bind(this)
     this.showCannResponse = this.showCannResponse.bind(this)
-    this.saveCannedResponses =this.saveCannedResponses.bind(this)
-    this.selectCannedResponse= this.selectCannedResponse.bind(this)
+    this.saveCannedResponses = this.saveCannedResponses.bind(this)
+    this.selectCannedResponse = this.selectCannedResponse.bind(this)
     this.onCannedMessageChange = this.onCannedMessageChange.bind(this)
     this.setCannedResponse = this.setCannedResponse.bind(this)
+    this.setZoomModal = this.setZoomModal.bind(this)
 
     this.newMessage = false
+  }
+
+  setZoomModal () {
+    this.setState({showZoomModal: !this.state.showZoomModal})
   }
 
   setCannedResponse (cannResponse) {
@@ -45,7 +51,6 @@ class Chat extends React.Component {
   }
 
   selectCannedResponse (selectedcannResponse) {
-    console.log('selectCannedResponse called')
     let cannResponse = {...selectedcannResponse}
     let activeSession = this.props.activeSession
     if (cannResponse.responseMessage.includes('{{user_full_name}}')) {
@@ -99,7 +104,23 @@ class Chat extends React.Component {
           flex: 1
         }}
       >
-        <ZOOMMODAL />
+        {this.state.showZoomModal &&
+          <ZOOMMODAL
+            zoomIntegrations={this.props.zoomIntegrations}
+            createZoomMeeting={this.props.createZoomMeeting}
+            setZoomModal={this.setZoomModal}
+            showZoomModal={this.state.showZoomModal}
+            performAction={this.props.performAction}
+            activeSession={this.props.activeSession}
+            user={this.props.user}
+            setMessageData={this.props.setMessageData}
+            sendChatMessage={this.props.sendChatMessage}
+            updateState={this.props.updateState}
+            updateNewMessage={this.updateNewMessage}
+            sessions={this.props.sessions}
+            userChat={this.props.userChat}
+          />
+        }
         <Block flex>
           <View style= {{flex:1}}>
           <BODY
@@ -209,6 +230,7 @@ class Chat extends React.Component {
                 showZoom={this.props.showZoom}
                 zoomIntegrations={this.props.zoomIntegrations}
                 createZoomMeeting={this.props.createZoomMeeting}
+                setZoomModal={this.setZoomModal}
               />
           }
         </Block>

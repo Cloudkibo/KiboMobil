@@ -32,24 +32,25 @@ class SelectPlatform extends React.Component {
   UNSAFE_componentWillReceiveProps (nextProps) {
       if(nextProps.user) {
         let currentSelectedValue  = {value: nextProps.user.platform,label: nextProps.user.platform === 'messenger' ? 'Messenger' : 'WhatsApp'}
-        this.setState({currentSelectedValue: currentSelectedValue})  
+        this.setState({currentSelectedValue: currentSelectedValue})
     }
   /* eslint-enable */
   }
 
   changeSelected (item) {
     let value =  {value: item.value,label: item.value === 'messenger' ? 'Messenger' : 'WhatsApp'}
-    this.setState({currentSelectedValue: value})  
+    this.setState({currentSelectedValue: value})
 }
 
   assign () {
-      console.log('this.state.currentSelectedValue.value', this.state.currentSelectedValue.value)
       this.props.updatePlatform({platform :this.state.currentSelectedValue.value})
       this.props.toggleAssignmentModal(false)
       if(this.state.currentSelectedValue.value ==='messenger') {
         this.props.clearDashboardData()
+        this.props.clearWhatsappDashboardData()
       } else {
         this.props.clearWhatsappDashboardData()
+        this.props.clearDashboardData()
       }
   }
 
