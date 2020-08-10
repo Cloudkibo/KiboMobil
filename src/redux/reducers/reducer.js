@@ -11,7 +11,7 @@ import {socketInfo} from './socket.reducer'
 import {settingsInfo} from './settings.reducer'
 import {smsWhatsAppDashboardInfo} from './smsWhatsAppDashboard.reducer'
 import {whatsAppChatInfo} from './whatsAppChat.reducer'
-
+import {whatsAppSubscribersInfo} from './whatsAppSubscribers.reducer'
 
 const appReducer = combineReducers({
   dashboardInfo,
@@ -24,7 +24,8 @@ const appReducer = combineReducers({
   socketInfo,
   settingsInfo,
   smsWhatsAppDashboardInfo,
-  whatsAppChatInfo
+  whatsAppChatInfo,
+  whatsAppSubscribersInfo
 })
 
 export default appReducer

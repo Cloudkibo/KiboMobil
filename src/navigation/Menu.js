@@ -21,8 +21,9 @@ function CustomDrawerContent ({
     'Dashboard',
     'Live Chat',
     'Invite Subscribers',
+    'Subscribers',
     'User Guide'
-  ] :[
+  ] : [
     'Dashboard',
     'Live Chat',
     'Subscribers',

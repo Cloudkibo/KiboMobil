@@ -64,7 +64,6 @@ class WhastappLiveChat extends React.Component {
   }
 
   componentDidMount () {
-    console.log('componentDid mount called')
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
@@ -78,7 +77,6 @@ class WhastappLiveChat extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
-  console.log('props.route.params',this.props.route.params)
   if(this.props.route.params && this.props.route.params.activeSession) {
     this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
     this.props.route.params = null
@@ -285,7 +283,7 @@ function mapStateToProps (state) {
     closeSessions: (state.whatsAppChatInfo.closeSessions),
     user: (state.basicInfo.user),
     automated_options: (state.basicInfo.automated_options),
-    
+
   }
 }
 
@@ -329,11 +327,11 @@ const styles = StyleSheet.create({
     padding: 5,
     height: 50,
     width: 50,  //The Width must be the same as the height
-    borderRadius:120, //Then Make the Border Radius twice the size of width or Height   
+    borderRadius:120, //Then Make the Border Radius twice the size of width or Height
     backgroundColor:'#716aca',
     alignItems: 'center',
     margin: 20,
-    position: "absolute", 
+    position: "absolute",
     bottom: 0,
     right: 0
   }

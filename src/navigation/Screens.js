@@ -21,6 +21,7 @@ import WhatsappChatScreen from '../screens/WhatsappLivechat/WhatsappChat'
 import DashboardHeader from '../screens/Dashboard/DashboardHeader'
 import ChatHeader from '../screens/LiveChat/ChatHeader'
 import SignInScreen from '../screens/SignIn/SignIn'
+import WhatsAppSubscribers from '../screens/WhatsAppSubscribers/WhatsAppSubscribers'
 
 import CustomDrawerContent from './Menu'
 
@@ -135,7 +136,7 @@ function LiveChatStack (props) {
         }}
       />
 
-      
+
     </Stack.Navigator>
   )
 }
@@ -185,6 +186,28 @@ function WhatsappLivechat (props) {
             <Header
               back
               title='Send Whastapp Message'
+              navigation={navigation}
+              scene={scene}
+            />
+          )
+        }}
+      />
+    </Stack.Navigator>
+  )
+}
+
+function WhatsappSubscribersStack (props) {
+  return (
+    <Stack.Navigator mode='card' headerMode='screen'>
+      <Stack.Screen
+        name='Live Chat'
+        component={WhatsAppSubscribers}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              search
+              options
+              title='Subscribers'
               navigation={navigation}
               scene={scene}
             />
@@ -320,7 +343,7 @@ function AppStack (props, param) {
       />
       <Drawer.Screen
         name='Subscribers'
-        component={SubscribersStack}
+        component={user && user.platform === 'whatsApp' ? WhatsappSubscribersStack : SubscribersStack}
         options={{
           drawerIcon: ({ focused }) => (
             <Icon

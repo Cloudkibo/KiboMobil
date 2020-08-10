@@ -96,7 +96,6 @@ class Chat extends React.Component {
   }
 
   render () {
-    console.log('this.props.activeSession.lastMessagedAt', this.props.activeSession.lastMessagedAt)
     return (
       <KeyboardAvoidingView
         keyboardVerticalOffset={100}

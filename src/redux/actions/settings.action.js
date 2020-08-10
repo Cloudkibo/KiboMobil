@@ -57,7 +57,6 @@ export function getWhatsAppMessageTemplates () {
   return (dispatch) => {
     callApi('company/getWhatsAppMessageTemplates')
       .then(res => {
-        console.log('response from getWhatsAppMessageTemplates', res)
         dispatch(updateWhatsAppMessageTemplates(res.payload))
     })
   }
