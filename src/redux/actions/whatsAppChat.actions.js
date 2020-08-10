@@ -2,7 +2,7 @@
 import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 import { AsyncStorage } from 'react-native'
-export const API_URL = '/api'
+export const API_URL = 'https://kibochat.cloudkibo.com/api'
 
 
 export function updateWhatspSessions (data) {
@@ -96,7 +96,9 @@ export function fetchOpenSessions (data) {
     return (dispatch) => {
       callApi(`broadcasts/delete/${data}`)
         .then(res => {
-          handleRemove(res)
+          if (handleRemove) {
+            handleRemove(res)
+          }
         })
     }
   }
@@ -125,16 +127,24 @@ export function fetchOpenSessions (data) {
   export function uploadAttachment (fileData, handleUpload) {
     return (dispatch) => {
       // eslint-disable-next-line no-undef
-      fetch(`${API_URL}/broadcasts/upload`, {
-        method: 'post',
-        body: fileData,
-        // eslint-disable-next-line no-undef
-        headers: new Headers({
-          'Authorization': `Bearer ${auth.getToken()}`
+      AsyncStorage.getItem('token')
+        .then(token => {
+          fetch(`${API_URL}/broadcasts/upload`, {
+            method: 'post',
+            body: fileData,
+            // eslint-disable-next-line no-undef
+            headers: new Headers({
+              'Authorization': `Bearer ${token}`
+            })
+          }).then((res) => res.json()).then((res) => res).then(res => {
+            handleUpload(res)
+          })
+            .catch((err) => {
+              console.log('failed to upload file', err)
+            })
         })
-      }).then((res) => res.json()).then((res) => res).then(res => {
-        console.log('respone', res)
-        handleUpload(res)
-      })
+        .catch((err) => {
+          console.log('failed to fetch token', err)
+        })
     }
   }

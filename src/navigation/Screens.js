@@ -17,6 +17,7 @@ import LiveChatSessionScreen from '../screens/LiveChat/LiveChat'
 import WhatsappLiveChatSessionScreen from '../screens/WhatsappLivechat/WhatsappLiveChat'
 import WhatsappTemplateMessage from '../screens/WhatsappLivechat/WhatsappTemplateMessage'
 import ChatScreen from '../screens/LiveChat/Chat'
+import WhatsappChatScreen from '../screens/WhatsappLivechat/WhatsappChat'
 import DashboardHeader from '../screens/Dashboard/DashboardHeader'
 import ChatHeader from '../screens/LiveChat/ChatHeader'
 import SignInScreen from '../screens/SignIn/SignIn'
@@ -159,7 +160,7 @@ function WhatsappLivechat (props) {
       />
       <Stack.Screen
         name='WhatsappChat'
-        component={ChatScreen}
+        component={WhatsappChatScreen}
         options={{
           header: ({ navigation, scene }) => {
             const activeSession = scene.__memo[0].params.activeSession

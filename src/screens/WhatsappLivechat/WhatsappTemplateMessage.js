@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import {validatePhoneNumber} from '../../utility/utils'
 import { StyleSheet, Dimensions, Image, FlatList, Alert, ActivityIndicator, Platform, TextInput,ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
-import { Button, Block, Text, theme } from 'galio-framework'
+import { Button, Block, Text, theme, Input } from 'galio-framework'
 import { CheckBox } from 'react-native-elements'
 import {createNewContact, sendChatMessage} from '../../redux/actions/whatsAppChat.actions'
 import { materialTheme } from '../../constants/'
@@ -195,10 +195,11 @@ class WhatsappTemplateMessage extends React.Component {
                 WhatsApp Number:
               </Text>
               <View style={{marginTop:5}}>
-              <TextInput
+              <Input
                 style={{height: 40, width: 300, marginHorizontal: 25,  borderColor: 'gray', borderWidth: 1}}
                 value={this.state.number}
                 onChangeText={text => this.onInputPhoneChange(text)}
+                color='black'
               />
               <Text style={{marginHorizontal: 25,fontWeight: "bold", color: this.state.isPhoneNumberValid ? 'white': 'red'}}>
                  invalid phone number
@@ -212,19 +213,20 @@ class WhatsappTemplateMessage extends React.Component {
               data={this.props.whatsAppMessageTemplates}
               renderItem={this.renderItem}
               keyExtractor={(item) => item.name} />
-              <ScrollView
+              {/* <ScrollView
               style= {{marginTop: 10,  marginHorizontal: 25, height:80}}
               showsVerticalScrollIndicator = {true}
               persistentScrollbar={true}
-              >
-                <TextInput
-                style= {{textAlignVertical: 'top', borderColor: 'gray', borderWidth: 1}}
+              > */}
+                <Input
+                color='black'
+                style={{paddingVertical: 0, marginTop: 10,  marginHorizontal: 25, height:70, borderColor: 'gray', width: 300}}
                 multiline = {true}
                 numberOfLines = {4}
                 value={this.state.selectedTemplate ? this.state.selectedTemplate.text: ''}
                 onChangeText={text => this.onTextChange(text)}
                 />
-              </ScrollView>
+              {/* </ScrollView> */}
               {!this.state.isTemplateValid && 
               <Text style={{marginHorizontal: 25,fontWeight: "bold", color: 'red'}}>
                  Message template format cann't be changed.
@@ -281,6 +283,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(WhatsappTemplateMess
 const styles = StyleSheet.create({
   block: {
     width: width,
+    backgroundColor: 'white'
   },
   pages: {
     width: width,

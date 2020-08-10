@@ -12,7 +12,6 @@ import {
   assignToTeam,
   assignToAgent,
   sendNotifications,
-  uploadAttachment,
   uploadRecording,
   updateLiveChatInfo,
   getSMPStatus,
@@ -40,16 +39,13 @@ class LiveChat extends React.Component {
       tabValue: props.route.params.tabValue,
       cannedResponses: []
     }
-    this.isSMPApproved = this.isSMPApproved.bind(this)
     this.setMessageData = this.setMessageData.bind(this)
     this.performAction = this.performAction.bind(this)
     this.handleAgents = this.handleAgents.bind(this)
     this.fetchTeamAgents = this.fetchTeamAgents.bind(this)
     this.updateState = this.updateState.bind(this)
-    this.handleSMPStatus = this.handleSMPStatus.bind(this)
     this.props.loadcannedResponses()
     this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
-    props.getSMPStatus(this.handleSMPStatus)
     props.getZoomIntegrations()
     // if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
     //   this.props.markRead(props.route.params.activeSession._id)
@@ -74,13 +70,6 @@ class LiveChat extends React.Component {
       })
     }
   }
-
-  handleSMPStatus (res) {
-    if (res.status === 'success') {
-      this.setState({smpStatus: res.payload})
-    }
-  }
-
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
@@ -170,7 +159,7 @@ class LiveChat extends React.Component {
 
   setMessageData(session, payload, urlMeta) {
     const data = {
-      senderNumber: this.props.automated_options.flockSendWhatsApp.number,
+      senderNumber: this.props.automated_options.whatsApp.businessNumber,
       recipientNumber: this.state.activeSession.number,
       contactId: session._id,
       payload,
@@ -211,6 +200,7 @@ class LiveChat extends React.Component {
             performAction={this.performAction}
             alertMsg={this.alertMsg}
             user={this.props.user}
+            isWhatspModule = {true}
             sendChatMessage={this.props.sendChatMessage}
             uploadAttachment={this.props.uploadAttachment}
             sendAttachment={this.props.sendAttachment}
@@ -252,7 +242,8 @@ function mapStateToProps (state) {
     closeSessions: (state.whatsAppChatInfo.closeSessions),
     user: (state.basicInfo.user),
     cannedResponses: state.settingsInfo.cannedResponses,
-    zoomIntegrations: (state.settingsInfo.zoomIntegrations)
+    zoomIntegrations: (state.settingsInfo.zoomIntegrations),
+    automated_options: (state.basicInfo.automated_options),
   }
 }
 
