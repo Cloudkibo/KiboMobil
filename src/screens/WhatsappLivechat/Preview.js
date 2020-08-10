@@ -46,7 +46,7 @@ class Preview extends React.Component {
          <View style= {{ justifyContent: 'center', alignItems: 'center', marginVertical: 10}}>
          {
            this.props.selectedTemplate.buttons.map((button, index) => (
-            <Button radius={10}
+            <Button radius={10} key={index}
             style={{marginVertical: 2, marginTop: 5, width: 200, backgroundColor:'#009688'
           }}
            onPress={this.closeModal}>{button.title}</Button>
