@@ -2,11 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
-import { Block, Text, theme, Input } from 'galio-framework'
+import { MaterialIcons } from '@expo/vector-icons'
+import { Block, Text, theme, Input, Button } from 'galio-framework'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
+import {getWhatsAppMessageTemplates} from '../../redux/actions/settings.action'
 import {fetchOpenSessions, fetchCloseSessions, markRead} from '../../redux/actions/whatsAppChat.actions'
 // import { CommonActions } from '@react-navigation/native'
 
@@ -41,10 +43,16 @@ class WhastappLiveChat extends React.Component {
     this.profilePicError = this.profilePicError.bind(this)
     this.changeActiveSession = this.changeActiveSession.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
-
+    this.openTemplatePage = this.openTemplatePage.bind(this)
     // this.fetchSessions(true, 'none', true)
+    this.props.getWhatsAppMessageTemplates()
   }
 
+
+
+  openTemplatePage () {
+    this.props.navigation.navigate('WhatsappTemplateMessage')
+  }
   changeActiveSession (session) {
     if (session.unreadCount && session.unreadCount > 0) {
       session.unreadCount = 0
@@ -254,6 +262,9 @@ class WhastappLiveChat extends React.Component {
               onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
             />
           }
+           <Button
+              style={styles.myButton}
+              onPress={this.openTemplatePage}><MaterialIcons name="message"  size={30} color="white"/></Button>
         </Block>
       </Block>
     )
@@ -266,7 +277,9 @@ function mapStateToProps (state) {
     openCount: (state.whatsAppChatInfo.openCount),
     closeCount: (state.whatsAppChatInfo.closeCount),
     closeSessions: (state.whatsAppChatInfo.closeSessions),
-    user: (state.basicInfo.user)
+    user: (state.basicInfo.user),
+    automated_options: (state.basicInfo.automated_options),
+    
   }
 }
 
@@ -274,6 +287,7 @@ function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     fetchOpenSessions,
     fetchCloseSessions,
+    getWhatsAppMessageTemplates,
     markRead
   }, dispatch)
 }
@@ -304,5 +318,17 @@ const styles = StyleSheet.create({
   empty: {
     marginHorizontal: 16,
     marginVertical: 20
+  },
+  myButton:{
+    padding: 5,
+    height: 50,
+    width: 50,  //The Width must be the same as the height
+    borderRadius:120, //Then Make the Border Radius twice the size of width or Height   
+    backgroundColor:'#716aca',
+    alignItems: 'center',
+    margin: 20,
+    position: "absolute", 
+    bottom: 0,
+    right: 0
   }
 })

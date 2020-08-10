@@ -1,6 +1,12 @@
 import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 
+export function updateWhatsAppMessageTemplates (data) {
+  return {
+    type: ActionTypes.UPDATE_WHATSAPP_MESSAGE_TEMPLATES,
+    data
+  }
+}
 export function showcannedResponses (data) {
   return {
     type: ActionTypes.GET_CANNED_RESPONSES,
@@ -44,5 +50,15 @@ export function createZoomMeeting (data, callback) {
           callback(res)
         }
       })
+  }
+}
+
+export function getWhatsAppMessageTemplates () {
+  return (dispatch) => {
+    callApi('company/getWhatsAppMessageTemplates')
+      .then(res => {
+        console.log('response from getWhatsAppMessageTemplates', res)
+        dispatch(updateWhatsAppMessageTemplates(res.payload))
+    })
   }
 }

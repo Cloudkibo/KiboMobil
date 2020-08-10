@@ -3,6 +3,13 @@ import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 import { AsyncStorage } from 'react-native'
 
+
+export function updateWhatspSessions (data) {
+  return {
+    type: ActionTypes.UPDATE_WHATSAPP_OPEN_SESSION,
+    data
+  }
+}
 export function showOpenSessions (data) {
     let openSessions = data.openSessions.map((s) => {
       let name = s.name.split(' ')
@@ -61,3 +68,26 @@ export function fetchOpenSessions (data) {
       })
     }
   }
+  export function createNewContact (data, callback) {
+    return (dispatch) => {
+      callApi(`whatsAppContacts/create`, 'post', data).then(res => {
+        console.log('response from create whatsapp contact', res)
+        if (callback) {
+          callback(res)
+        }
+      })
+    }
+  }
+
+  export function sendChatMessage (data, callback) {
+    console.log('data for sendChatMessage', data)
+    return (dispatch) => {
+      callApi('whatsAppChat', 'post', data)
+        .then(res => {
+          if (callback) {
+            callback(res)
+          }
+      })
+    }
+  }
+
