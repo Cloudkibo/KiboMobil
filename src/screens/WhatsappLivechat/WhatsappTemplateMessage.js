@@ -23,6 +23,8 @@ class WhatsappTemplateMessage extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
+      activeSession: {},
+      loading: false,
       showAssignmentModal: false,
       isTemplateValid: true,
       number: '',
@@ -62,7 +64,7 @@ class WhatsappTemplateMessage extends React.Component {
 
   sendTemplate () {
     if(!this.state.isButtonDisabled) {
-      this.setState({sendingTemplate: true})
+      this.setState({sendingTemplate: true, loading: true})
         this.props.createNewContact({
           number: '+' + this.state.number.replace(/\D/g, '')
         }, (res) => {
@@ -80,10 +82,11 @@ class WhatsappTemplateMessage extends React.Component {
     }
     let data = this._setMessageData(session, payload)
     this.props.sendChatMessage(data, (res) => {
+      this.setState({loading:false, activeSession: session})
       if (res.status === 'success') {
-        Toast.default.show('Message send successfully')
+        Toast.default.show('Message sent successfully')
         this.reset()
-        this.props.navigation.navigate('Live Chat')
+        this.props.navigation.navigate('Live Chat', { activeSession: session})
       } else {
         this.showErrorDialog(res.payload)
      }
@@ -202,7 +205,7 @@ class WhatsappTemplateMessage extends React.Component {
                 color='black'
               />
               <Text style={{marginHorizontal: 25,fontWeight: "bold", color: this.state.isPhoneNumberValid ? 'white': 'red'}}>
-                 invalid phone number
+                 Invalid phone number
               </Text>
               </View>
               <Text style={{marginHorizontal: 25, marginTop:5, fontWeight: "bold" }}>
@@ -243,6 +246,7 @@ class WhatsappTemplateMessage extends React.Component {
                 style={styles.button}
                 onPress={this.Preview}>Preview</Button>
               <Button radius={10}
+                loading={this.state.loading}
                 style={this.state.isButtonDisabled ? [styles.button, {backgroundColor:'#CE9DD9'}]: [styles.button]}
                 onPress={this.sendTemplate}
                 >Send</Button>

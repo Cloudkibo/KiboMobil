@@ -218,7 +218,7 @@ class Header extends React.Component {
           borderless
           editable={false}
           color='black'
-          value={`${activeSession.firstName} ${activeSession.lastName}`}
+          value={this.props.isWhatspHeader ? activeSession.name  : `${activeSession.firstName} ${activeSession.lastName}`}
           style={{height: 15, marginTop: -5, fontSize: '30px'}}
         />
       {/*<Text size={16} style={{marginLeft: 5}}>
