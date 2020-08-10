@@ -158,7 +158,7 @@ function WhatsappLivechat (props) {
         }}
       />
       <Stack.Screen
-        name='Chat'
+        name='WhatsappChat'
         component={ChatScreen}
         options={{
           header: ({ navigation, scene }) => {
@@ -167,7 +167,7 @@ function WhatsappLivechat (props) {
               <ChatHeader
                 back
                 activeSession={activeSession}
-                title={`${activeSession.firstName} ${activeSession.lastName}`}
+                title={activeSession.name}
                 navigation={navigation}
                 scene={scene}
               />

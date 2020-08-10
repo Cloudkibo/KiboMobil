@@ -2,6 +2,7 @@
 import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 import { AsyncStorage } from 'react-native'
+export const API_URL = '/api'
 
 
 export function updateWhatspSessions (data) {
@@ -91,3 +92,49 @@ export function fetchOpenSessions (data) {
     }
   }
 
+  export function deletefile (data, handleRemove) {
+    return (dispatch) => {
+      callApi(`broadcasts/delete/${data}`)
+        .then(res => {
+          handleRemove(res)
+        })
+    }
+  }
+
+  export function sendAttachment (data, handleSendAttachment) {
+    return (dispatch) => {
+      callApi('whatsAppChat', 'post', data).then(res => {
+        handleSendAttachment(res)
+        let fetchData = {
+          filter_criteria: {
+            pendingResponse: false,
+            search_value: '',
+            sort_value: -1,
+            unreadCount: false,
+          },
+          first_page: true,
+          last_id: 'none',
+          number_of_records: 10,
+        }
+        dispatch(fetchOpenSessions(fetchData))
+        // dispatch(fetchUserChats(data.contactId, {page: 'first', number: 25}))
+      })
+    }
+  }
+
+  export function uploadAttachment (fileData, handleUpload) {
+    return (dispatch) => {
+      // eslint-disable-next-line no-undef
+      fetch(`${API_URL}/broadcasts/upload`, {
+        method: 'post',
+        body: fileData,
+        // eslint-disable-next-line no-undef
+        headers: new Headers({
+          'Authorization': `Bearer ${auth.getToken()}`
+        })
+      }).then((res) => res.json()).then((res) => res).then(res => {
+        console.log('respone', res)
+        handleUpload(res)
+      })
+    }
+  }
