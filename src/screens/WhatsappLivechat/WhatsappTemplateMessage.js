@@ -133,7 +133,7 @@ class WhatsappTemplateMessage extends React.Component {
     let buttonDisabled = true
     if(this.state.isPhoneNumberValid && isValid) {
       buttonDisabled = false
-    } 
+    }
     this.setState({
       isTemplateValid: isValid,
       isButtonDisabled: buttonDisabled
@@ -144,7 +144,6 @@ class WhatsappTemplateMessage extends React.Component {
     this.setState({showAssignmentModal: true})
   }
   reset () {
-    console.log('called reset')
     this.setState({number: '', selectedTemplate: {...this.props.whatsAppMessageTemplates[0]}, isPhoneNumberValid:false, isTemplateValid: true, isButtonDisabled: true})
   }
 
@@ -168,7 +167,7 @@ class WhatsappTemplateMessage extends React.Component {
       number: text,
       isPhoneNumberValid: isPhoneNumberValid,
       isButtonDisabled: buttonDisabled
-    }) 
+    })
   }
   renderItem ({ item }) {
     return (
@@ -182,16 +181,15 @@ class WhatsappTemplateMessage extends React.Component {
     )
   }
   render () {
-    console.log('this.state.isButtonDisabled', this.state.isButtonDisabled)
       return (
         <ScrollView >
-        <KeyboardAvoidingView        
+        <KeyboardAvoidingView
         keyboardVerticalOffset={100}
         behavior={Platform.OS == "ios" ? "padding" : null}
         style={{
           flex: 1
         }}
-      >        
+      >
           <Block flex center style={styles.block}>
             <Block shadow style={styles.pages}>
               <Text style={{marginHorizontal: 25,fontWeight: "bold" , marginTop:10}}>
@@ -230,7 +228,7 @@ class WhatsappTemplateMessage extends React.Component {
                 onChangeText={text => this.onTextChange(text)}
                 />
               {/* </ScrollView> */}
-              {!this.state.isTemplateValid && 
+              {!this.state.isTemplateValid &&
               <Text style={{marginHorizontal: 25,fontWeight: "bold", color: 'red'}}>
                  Message template format cann't be changed.
               </Text>

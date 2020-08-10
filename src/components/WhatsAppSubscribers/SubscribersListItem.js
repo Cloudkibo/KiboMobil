@@ -1,9 +1,6 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { Block, Text } from 'galio-framework'
-import { fetchSubscribers } from '../../redux/actions/subscribers.actions'
 import Icon from '../../components/Icon'
 import SubscriberDetail from './SubscriberDetail'
 import { materialTheme } from '../../constants/'
@@ -76,20 +73,8 @@ class SubscribersListItem extends React.Component {
   }
 }
 
-function mapStateToProps (state) {
-  return {
-    subscribers: (state.subscribersInfo.subscribers),
-    count: (state.subscribersInfo.count)
-  }
-}
+export default SubscribersListItem
 
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators({
-    fetchSubscribers
-  }, dispatch)
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SubscribersListItem)
 const styles = StyleSheet.create({
   avatar: {
     height: 50,

@@ -1,11 +1,19 @@
 import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 
-export function showContacts (data) {
-  return {
-    type: ActionTypes.LOAD_WHATSAPP_CONTACTS_LIST,
-    contacts: data.contacts,
-    count: data.count
+export function showContacts (payload, data) {
+  if (data.first_page === 'first') {
+    return {
+      type: ActionTypes.LOAD_WHATSAPP_CONTACTS_OVERRIDE,
+      data: payload.contacts,
+      count: payload.count
+    }
+  } else {
+    return {
+      type: ActionTypes.LOAD_WHATSAPP_CONTACTS,
+      data: payload.contacts,
+      count: payload.count
+    }
   }
 }
 
@@ -18,12 +26,10 @@ export function updateContact (id, data) {
 }
 
 export function loadWhatsAppContactsList (data, prepareExport) {
-  console.log('data for loadWhatsAppContactsList', data)
   return (dispatch) => {
     callApi('whatsAppContacts', 'post', data)
       .then(res => {
-        console.log('response from loadWhatsAppContactsList', res)
-        dispatch(showContacts(res.payload))
+        dispatch(showContacts(res.payload, data))
         if (prepareExport) {
           prepareExport(res)
         }
@@ -31,11 +37,9 @@ export function loadWhatsAppContactsList (data, prepareExport) {
   }
 }
 export function editSubscriberWhatsApp (id, data, callback) {
-  console.log('data for editSubscriber', data)
   return (dispatch) => {
     callApi(`whatsAppContacts/update/${id}`, 'post', data)
       .then(res => {
-        console.log('response from editSubscriber', res)
         dispatch(updateContact(id, data))
         callback(res)
       })

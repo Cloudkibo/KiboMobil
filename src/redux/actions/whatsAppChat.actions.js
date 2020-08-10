@@ -72,7 +72,6 @@ export function fetchOpenSessions (data) {
   export function createNewContact (data, callback) {
     return (dispatch) => {
       callApi(`whatsAppContacts/create`, 'post', data).then(res => {
-        console.log('response from create whatsapp contact', res)
         if (callback) {
           callback(res)
         }
@@ -81,7 +80,6 @@ export function fetchOpenSessions (data) {
   }
 
   export function sendChatMessage (data, callback) {
-    console.log('data for sendChatMessage', data)
     return (dispatch) => {
       callApi('whatsAppChat', 'post', data)
         .then(res => {

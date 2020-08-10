@@ -9,6 +9,12 @@ import SubscribersListItem from '../../components/WhatsAppSubscribers/Subscriber
 import Modal from 'react-native-modal'
 
 const { width } = Dimensions.get('screen')
+let Toast = null
+if (Platform.OS === 'ios') {
+  Toast = require('react-native-tiny-toast')
+} else {
+  Toast = require('react-native-simple-toast')
+}
 
 class Subscribers extends React.Component {
   constructor (props, context) {
@@ -130,7 +136,7 @@ class Subscribers extends React.Component {
   }
 
   closeEdit () {
-    this.setState({isShowingModalEdit: false, name: '', saveLoading: false})
+    this.setState({isShowingModalEdit: false, name: '', saveLoading: false, errorMessage: ''})
   }
 
   editSubscriber () {
@@ -145,6 +151,7 @@ class Subscribers extends React.Component {
   handleEditSubscriber (res) {
     if (res.status === 'success') {
       this.closeEdit()
+      Toast.default.show('Subscriber updated successfully')
     }
   }
 
@@ -153,6 +160,7 @@ class Subscribers extends React.Component {
   }
 
   render () {
+    console.log('re render')
     return (
       <Block flex center style={styles.block}>
         <Modal isVisible={this.state.isShowingModalEdit} onBackdropPress={this.closeEdit} style={{margin: 0}}>

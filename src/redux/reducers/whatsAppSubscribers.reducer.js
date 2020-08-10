@@ -10,7 +10,6 @@ export function whatsAppSubscribersInfo (state = initialState, action) {
       let currentContacts = state.contacts
       if (currentContacts) {
         index = currentContacts.findIndex((contact) => contact._id === action.id)
-        console.log('index', index)
         if (index >= 0) {
           let keys = Object.keys(action.data)
           for (let i = 0; i < keys.length; i++) {
@@ -19,11 +18,17 @@ export function whatsAppSubscribersInfo (state = initialState, action) {
         }
       }
       return Object.assign({}, state, {
-        contacts: currentContacts ? [...currentContacts] : currentContacts
+        contacts: currentContacts ? [...currentContacts] : currentContacts,
+        timestamp: new Date().getTime()
       })
-    case ActionTypes.LOAD_WHATSAPP_CONTACTS_LIST:
+    case ActionTypes.LOAD_WHATSAPP_CONTACTS_OVERRIDE:
       return Object.assign({}, state, {
-        contacts: action.contacts,
+        contacts: action.data,
+        count: action.count
+      })
+    case ActionTypes.LOAD_WHATSAPP_CONTACTS:
+      return Object.assign({}, state, {
+        contacts: [...state.contacts, ...action.data],
         count: action.count
       })
     default:

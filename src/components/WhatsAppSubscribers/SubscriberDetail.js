@@ -1,7 +1,6 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
 import { Block, Text } from 'galio-framework'
-import {localeCodeToEnglish} from '../../utility/utils'
 import moment from 'moment'
 
 class SubscriberDetail extends React.Component {

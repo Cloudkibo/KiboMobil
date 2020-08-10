@@ -10,7 +10,6 @@ export function setSocketStatus (data) {
 }
 
 export function showAutomatedOptions (data) {
-  console.log(data)
   return {
     type: ActionTypes.GET_AUTOMATED_OPTIONS,
     data
