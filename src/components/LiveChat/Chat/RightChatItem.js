@@ -52,9 +52,19 @@ class RightChatItem extends PureComponent {
       )
     } else if (['image', 'sticker', 'gif', 'thumbsUp'].includes(type)) {
       return (
-        <IMAGECOMPONENT
-          image={message}
-        />
+        <Block>
+          <IMAGECOMPONENT
+            image={message}
+          />
+          {message.caption &&
+            <Block style={{marginTop: 10}}>
+              <TEXTCOMPONENT
+                text={{text: message.caption}}
+                textColor='white'
+              />
+            </Block>
+          }
+        </Block>
       )
     } else if (type === 'audio') {
       return (
@@ -64,9 +74,19 @@ class RightChatItem extends PureComponent {
       )
     } else if (type === 'video') {
       return (
-        <VIDEO
-          video={message}
-        />
+        <Block>
+          <VIDEO
+            video={message}
+          />
+          {message.caption &&
+            <Block style={{marginTop: 10}}>
+              <TEXTCOMPONENT
+                text={{text: message.caption}}
+                textColor='white'
+              />
+            </Block>
+          }
+        </Block>
       )
     } else if (type === 'file') {
       return (
@@ -128,6 +148,7 @@ class RightChatItem extends PureComponent {
               style={[styles.messageCard, styles.shadow]}>
               {this.getRepliedByMsg()}
               {this.getMessage()}
+              {this.props.seenElement}
             </LinearGradient>
           </Block>
         </Block>

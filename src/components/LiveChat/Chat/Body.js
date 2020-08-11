@@ -4,7 +4,8 @@ import {
   View,
   StyleSheet,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
+  Image
 } from 'react-native'
 import { Block } from 'galio-framework'
 import LEFTCHATITEM from './LeftChatItem'
@@ -54,7 +55,6 @@ class Body extends React.Component {
       })
     }
   }
-
   allowedType (chat) {
     let isAllowed = true
     if (
@@ -67,15 +67,18 @@ class Body extends React.Component {
     return isAllowed
   }
 
-  getSeen (message, index) {
-    if (index === (this.props.userChat.length - 1) && message.seen) {
+  getSeen (message, chat) {
+    if (message.seen || message.delivered) {
       return (
-        <div style={{float: 'right', marginRight: '15px', fontSize: 'small'}}>
-          <i className='la la-check' style={{fontSize: 'small'}} />&nbsp;Seen&nbsp;{this.props.displayDate(message.seenDateTime)}
-        </div>
+        <Block style={{marginTop: 5, flexDirection: 'row', justifyContent: 'flex-end'}}>
+          <Image
+            source={{ uri: message.seen ? 'https://cdn.cloudkibo.com/public/img/double-ticks-blue.png' : 'https://cdn.cloudkibo.com/public/img/double-ticks-white.png' }}
+            style={{height: 18, width: 18}}
+          />
+        </Block>
       )
     } else {
-      return <div />
+      return null
     }
   }
 

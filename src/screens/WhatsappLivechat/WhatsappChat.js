@@ -6,6 +6,11 @@ import { Block } from 'galio-framework'
 
 import CHAT from '../../components/LiveChat/Chat/index'
 import {
+  sendChatMessage,
+  uploadAttachment,
+  sendAttachment,
+  deletefile,
+  markRead,
   fetchUserChats,
   fetchTeamAgents,
   changeStatus,
@@ -13,13 +18,10 @@ import {
   assignToAgent,
   sendNotifications,
   uploadRecording,
-  updateLiveChatInfo,
-  getSMPStatus,
-  updateSessionProfilePicture,
-} from '../../redux/actions/liveChat.actions'
-import {sendChatMessage, uploadAttachment, sendAttachment, deletefile, markRead} from '../../redux/actions/whatsAppChat.actions'
+  updateLiveChatInfo
+} from '../../redux/actions/whatsAppChat.actions'
 import {getZoomIntegrations, createZoomMeeting, loadcannedResponses} from '../../redux/actions/settings.action'
-import { clearSocketData } from '../../redux/actions/socket.actions'
+import { clearSocketDataWhatsapp } from '../../redux/actions/socket.actions'
 import { loadTeamsList } from '../../redux/actions/teams.actions'
 import { loadMembersList } from '../../redux/actions/members.actions'
 const { width } = Dimensions.get('screen')
@@ -59,7 +61,7 @@ class LiveChat extends React.Component {
   updateState (state, callback) {
     if (state.reducer) {
       const data = {
-        userChat: state.userChat,
+        chat: state.userChat,
         openSessions: this.state.tabValue === 'open' ? state.sessions : this.props.openSessions,
         closeSessions: this.state.tabValue === 'close' ? state.sessions : this.props.closeSessions
       }
@@ -75,7 +77,7 @@ class LiveChat extends React.Component {
   /* eslint-enable */
     let state = {}
     if (nextProps.cannedResponses !== this.props.cannedResponses) {
-      this.setState({ cannedResponses: nextProps.cannedResponses})
+      this.setState({cannedResponses: nextProps.cannedResponses})
     }
     if (nextProps.userChat) {
       if (nextProps.userChat.length > 0) {
@@ -105,15 +107,6 @@ class LiveChat extends React.Component {
     //   )
     // }
   }
-
-  // isSMPApproved () {
-  //   const page = this.state.smpStatus.find((item) => item.pageId === this.state.activeSession.pageId._id)
-  //   if (page && page.smpStatus === 'approved') {
-  //     return true
-  //   } else {
-  //     return false
-  //   }
-  // }
 
   performAction (errorMsg, session) {
     let isAllowed = true
@@ -157,7 +150,7 @@ class LiveChat extends React.Component {
     // }
   }
 
-  setMessageData(session, payload, urlMeta) {
+  setMessageData (session, payload, urlMeta) {
     const data = {
       senderNumber: this.props.automated_options.whatsApp.businessNumber,
       recipientNumber: this.state.activeSession.number,
@@ -200,7 +193,7 @@ class LiveChat extends React.Component {
             performAction={this.performAction}
             alertMsg={this.alertMsg}
             user={this.props.user}
-            isWhatspModule = {true}
+            isWhatspModule
             sendChatMessage={this.props.sendChatMessage}
             uploadAttachment={this.props.uploadAttachment}
             sendAttachment={this.props.sendAttachment}
@@ -230,12 +223,11 @@ class LiveChat extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    userChat: (state.liveChat.userChat),
-    chatCount: (state.liveChat.chatCount),
-    pages: (state.pagesInfo.pages),
+    userChat: (state.whatsAppChatInfo.chat),
+    chatCount: (state.whatsAppChatInfo.chatCount),
     // members: (state.membersInfo.members),
     // teams: (state.teamsInfo.teams),
-    socketData: (state.socketInfo.socketData),
+    socketData: (state.socketInfo.socketDataWhatsapp),
     openSessions: (state.whatsAppChatInfo.openSessions),
     openCount: (state.whatsAppChatInfo.openCount),
     closeCount: (state.whatsAppChatInfo.closeCount),
@@ -243,13 +235,12 @@ function mapStateToProps (state) {
     user: (state.basicInfo.user),
     cannedResponses: state.settingsInfo.cannedResponses,
     zoomIntegrations: (state.settingsInfo.zoomIntegrations),
-    automated_options: (state.basicInfo.automated_options),
+    automated_options: (state.basicInfo.automated_options)
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    // updatePicture,
     fetchTeamAgents,
     assignToTeam,
     changeStatus,
@@ -263,11 +254,9 @@ function mapDispatchToProps (dispatch) {
     uploadRecording,
     fetchUserChats,
     markRead,
-    clearSocketData,
+    clearSocketDataWhatsapp,
     updateLiveChatInfo,
     // urlMetaData,
-    getSMPStatus,
-    updateSessionProfilePicture,
     deletefile,
     loadcannedResponses,
     getZoomIntegrations,

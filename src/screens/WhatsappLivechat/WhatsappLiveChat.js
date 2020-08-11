@@ -9,7 +9,9 @@ import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
 import {getWhatsAppMessageTemplates} from '../../redux/actions/settings.action'
-import {fetchOpenSessions, fetchCloseSessions, markRead} from '../../redux/actions/whatsAppChat.actions'
+import {fetchOpenSessions, fetchCloseSessions, markRead, updateLiveChatInfo} from '../../redux/actions/whatsAppChat.actions'
+import { handleSocketEvent } from './socket'
+import { clearSocketDataWhatsapp } from '../../redux/actions/socket.actions'
 // import { CommonActions } from '@react-navigation/native'
 
 const { width } = Dimensions.get('screen')
@@ -48,8 +50,6 @@ class WhastappLiveChat extends React.Component {
     this.props.getWhatsAppMessageTemplates()
   }
 
-
-
   openTemplatePage () {
     this.props.navigation.navigate('WhatsappTemplateMessage')
   }
@@ -77,10 +77,10 @@ class WhastappLiveChat extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
-  if(this.props.route.params && this.props.route.params.activeSession) {
-    this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
-    this.props.route.params = null
-  }
+    if (this.props.route.params && this.props.route.params.activeSession) {
+      this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
+      this.props.route.params = null
+    }
     let state = {}
     if (nextProps.openSessions || nextProps.closeSessions) {
       state.loading = false
@@ -93,6 +93,16 @@ class WhastappLiveChat extends React.Component {
     this.setState({
       ...state
     })
+    if (nextProps.socketData) {
+      handleSocketEvent(
+        nextProps.socketData,
+        this.state,
+        this.props,
+        this.props.updateLiveChatInfo,
+        this.props.user,
+        this.props.clearSocketDataWhatsapp
+      )
+    }
   }
 
   changeTab (value) {
@@ -266,9 +276,9 @@ class WhastappLiveChat extends React.Component {
               onMomentumScrollBegin={() => this._onMomentumScrollBegin()}
             />
           }
-           <Button
-              style={styles.myButton}
-              onPress={this.openTemplatePage}><MaterialIcons name="message"  size={30} color="white"/></Button>
+          <Button
+            style={styles.myButton}
+            onPress={this.openTemplatePage}><MaterialIcons name='message' size={30} color='white' /></Button>
         </Block>
       </Block>
     )
@@ -283,7 +293,9 @@ function mapStateToProps (state) {
     closeSessions: (state.whatsAppChatInfo.closeSessions),
     user: (state.basicInfo.user),
     automated_options: (state.basicInfo.automated_options),
-
+    socketData: (state.socketInfo.socketDataWhatsapp),
+    userChat: (state.whatsAppChatInfo.chat),
+    chatCount: (state.whatsAppChatInfo.chatCount)
   }
 }
 
@@ -292,7 +304,9 @@ function mapDispatchToProps (dispatch) {
     fetchOpenSessions,
     fetchCloseSessions,
     getWhatsAppMessageTemplates,
-    markRead
+    markRead,
+    clearSocketDataWhatsapp,
+    updateLiveChatInfo
   }, dispatch)
 }
 
@@ -323,15 +337,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 20
   },
-  myButton:{
+  myButton: {
     padding: 5,
     height: 50,
-    width: 50,  //The Width must be the same as the height
-    borderRadius:120, //Then Make the Border Radius twice the size of width or Height
-    backgroundColor:'#716aca',
+    width: 50,
+    borderRadius: 120,
+    backgroundColor: '#716aca',
     alignItems: 'center',
     margin: 20,
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     right: 0
   }
