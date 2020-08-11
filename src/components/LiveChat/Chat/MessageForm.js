@@ -689,7 +689,7 @@ class Footer extends React.Component {
         {this.state.showPickers && this.state.selectedPicker !== '' &&
           <Block>
             <Tabs
-              data={[
+              data= { this.props.isWhatspModule ? [{id: 'emoji', title: 'EMOJI', width: 70}] : [
                 {id: 'emoji', title: 'EMOJI', width: 70},
                 {id: 'stickers', title: 'STICKERS', width: 100},
                 {id: 'gifs', title: 'GIFS', width: 55}
