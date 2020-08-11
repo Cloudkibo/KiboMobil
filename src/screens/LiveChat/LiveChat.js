@@ -56,14 +56,25 @@ class LiveChat extends React.Component {
       this.props.markRead(session._id)
     }
     this.setState({activeSession: session})
+    this.getPushNotificationsAsync(session._id)
     this.props.navigation.navigate('Chat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
     session.unreadCount = 0
   }
 
-  getPushNotificationsAsync = async () => {
-    // console.log('Notifications in Livechat', Notifications)
-    // let notification =  Notifications.getPresentedNotificationsAsync()
-    // console.log('notification in Live chat', notification)
+  getPushNotificationsAsync = async (sessionId) => {
+    // let notifications = await Notifications.getPresentedNotificationsAsync()
+    // // // let data = JSON.parse(notification[0])
+    // for (let notification of notifications) {
+    //   console.log('sessionId', sessionId)
+    //   console.log('notification.request.content.data._id', notification.request.content.data._id)
+    //    if(notification.request.content.data._id === sessionId) {
+    //      let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
+    //    }
+    // }
+    // console.log('notification[0].identifier', notification[0].request.identifier)
+    // let removeNotification = await Notifications.dismissNotificationAsync(notification[0].request.identifier)
+    // // console.log('notification in Live chat', data)
+    // console.log('remove_notidication', removeNotification)
 
   }
 
@@ -78,7 +89,6 @@ class LiveChat extends React.Component {
       this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
       this.props.route.params = null
     }
-      this.getPushNotificationsAsync()
   }
 
   componentWillUnmount () {

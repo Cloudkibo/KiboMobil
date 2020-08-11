@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions } from 'react-native'
 import { Block } from 'galio-framework'
+import * as Notifications from 'expo-notifications'
 
 import CHAT from '../../components/LiveChat/Chat/index'
 import {
@@ -87,6 +88,23 @@ class LiveChat extends React.Component {
     }
   }
 
+  getPushNotificationsAsync = async (sessionId) => {
+    let notifications = await Notifications.getPresentedNotificationsAsync()
+    // // let data = JSON.parse(notification[0])
+    for (let notification of notifications) {
+      console.log('sessionId', sessionId)
+      console.log('notification.request.content.data._id', notification.request.content.data._id)
+       if(notification.request.content.data._id === sessionId) {
+         let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
+       }
+    }
+    // console.log('notification[0].identifier', notification[0].request.identifier)
+    // let removeNotification = await Notifications.dismissNotificationAsync(notification[0].request.identifier)
+    // // console.log('notification in Live chat', data)
+    // console.log('remove_notidication', removeNotification)
+
+  }
+
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
 
@@ -100,6 +118,7 @@ class LiveChat extends React.Component {
     }
     if (nextProps.userChat) {
       if (nextProps.userChat.length > 0) {
+        this.getPushNotificationsAsync(this.state.activeSession._id)
         state.userChat = nextProps.userChat
         state.loadingChat = false
       } else if (nextProps.userChat.length === 0) {

@@ -35,6 +35,7 @@ export default class ButtonTabs extends React.Component {
     Animated.timing(this.animatedValue, {
       toValue: 1,
       duration: 300,
+      useNativeDriver: true
       // useNativeDriver: true, // color not supported
     }).start()
   }

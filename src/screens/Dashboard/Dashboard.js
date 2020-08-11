@@ -8,11 +8,18 @@ import { saveNotificationToken, getAutomatedOptions } from '../../redux/actions/
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
 import { loadDashboardData} from '../../redux/actions/dashboard.actions'
 import { Text, View, Button, Vibration, Platform } from 'react-native'
-import { Notifications } from 'expo'
+import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions'
 import Constants from 'expo-constants';
 const { width } = Dimensions.get('screen')
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 class Dashboard extends React.Component {
   constructor (props, context) {
     super(props, context)
@@ -45,7 +52,10 @@ class Dashboard extends React.Component {
   componentDidMount () {
     this.props.getAutomatedOptions()
     this.registerForPushNotificationsAsync()
-    this._notificationSubscription = Notifications.addListener(this._handleNotification)
+    this._notificationSubscription = Notifications.addNotificationResponseReceivedListener(this._handleNotification)
+    this._notificationListener = Notifications.addNotificationReceivedListener(notification => {
+      // console.log('received_notification', notification)
+    });
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       if(this.props.user) {
         if(this.props.user.platform === 'messenger') {
@@ -58,13 +68,12 @@ class Dashboard extends React.Component {
   }
 
   _handleNotification = notification => {
-    Vibration.vibrate();
-    this.setState({ notification: notification })
-    if(notification.origin === 'selected') {
+    this.setState({ notification: notification.notification })
+    // console.log('notification.origin', notification.notification.request.content.data)
       this.props.navigation.navigate('Live Chat', {
         screen: 'Live Chat',
-        params: {activeSession: notification.data},
-      });    }
+        params: {activeSession: notification.notification.request.content.data}
+      });    
   };
   registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
@@ -78,7 +87,7 @@ class Dashboard extends React.Component {
         alert('Failed to get push token for push notification!');
         return;
       }
-      token = await Notifications.getExpoPushTokenAsync();
+      token = (await Notifications.getExpoPushTokenAsync()).data
       let user = this.props.user
       console.log(token);
       if(!user.expoListToken.includes(token)) {
@@ -93,11 +102,11 @@ class Dashboard extends React.Component {
     }
 
     if (Platform.OS === 'android') {
-      Notifications.createChannelAndroidAsync('default', {
+      Notifications.setNotificationChannelAsync('default', {
         name: 'default',
-        sound: true,
-        priority: 'max',
-        vibrate: [0, 250, 250, 250],
+        // importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
       });
     }
   }

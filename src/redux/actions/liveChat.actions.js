@@ -391,6 +391,7 @@ export function fetchUrlMeta (url) {
 }
 
 export function markRead (sessionid) {
+  console.log('Mark Read called')
   return (dispatch) => {
     callApi(`sessions/markread/${sessionid}`).then(res => {
     })
