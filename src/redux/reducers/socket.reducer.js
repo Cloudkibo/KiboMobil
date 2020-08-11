@@ -15,6 +15,14 @@ export function socketInfo (state = initialState, action) {
       return Object.assign({}, state, {
         socketData: null
       })
+    case ActionTypes.SOCKET_EVENT_WHATSAPP:
+      return Object.assign({}, state, {
+        socketDataWhatsapp: action.data
+      })
+    case ActionTypes.CLEAR_SOCKET_DATA_WHATSAPP:
+      return Object.assign({}, state, {
+        socketDataWhatsapp: null
+      })
     default:
       return state
   }

@@ -351,11 +351,11 @@ const styles = StyleSheet.create({
     padding: 5,
     height: 50,
     width: 50,  //The Width must be the same as the height
-    borderRadius:120, //Then Make the Border Radius twice the size of width or Height   
+    borderRadius:120, //Then Make the Border Radius twice the size of width or Height
     backgroundColor:'#716aca',
     alignItems: 'center',
     margin: 20,
-    position: "absolute", 
+    position: "absolute",
     bottom: 0,
     right: 0
   }

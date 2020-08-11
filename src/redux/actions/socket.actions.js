@@ -12,3 +12,16 @@ export function clearSocketData () {
     type: ActionTypes.CLEAR_SOCKET_DATA
   }
 }
+
+export function handleSocketEventWhatsapp (data) {
+  return {
+    type: ActionTypes.SOCKET_EVENT_WHATSAPP,
+    data
+  }
+}
+
+export function clearSocketDataWhatsapp () {
+  return {
+    type: ActionTypes.CLEAR_SOCKET_DATA_WHATSAPP
+  }
+}

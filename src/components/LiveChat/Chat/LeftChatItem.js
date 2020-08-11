@@ -13,6 +13,7 @@ import VIDEO from '../Messages/Video'
 import FILE from '../Messages/File'
 import CARD from '../Messages/Card'
 import LOCATION from '../Messages/Location'
+import CONTACT from '../Messages/Contact'
 
 class LeftChatItem extends PureComponent {
   constructor (props, context) {
@@ -48,9 +49,18 @@ class LeftChatItem extends PureComponent {
         fileurl: { url: message.attachments ? message.attachments[0].payload.url : message.fileurl.url }
       }
       return (
-        <VIDEO
-          video={video}
-        />
+        <Block>
+          <VIDEO
+            video={video}
+          />
+          {message.caption &&
+            <Block style={{marginTop: 10}}>
+              <TEXTCOMPONENT
+                text={{text: message.caption}}
+              />
+            </Block>
+          }
+        </Block>
       )
     } else if (type === 'audio') {
       const audio = {
@@ -66,9 +76,18 @@ class LeftChatItem extends PureComponent {
         fileurl: message.attachments ? message.attachments[0].payload.url : message.fileurl.url
       }
       return (
-        <IMAGECOMPONENT
-          image={image}
-        />
+        <Block>
+          <IMAGECOMPONENT
+            image={image}
+          />
+          {message.caption &&
+            <Block style={{marginTop: 10}}>
+              <TEXTCOMPONENT
+                text={{text: message.caption}}
+              />
+            </Block>
+          }
+        </Block>
       )
     } else if (type === 'file') {
       const url = message.attachments ? message.attachments[0].payload.url : message.fileurl.url
@@ -81,7 +100,14 @@ class LeftChatItem extends PureComponent {
     } else if (type === 'location') {
       return (
         <LOCATION
-          data={message.attachments[0]}
+          data={(message.attachments && message.attachments[0]) || message}
+        />
+      )
+    } else if (type === 'contact') {
+      return (
+        <CONTACT
+          name={message.name}
+          number={message.number}
         />
       )
     } else if (message.text) {
