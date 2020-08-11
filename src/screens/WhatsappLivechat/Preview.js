@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dimensions, FlatList, Platform, View, ScrollView } from 'react-native'
+import { Dimensions, FlatList, Platform, View, ScrollView, StyleSheet} from 'react-native'
 import Modal from 'react-native-modal'
 import { Button, Block, Text } from 'galio-framework'
 import Tabs from '../../components/Tabs';
@@ -37,17 +37,17 @@ class Preview extends React.Component {
             <Text h5 style={{marginVertical: 10, marginHorizontal: 16}}>Preview:</Text>
           </Block>
           <ScrollView
-              style= {{marginHorizontal:16, marginTop: 10,  borderColor: '1px solid rgba(0,0,0,.1)', borderWidth: 2, paddingLeft: 2, flex:1, height: 250}}
+              style= {{ marginHorizontal:16, marginTop: 10,  borderColor: '1px solid rgba(0,0,0,.1)', borderWidth: 2, padding: 5,  flex:1, height: 250}}
               showsVerticalScrollIndicator = {true}
               persistentScrollbar={true}
               >
-          <View>
-         <Text>{this.props.selectedTemplate.text}</Text>
-         <View style= {{ justifyContent: 'center', alignItems: 'center', marginVertical: 10}}>
+          <View >
+         <Text style={{backgroundColor:'#efefef', padding: 15, borderRadius: 20}}>{this.props.selectedTemplate.text}</Text>
+         <View style= {{ justifyContent: 'center', alignItems: 'center', marginVertical: 1}}>
          {
            this.props.selectedTemplate.buttons.map((button, index) => (
             <Button radius={10} key={index}
-            style={{marginVertical: 2, marginTop: 5, width: 200, backgroundColor:'#009688'
+            style={{marginVertical: 2, marginTop: 5, width: 150, backgroundColor:'#009688'
           }}
            onPress={this.closeModal}>{button.title}</Button>
            ))
@@ -66,4 +66,17 @@ class Preview extends React.Component {
   }
 }
 
+
+
 export default Preview
+
+const styles = StyleSheet.create({
+  viewStyle: {
+    padding: 5,
+    height: 50,
+    width: 50,
+    borderRadius: 120,
+    backgroundColor: '#716aca',
+  }
+
+})
