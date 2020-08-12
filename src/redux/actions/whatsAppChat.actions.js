@@ -186,18 +186,18 @@ export function fetchUserChats (sessionid, data, handleFunction) {
       })
   }
 }
-export function fetchTeamAgents (id, handleAgents) {
+export function fetchTeamAgentsWhatsApp (id, handleAgents) {
   return (dispatch) => {
     callApi(`teams/fetchAgents/${id}`)
       .then(res => {
-        if (res.status === 'success') {
+        if (res.status === 'success' && handleAgents) {
           handleAgents(res.payload)
         }
       })
   }
 }
 
-export function changeStatus (data, handleActiveSession) {
+export function changeStatusWhatsApp (data, handleActiveSession) {
   return (dispatch) => {
     callApi('whatsAppSessions/changeStatus', 'post', data).then(res => {
       handleActiveSession()
@@ -205,7 +205,7 @@ export function changeStatus (data, handleActiveSession) {
   }
 }
 
-export function assignToTeam (data, handleResponse) {
+export function assignToTeamWhatsApp (data, handleResponse) {
   return (dispatch) => {
     callApi('whatsAppSessions/assignTeam', 'post', data).then(res => {
       dispatch(updateSessions(data))
@@ -216,7 +216,7 @@ export function assignToTeam (data, handleResponse) {
   }
 }
 
-export function assignToAgent (data, handleResponse) {
+export function assignToAgentWhatsApp (data, handleResponse) {
   return (dispatch) => {
     callApi('whatsAppSessions/assignAgent', 'post', data).then(res => {
       dispatch(updateSessions(data))

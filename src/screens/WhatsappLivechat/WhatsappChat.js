@@ -53,8 +53,8 @@ class LiveChat extends React.Component {
     //   this.props.markRead(props.route.params.activeSession._id)
     // }
     if (this.props.user.currentPlan.unique_ID === 'plan_C' || this.props.user.currentPlan.unique_ID === 'plan_D') {
-      // props.loadMembersList()
-      // props.loadTeamsList({pageId: props.route.params.activeSession.pageId._id})
+      props.loadMembersList()
+      props.loadTeamsList({ platform: 'whatsapp' })
     }
   }
 

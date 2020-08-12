@@ -142,15 +142,16 @@ class AssignSession extends React.Component {
       subscriberId: this.props.activeSession._id,
       isAssigned: true
     }
+    let activeSessionData = {
+      id: this.state.currentSelected.value,
+      name: this.state.currentSelected.label,
+      type: 'agent'
+    }
     this.props.assignToAgent(data, (res) => {
       if (res.status === 'success') {
         let activeSession = this.props.activeSession
         activeSession.is_assigned = true
-        activeSession.assigned_to = {
-          id: this.state.currentSelected.value,
-          name: this.state.currentSelected.label,
-          type: 'agent'
-        }
+        activeSession.assigned_to = activeSessionData
         this.props.handleAssignment(activeSession)
         Toast.default.show('Agent assigned succesfully')
       } else {
@@ -175,16 +176,17 @@ class AssignSession extends React.Component {
       subscriberId: this.props.activeSession._id,
       isAssigned: true
     }
+    let activeSessionData = {
+      id: this.state.currentSelected.value,
+      name: this.state.currentSelected.label,
+      type: 'team'
+    }
     this.props.fetchTeamAgents(this.state.currentSelected.value)
     this.props.assignToTeam(data, (res) => {
       if (res.status === 'success') {
         let activeSession = this.props.activeSession
         activeSession.is_assigned = true
-        activeSession.assigned_to = {
-          id: this.state.currentSelected.value,
-          name: this.state.currentSelected.label,
-          type: 'agent'
-        }
+        activeSession.assigned_to = activeSessionData
         this.props.handleAssignment(activeSession)
         Toast.default.show('Team assigned succesfully')
       } else {
