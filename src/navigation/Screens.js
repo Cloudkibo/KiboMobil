@@ -135,8 +135,6 @@ function LiveChatStack (props) {
           }
         }}
       />
-
-
     </Stack.Navigator>
   )
 }
@@ -169,7 +167,7 @@ function WhatsappLivechat (props) {
               <ChatHeader
                 back
                 activeSession={activeSession}
-                isWhatspHeader = {true}
+                isWhatspHeader
                 title={activeSession.name}
                 navigation={navigation}
                 scene={scene}

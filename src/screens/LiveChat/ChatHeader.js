@@ -8,6 +8,7 @@ import ASSIGNSESSION from '../../components/LiveChat/Chat/AssignSession'
 import { updatePicture } from '../../redux/actions/subscribers.actions'
 
 import { changeStatus, fetchTeamAgents, assignToTeam, assignToAgent } from '../../redux/actions/liveChat.actions'
+import { changeStatusWhatsApp, fetchTeamAgentsWhatsApp, assignToTeamWhatsApp, assignToAgentWhatsApp } from '../../redux/actions/whatsAppChat.actions'
 
 const { height, width } = Dimensions.get('window')
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896)
@@ -75,7 +76,9 @@ class Header extends React.Component {
   }
 
   fetchTeamAgents (id) {
-    this.props.fetchTeamAgents(id, this.handleAgents)
+    this.props.isWhatspHeader
+      ? this.props.fetchTeamAgentsWhatsApp(id, this.handleAgents)
+      : this.props.fetchTeamAgents(id, this.handleAgents)
   }
 
   handleAgents (teamAgents) {
@@ -154,7 +157,9 @@ class Header extends React.Component {
     let errorMsg = (status === 'resolved') ? 'mark this session as resolved' : 'reopen this session'
     const data = this.performAction(errorMsg, session)
     if (data.isAllowed) {
-      this.props.changeStatus({_id: session._id, status: status}, () => this.handleStatusChange(session, status))
+      this.props.isWhatspHeader
+        ? this.props.changeStatusWhatsApp({_id: session._id, status: status}, () => this.handleStatusChange(session, status))
+        : this.props.changeStatus({_id: session._id, status: status}, () => this.handleStatusChange(session, status))
     } else {
       Toast.default.show(data.errorMsg)
     }
@@ -195,9 +200,9 @@ class Header extends React.Component {
           teams={this.getTeams()}
           agents={this.getAgents()}
           activeSession={activeSession}
-          fetchTeamAgents={this.props.fetchTeamAgents}
-          assignToTeam={this.props.assignToTeam}
-          assignToAgent={this.props.assignToAgent}
+          fetchTeamAgents={this.props.isWhatspHeader ? this.props.fetchTeamAgentsWhatsApp : this.props.fetchTeamAgents}
+          assignToTeam={this.props.isWhatspHeader ? this.props.assignToTeamWhatsApp : this.props.assignToTeam}
+          assignToAgent={this.props.isWhatspHeader ? this.props.assignToAgentWhatsApp : this.props.assignToAgent}
           user={this.props.user}
           handleAssignment={this.handleAssignment}
         />
@@ -285,7 +290,11 @@ function mapDispatchToProps (dispatch) {
     fetchTeamAgents,
     assignToTeam,
     assignToAgent,
-    updatePicture
+    updatePicture,
+    changeStatusWhatsApp,
+    fetchTeamAgentsWhatsApp,
+    assignToTeamWhatsApp,
+    assignToAgentWhatsApp
   }, dispatch)
 }
 

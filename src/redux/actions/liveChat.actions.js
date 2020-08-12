@@ -437,7 +437,7 @@ export function fetchTeamAgents (id, handleAgents) {
   return (dispatch) => {
     callApi(`teams/fetchAgents/${id}`)
       .then(res => {
-        if (res.status === 'success') {
+        if (res.status === 'success' && handleAgents) {
           handleAgents(res.payload)
         }
       })
