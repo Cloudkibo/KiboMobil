@@ -6,7 +6,7 @@ import Tabs from '../../components/Tabs';
 import materialTheme from '../../constants/Theme';
 import { CheckBox } from 'react-native-elements'
 
-const { height } = Dimensions.get('screen')
+const { width,height } = Dimensions.get('screen')
 
 let Toast = null
 if (Platform.OS === 'ios') {
@@ -37,7 +37,7 @@ class Preview extends React.Component {
             <Text h5 style={{marginVertical: 10, marginHorizontal: 16}}>Preview:</Text>
           </Block>
           <ScrollView
-              style= {{ marginHorizontal:16, marginTop: 10,  borderColor: '1px solid rgba(0,0,0,.1)', borderWidth: 2, padding: 5,  flex:1, height: 250}}
+              style= {{ marginHorizontal:16, marginTop: 10,  borderColor: '1px solid rgba(0,0,0,.1)', borderWidth: 2,  flex:1, height: 250, paddingTop: 5, paddingLeft:5, paddingRight:5}}
               showsVerticalScrollIndicator = {true}
               persistentScrollbar={true}
               >
@@ -47,9 +47,9 @@ class Preview extends React.Component {
          {
            this.props.selectedTemplate.buttons.map((button, index) => (
             <Button radius={10} key={index}
-            style={{marginVertical: 2, marginTop: 5, width: 150, backgroundColor:'#009688'
+            style={{marginVertical: 2, marginTop: 5, width: width-50, backgroundColor:'white',borderColor: '1px solid rgba(0,0,0,.1)', borderWidth: 1, color: 'blue'
           }}
-           onPress={this.closeModal}>{button.title}</Button>
+           onPress={this.closeModal}><Text  style= {{color:'rgb(7, 130, 255)'}}>{button.title}</Text></Button>
            ))
          }
          </View>
