@@ -8,7 +8,6 @@ import { CheckBox } from 'react-native-elements'
 import {createNewContact, sendChatMessage} from '../../redux/actions/whatsAppChat.actions'
 import { materialTheme } from '../../constants/'
 import { View } from 'react-native-animatable';
-import { HitTestResultTypes } from 'expo/build/AR'
 import Perview from './Preview'
 const { width } = Dimensions.get('screen')
 

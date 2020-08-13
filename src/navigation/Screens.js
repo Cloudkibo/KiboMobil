@@ -256,24 +256,7 @@ function DashboardStack (props) {
           )
         }}
       />
-      <Stack.Screen
-        name='Chat'
-        component={ChatScreen}
-        options={{
-          header: ({ navigation, scene }) => {
-            const activeSession = scene.__memo[0].params.activeSession
-            return (
-              <ChatHeader
-                back
-                activeSession={activeSession}
-                title={`${activeSession.firstName} ${activeSession.lastName}`}
-                navigation={navigation}
-                scene={scene}
-              />
-            )
-          }
-        }}
-      />
+      
     </Stack.Navigator>
   )
 }

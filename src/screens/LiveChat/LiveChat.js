@@ -1,11 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
+import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator,Platform } from 'react-native'
 import { Block, Text, theme, Input, Button } from 'galio-framework'
 import { MaterialIcons } from '@expo/vector-icons'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
+import * as Notifications from 'expo-notifications'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
 import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead} from '../../redux/actions/liveChat.actions'
@@ -55,8 +56,26 @@ class LiveChat extends React.Component {
       this.props.markRead(session._id)
     }
     this.setState({activeSession: session})
+    this.getPushNotificationsAsync(session._id)
     this.props.navigation.navigate('Chat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
     session.unreadCount = 0
+  }
+
+  getPushNotificationsAsync = async (sessionId) => {
+    // let notifications = await Notifications.getPresentedNotificationsAsync()
+    // // // let data = JSON.parse(notification[0])
+    // for (let notification of notifications) {
+    //   console.log('sessionId', sessionId)
+    //   console.log('notification.request.content.data._id', notification.request.content.data._id)
+    //    if(notification.request.content.data._id === sessionId) {
+    //      let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
+    //    }
+    // }
+    // console.log('notification[0].identifier', notification[0].request.identifier)
+    // let removeNotification = await Notifications.dismissNotificationAsync(notification[0].request.identifier)
+    // // console.log('notification in Live chat', data)
+    // console.log('remove_notidication', removeNotification)
+
   }
 
   componentDidMount () {
@@ -64,6 +83,12 @@ class LiveChat extends React.Component {
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
     })
+    console.log('this.props.route.params', this.props.route)
+    if (this.props.route.params && this.props.route.params.activeSession){
+      this.props.markRead(this.props.route.params.activeSession._id)
+      this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
+      this.props.route.params = null
+    }
   }
 
   componentWillUnmount () {
@@ -72,9 +97,17 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
+
+    if (this.props.route.params && this.props.route.params.activeSession){
+      this.props.markRead(this.props.route.params.activeSession._id)
+      this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
+      this.props.route.params = null
+    }
+    
   /* eslint-enable */
     let state = {}
     if (nextProps.openSessions || nextProps.closeSessions) {
+      
       state.loading = false
       state.sessionsLoading = false
       let sessions = this.state.tabValue === 'open' ? nextProps.openSessions : nextProps.closeSessions
@@ -175,6 +208,12 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillMount () {
+
+
+    // console.log('this.props.route.params', this.props.route)
+    // if (this.props.route.params && this.props.route.params.activeSession){
+    //   this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession})
+    // }
   /* eslint-enable */
   // console.log('props.route.params.activeSession',this.props.route.params.activeSession)
     // this.props.navigation.dispatch(
