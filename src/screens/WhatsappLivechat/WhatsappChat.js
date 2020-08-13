@@ -12,7 +12,7 @@ import {
   deletefile,
   markRead,
   fetchUserChats,
-  fetchTeamAgents,
+  fetchTeamAgentsWhatsApp,
   changeStatus,
   assignToTeam,
   assignToAgent,
@@ -129,7 +129,7 @@ class LiveChat extends React.Component {
   }
 
   fetchTeamAgents (id) {
-    this.props.fetchTeamAgents(id, this.handleAgents)
+    this.props.fetchTeamAgentsWhatsApp(id, this.handleAgents)
   }
 
   handleAgents (teamAgents) {
@@ -241,7 +241,7 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    fetchTeamAgents,
+    fetchTeamAgentsWhatsApp,
     assignToTeam,
     changeStatus,
     loadTeamsList,
