@@ -42,6 +42,7 @@
     "react-giphy-picker": "^1.1.1",
     "react-image-appear": "^1.2.23",
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
+    "react-native-dropdown-picker": "^3.1.11",
     "react-native-elements": "^2.0.1",
     "react-native-emoji-selector": "^0.1.8",
     "react-native-gesture-handler": "~1.6.0",
