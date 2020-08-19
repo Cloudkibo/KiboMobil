@@ -160,7 +160,6 @@ class Subscribers extends React.Component {
   }
 
   render () {
-    console.log('re render')
     return (
       <Block flex center style={styles.block}>
         <Modal isVisible={this.state.isShowingModalEdit} onBackdropPress={this.closeEdit} style={{margin: 0}}>
@@ -173,6 +172,7 @@ class Subscribers extends React.Component {
                   multiline
                   value={this.state.name}
                   onChangeText={text => this.changeName(text)}
+                  maxLength={25}
                 />
               </Block>
               {this.state.errorMessage !== '' &&

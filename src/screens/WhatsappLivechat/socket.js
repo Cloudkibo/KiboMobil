@@ -1,5 +1,4 @@
 export function handleSocketEvent (data, state, props, updateLiveChatInfo, user, clearSocketData) {
-  console.log('in handleSocketEvent', data.action)
   switch (data.action) {
     case 'new_chat_whatsapp':
       handleIncomingMessage(data.payload, state, props, updateLiveChatInfo, clearSocketData)
@@ -50,6 +49,7 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
     } else {
       session.status = 'new'
     }
+    props.markRead(session._id)
     data = {
       userChat,
       chatCount: props.chatCount + 1,
