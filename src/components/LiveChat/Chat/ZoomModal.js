@@ -1,10 +1,10 @@
 import React from 'react'
 import { Block, Text, Button, theme, Input } from 'galio-framework'
-import { KeyboardAvoidingView, View, ScrollView, TouchableOpacity, StyleSheet, TextInput, Dimensions, FlatList, Alert, Linking } from 'react-native'
+import {View, TouchableOpacity, StyleSheet, Dimensions, FlatList, Alert, Linking} from 'react-native'
 import Modal from 'react-native-modal'
-import { Select } from '../../../components/'
 import Icon from '../../../components/Icon'
-const { width, height } = Dimensions.get('screen')
+import DropDownPicker from 'react-native-dropdown-picker'
+const { width } = Dimensions.get('screen')
 
 class ZoomModal extends React.Component {
   constructor (props, context) {
@@ -12,7 +12,7 @@ class ZoomModal extends React.Component {
     this.initialZoomCountdown = 3
     this.initialZoomInvitationMessage = 'Please join Zoom meeting to discuss this in detail. [invite_url]'
     this.state = {
-      selectedZoom: props.zoomIntegrations[0],
+      selectedZoom: props.zoomIntegrations[0] ? props.zoomIntegrations[0]._id : null,
       listData: [{id: '0'}],
       zoomTopic: '',
       zoomAgenda: '',
@@ -22,8 +22,10 @@ class ZoomModal extends React.Component {
       zoomMeetingUrl: '',
       zoomMeetingCreationError: false,
       text: '',
-      errorMessage: ''
+      errorMessage: '',
+      options: []
     }
+
     this.renderList = this.renderList.bind(this)
     this.handleZoomSelect = this.handleZoomSelect.bind(this)
     this.setZoomTopic = this.setZoomTopic.bind(this)
@@ -31,11 +33,23 @@ class ZoomModal extends React.Component {
     this.setZoomInvitationMessage = this.setZoomInvitationMessage.bind(this)
     this.createZoomMeeting = this.createZoomMeeting.bind(this)
     this.appendInvitationUrl = this.appendInvitationUrl.bind(this)
+    this.getOptions = this.getOptions.bind(this)
+
+    this.getOptions()
   }
 
-  handleZoomSelect (index, value) {
-    let selectedZoom = this.props.zoomIntegrations[index]
-    this.setState({selectedZoom: selectedZoom})
+  getOptions () {
+    if (this.props.zoomIntegrations.length > 0) {
+      let options = []
+      options = this.props.zoomIntegrations.map(z => {
+        return {label: `${z.firstName} ${z.lastName}`, value: z._id}
+      })
+      this.setState({options: options})
+    }
+  }
+
+  handleZoomSelect (value) {
+    this.setState({selectedZoom: value})
   }
 
   setZoomTopic (text) {
@@ -79,7 +93,7 @@ class ZoomModal extends React.Component {
             topic: this.state.zoomTopic,
             agenda: this.state.zoomAgenda,
             invitationMessage: this.state.zoomInvitationMessage,
-            zoomUserId: this.state.selectedZoom._id,
+            zoomUserId: this.state.selectedZoom,
             platform: this.props.user.platform
           }, (res) => {
             if (res.status === 'success' && res.payload) {
@@ -161,18 +175,29 @@ class ZoomModal extends React.Component {
         </Block>
       )
     } else if (!this.state.zoomMeetingCreated) {
+      let options = this.props.zoomIntegrations.map(z => {
+        return {label: `${z.firstName} ${z.lastName}`, value: z._id}
+      })
       return (
-        <Block style={{paddingVertical: 20, marginHorizontal: 10}}>
-          <Block flex row style={styles.options}>
+        <Block style={{paddingVertical: 20, marginHorizontal: 10, zIndex: 10}}>
+          <Block flex row style={{...styles.options, zIndex: 10}}>
             <Block flex={0.2} middle><Text size={14}>Account:</Text></Block>
-            <Block flex={0.8} middle>
-              <Select
-                dropDownStyle={{marginTop: 10, width: width * 0.7}}
-                style={{width: width * 0.7}}
-                value={this.state.selectedZoom ? this.state.selectedZoom.firstName + ' ' + this.state.selectedZoom.lastName : ''}
-                options={this.props.zoomIntegrations.map(z => z.firstName + ' ' + z.lastName)}
-                onSelect={(index, value) => this.handleZoomSelect(index, value)}
-              />
+            <Block flex={0.8} middle style={{zIndex: 10}}>
+              <View style={{ zIndex: 1000 }}>
+                <DropDownPicker
+                  items={options}
+                  containerStyle={{height: 45}}
+                  style={{width: width * 0.7}}
+                  itemStyle={{
+                    justifyContent: 'flex-start'
+                  }}
+                  defaultValue={this.state.selectedZoom}
+                  placeholder='Select a Zoom Account'
+                  dropDownStyle={{backgroundColor: '#fafafa', width: width * 0.7, zIndex: 5000, marginTop: 2}}
+                  onChangeItem={item => this.handleZoomSelect(item.value)}
+
+                />
+              </View>
             </Block>
           </Block>
           <Block flex row style={styles.options}>
@@ -199,18 +224,14 @@ class ZoomModal extends React.Component {
             <Text size={14}> Invitation Message:</Text>
             <Input
               color='grey'
-              style={{height: 'auto', paddingVertical: 0}}
+              style={{height: 100, alignItems: 'flex-start', paddingVertical: 5}}
               multiline
-              numberOfLines={3}
               value={this.state.zoomInvitationMessage}
               onChangeText={text => this.setZoomInvitationMessage(text)}
-              right
-              iconContent={
-                <TouchableOpacity onPress={this.appendInvitationUrl}>
-                  <Icon size={20} color={theme.COLORS.MUTED} name='link' family='entypo' />
-                </TouchableOpacity>
-              }
             />
+            <TouchableOpacity onPress={this.appendInvitationUrl} style={{alignItems: 'flex-end', marginTop: -35, marginRight: 10}}>
+              <Icon size={20} color={theme.COLORS.MUTED} name='link' family='entypo' />
+            </TouchableOpacity>
           </Block>
           {this.state.errorMessage !== '' &&
             <Text style={{color: 'red', marginHorizontal: 10}}>{this.state.errorMessage}</Text>
@@ -245,7 +266,7 @@ class ZoomModal extends React.Component {
   render () {
     return (
       <Modal isVisible={this.props.showZoomModal} onBackdropPress={this.props.setZoomModal} style={{margin: 0}}>
-        <Block style={{backgroundColor: 'white', height: height * 0.6}}>
+        <Block style={{backgroundColor: 'white'}}>
           <FlatList
             data={this.state.listData}
             renderItem={this.renderList}
