@@ -55,10 +55,17 @@ class DashboardHeader extends React.Component {
     constructor (props, context) {
         super(props, context)
         this.state = {
-            showAssignmentModal: false
+            showAssignmentModal: false,
+            automated_options: this.props.automated_options
           }
           this.toggleAssignmentModal = this.toggleAssignmentModal.bind(this)
     }
+
+  UNSAFE_componentWillReceiveProps (nextProps) {
+    if(nextProps.automated_options) {
+      this.setState({automated_options: nextProps.automated_options})
+    }
+  }
   handleLeftPress = () => {
     const { back, navigation } = this.props;
     return (back ? navigation.goBack() : navigation.openDrawer());
@@ -70,6 +77,7 @@ class DashboardHeader extends React.Component {
     const { white, title, navigation, scene } = this.props;
     return (
     <Block flex={0.8} row >
+    { this.state.automated_options && this.state.automated_options.whatsApp &&
     <TouchableOpacity onPress={() => this.setState({showAssignmentModal: true})}>
     <Icon
         size={20}
@@ -78,6 +86,7 @@ class DashboardHeader extends React.Component {
         style={{marginLeft: 40, marginTop: 6}}
     />
     </TouchableOpacity>
+    }
          <SelectPlatform
           showModal={this.state.showAssignmentModal}
           toggleAssignmentModal={this.toggleAssignmentModal}
@@ -191,6 +200,7 @@ class DashboardHeader extends React.Component {
 function mapStateToProps (state) {
     return {
       user: (state.basicInfo.user),
+      automated_options: (state.basicInfo.automated_options)
       // socketData: (state.socketInfo.socketData)
     }
   }

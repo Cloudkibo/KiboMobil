@@ -6,11 +6,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {
   Dimensions,
-  Slider,
   StyleSheet,
   TouchableOpacity,
   View
 } from 'react-native'
+import Slider from '@react-native-community/slider'
 import { Block, Text } from 'galio-framework'
 import { Audio } from 'expo-av'
 import Icon from '../../../components/Icon'
