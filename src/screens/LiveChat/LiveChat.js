@@ -46,6 +46,7 @@ class LiveChat extends React.Component {
     this.profilePicError = this.profilePicError.bind(this)
     this.changeActiveSession = this.changeActiveSession.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
+    this.getPushNotificationsAsync=  this.getPushNotificationsAsync.bind(this)
 
     // this.fetchSessions(true, 'none', true)
   }
@@ -62,15 +63,13 @@ class LiveChat extends React.Component {
   }
 
   getPushNotificationsAsync = async (sessionId) => {
-    // let notifications = await Notifications.getPresentedNotificationsAsync()
-    // // // let data = JSON.parse(notification[0])
-    // for (let notification of notifications) {
-    //   console.log('sessionId', sessionId)
-    //   console.log('notification.request.content.data._id', notification.request.content.data._id)
-    //    if(notification.request.content.data._id === sessionId) {
-    //      let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
-    //    }
-    // }
+    let notifications = await Notifications.getPresentedNotificationsAsync()
+    // // let data = JSON.parse(notification[0])
+    for (let notification of notifications) {
+      if(notification.request.content.data.subscriber._id === sessionId) {
+        let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
+       }
+    }
     // console.log('notification[0].identifier', notification[0].request.identifier)
     // let removeNotification = await Notifications.dismissNotificationAsync(notification[0].request.identifier)
     // // console.log('notification in Live chat', data)

@@ -92,8 +92,8 @@ class LiveChat extends React.Component {
     let notifications = await Notifications.getPresentedNotificationsAsync()
     // // let data = JSON.parse(notification[0])
     for (let notification of notifications) {
-       if(notification.request.content.data._id === sessionId) {
-         let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
+      if(notification.request.content.data.subscriber._id === sessionId) {
+        let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
        }
     }
     // console.log('notification[0].identifier', notification[0].request.identifier)
