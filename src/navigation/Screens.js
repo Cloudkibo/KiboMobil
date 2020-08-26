@@ -143,7 +143,7 @@ function WhatsappLivechat (props) {
   return (
     <Stack.Navigator mode='card' headerMode='screen'>
       <Stack.Screen
-        name='Live Chat'
+        name='Whatsapp Live Chat'
         component={WhatsappLiveChatSessionScreen}
         options={{
           header: ({ navigation, scene }) => (

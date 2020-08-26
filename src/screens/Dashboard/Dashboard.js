@@ -70,10 +70,18 @@ class Dashboard extends React.Component {
   _handleNotification = notification => {
     this.setState({ notification: notification.notification })
     // console.log('notification.origin', notification.notification.request.content.data)
-      this.props.navigation.navigate('Live Chat', {
+     
+    if(notification.notification.request.content.data.action === 'chat_whatsapp') {
+      this.props.navigation.navigate('Whatsapp Live Chat', {
+        screen: 'Whatsapp Live Chat',
+        params: {activeSession: notification.notification.request.content.data.subscriber}
+      });
+    } else {
+     this.props.navigation.navigate('Live Chat', {
         screen: 'Live Chat',
         params: {activeSession: notification.notification.request.content.data}
       });    
+    }
   };
   registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {

@@ -68,6 +68,11 @@ class WhastappLiveChat extends React.Component {
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
     })
+    if (this.props.route.params && this.props.route.params.activeSession) {
+      this.props.markRead(this.props.route.params.activeSession._id)
+      this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
+      this.props.route.params = null
+    }
   }
 
   componentWillUnmount () {
@@ -78,6 +83,7 @@ class WhastappLiveChat extends React.Component {
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
     if (this.props.route.params && this.props.route.params.activeSession) {
+      this.props.markRead(this.props.route.params.activeSession._id)
       this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
       this.props.route.params = null
     }
