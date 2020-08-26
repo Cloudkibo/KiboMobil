@@ -11,6 +11,7 @@ import Tabs from '../../components/Tabs'
 import {getWhatsAppMessageTemplates} from '../../redux/actions/settings.action'
 import {fetchOpenSessions, fetchCloseSessions, markRead, updateLiveChatInfo} from '../../redux/actions/whatsAppChat.actions'
 import { handleSocketEvent } from './socket'
+import * as Notifications from 'expo-notifications'
 import { clearSocketDataWhatsapp } from '../../redux/actions/socket.actions'
 // import { CommonActions } from '@react-navigation/native'
 
@@ -46,8 +47,24 @@ class WhastappLiveChat extends React.Component {
     this.changeActiveSession = this.changeActiveSession.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
     this.openTemplatePage = this.openTemplatePage.bind(this)
+    this.getPushNotificationsAsync = this.getPushNotificationsAsync.bind(this)
     // this.fetchSessions(true, 'none', true)
     this.props.getWhatsAppMessageTemplates()
+  }
+
+  getPushNotificationsAsync = async (sessionId) => {
+    let notifications = await Notifications.getPresentedNotificationsAsync()
+    // // let data = JSON.parse(notification[0])
+    for (let notification of notifications) {
+       if(notification.request.content.data.subscriber._id === sessionId) {
+         let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
+       }
+    }
+    // console.log('notification[0].identifier', notification[0].request.identifier)
+    // let removeNotification = await Notifications.dismissNotificationAsync(notification[0].request.identifier)
+    // // console.log('notification in Live chat', data)
+    // console.log('remove_notidication', removeNotification)
+
   }
 
   openTemplatePage () {
@@ -57,6 +74,7 @@ class WhastappLiveChat extends React.Component {
     if (session.unreadCount && session.unreadCount > 0) {
       session.unreadCount = 0
       this.props.markRead(session._id)
+      this.getPushNotificationsAsync(session._id)
     }
     this.setState({activeSession: session})
     this.props.navigation.navigate('WhatsappChat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
@@ -69,6 +87,7 @@ class WhastappLiveChat extends React.Component {
       this.fetchSessions(true, 'none', true)
     })
     if (this.props.route.params && this.props.route.params.activeSession) {
+      this.getPushNotificationsAsync(this.props.route.params.activeSession._id)
       this.props.markRead(this.props.route.params.activeSession._id)
       this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
       this.props.route.params = null

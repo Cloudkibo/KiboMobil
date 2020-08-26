@@ -79,8 +79,8 @@ class LiveChat extends React.Component {
     let notifications = await Notifications.getPresentedNotificationsAsync()
     // // let data = JSON.parse(notification[0])
     for (let notification of notifications) {
-       if(notification.request.content.data._id === sessionId) {
-         let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
+      if(notification.request.content.data.subscriber._id === sessionId) {
+        let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
        }
     }
     // console.log('notification[0].identifier', notification[0].request.identifier)
@@ -101,6 +101,7 @@ class LiveChat extends React.Component {
     }
     if (nextProps.userChat) {
       if (nextProps.userChat.length > 0) {
+        console.log('nextProps.userChat.length', nextProps.userChat.length)
         this.getPushNotificationsAsync(this.state.activeSession._id)
         state.userChat = nextProps.userChat
         state.loadingChat = false
@@ -193,8 +194,7 @@ class LiveChat extends React.Component {
   /* eslint-enable */
   }
 
-  componentDidMount () {
-  }
+
 
   render () {
     return (
