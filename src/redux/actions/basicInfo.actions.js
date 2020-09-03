@@ -28,8 +28,9 @@ export function showuserdetails (data) {
 export function getuserdetails (callback, joinRoom) {
   return (dispatch) => {
     callApi('users').then(res => {
-      if (res.status === 'Unauthorized') {
+      if (res.status === 'Unauthorized' || res.status === 'failed') {
         AsyncStorage.removeItem('token')
+        if (callback) callback(res)
       } else {
         if (joinRoom) joinRoom(res.payload.companyId)
         if (callback) callback(res)
