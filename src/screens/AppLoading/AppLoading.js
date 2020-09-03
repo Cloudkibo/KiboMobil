@@ -50,7 +50,6 @@ class Loading extends React.Component {
     // this._notificationSubscription = Notifications.addListener(this._handleNotification)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
-        console.log('token', token)
         if (token) {
           this.props.getuserdetails(this.handleResponse, joinRoom)
         } else {
