@@ -100,6 +100,8 @@ class Loading extends React.Component {
   handleResponse (res) {
     if (res.status === 'success') {
       this.props.navigation.navigate('App')
+    } else {
+      this.props.navigation.navigate('Sign In')
     }
   }
 
@@ -119,9 +121,14 @@ class Loading extends React.Component {
     }
   }
 }
+function mapStateToProps (state) {
+  return {
+    user: (state.basicInfo.user)
+  }
+}
 function mapDispatchToProps (dispatch) {
   return bindActionCreators(
     {getuserdetails},
     dispatch)
 }
-export default connect(null, mapDispatchToProps)(Loading)
+export default connect(mapStateToProps, mapDispatchToProps)(Loading)

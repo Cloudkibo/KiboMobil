@@ -10,6 +10,6 @@ export function updateMembersList (data) {
 
 export function loadMembersList () {
   return (dispatch) => {
-    callApi('company/members').then(res => dispatch(updateMembersList(res)))
+    callApi(dispatch, 'company/members').then(res => dispatch(updateMembersList(res)))
   }
 }

@@ -17,7 +17,7 @@ export function updateConnectedPages (data) {
 
 export function fetchPages (callback) {
   return (dispatch) => {
-    callApi(`pages/addpages/`).then(res => {
+    callApi(dispatch, `pages/addpages/`).then(res => {
       dispatch(updatePages(res.payload))
       if (callback) callback()
     })
@@ -25,7 +25,7 @@ export function fetchPages (callback) {
 }
 export function disconnectPage (page, showSucessMessage) {
   return (dispatch) => {
-    callApi('pages/disable', 'post', page)
+    callApi(dispatch, 'pages/disable', 'post', page)
       .then(res => {
         showSucessMessage('Disconnected Sucessfully')
         dispatch(fetchPages())
@@ -34,7 +34,7 @@ export function disconnectPage (page, showSucessMessage) {
 }
 export function connectPage (page, showErrorDialog, showSucessMessage) {
   return (dispatch) => {
-    callApi(`pages/enable/`, 'post', page)
+    callApi(dispatch, `pages/enable/`, 'post', page)
       .then(res => {
         if (res.type === 'invalid_permissions') {
           showErrorDialog('Looks like you have not granted permissions for this page. Permissions must be granted to connect this page.')
@@ -52,7 +52,7 @@ export function connectPage (page, showErrorDialog, showSucessMessage) {
 
 export function fetchConnectedPages (callback) {
   return (dispatch) => {
-    callApi(`pages/allpages`).then(res => {
+    callApi(dispatch, `pages/allpages`).then(res => {
       dispatch(updateConnectedPages(res.payload))
       callback(res.payload)
     })

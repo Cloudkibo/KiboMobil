@@ -76,7 +76,7 @@ export function UpdateUnreadCount (data) {
 }
 export function fetchOpenSessions (data) {
   return (dispatch) => {
-    callApi('whatsAppSessions/getOpenSessions', 'post', data)
+    callApi(dispatch, 'whatsAppSessions/getOpenSessions', 'post', data)
       .then(res => {
         dispatch(showOpenSessions(res.payload))
       })
@@ -84,7 +84,7 @@ export function fetchOpenSessions (data) {
 }
 export function fetchCloseSessions (data) {
   return (dispatch) => {
-    callApi('whatsAppSessions/getClosedSessions', 'post', data)
+    callApi(dispatch, 'whatsAppSessions/getClosedSessions', 'post', data)
       .then(res => {
         dispatch(showCloseChatSessions(res.payload, data.first_page))
       })
@@ -93,14 +93,14 @@ export function fetchCloseSessions (data) {
 
 export function markRead (sessionid) {
   return (dispatch) => {
-    callApi(`whatsAppSessions/markread/${sessionid}`).then(res => {
+    callApi(dispatch, `whatsAppSessions/markread/${sessionid}`).then(res => {
       dispatch(UpdateUnreadCount(sessionid))
     })
   }
 }
 export function createNewContact (data, callback) {
   return (dispatch) => {
-    callApi(`whatsAppContacts/create`, 'post', data).then(res => {
+    callApi(dispatch, `whatsAppContacts/create`, 'post', data).then(res => {
       if (callback) {
         callback(res)
       }
@@ -110,7 +110,7 @@ export function createNewContact (data, callback) {
 
 export function sendChatMessage (data, callback) {
   return (dispatch) => {
-    callApi('whatsAppChat', 'post', data)
+    callApi(dispatch, 'whatsAppChat', 'post', data)
       .then(res => {
         if (callback) {
           callback(res)
@@ -121,7 +121,7 @@ export function sendChatMessage (data, callback) {
 
 export function deletefile (data, handleRemove) {
   return (dispatch) => {
-    callApi(`broadcasts/delete/${data}`)
+    callApi(dispatch, `broadcasts/delete/${data}`)
       .then(res => {
         if (handleRemove) {
           handleRemove(res)
@@ -132,7 +132,7 @@ export function deletefile (data, handleRemove) {
 
 export function sendAttachment (data, handleSendAttachment) {
   return (dispatch) => {
-    callApi('whatsAppChat', 'post', data).then(res => {
+    callApi(dispatch, 'whatsAppChat', 'post', data).then(res => {
       handleSendAttachment(res)
       let fetchData = {
         filter_criteria: {
@@ -177,7 +177,7 @@ export function uploadAttachment (fileData, handleUpload) {
 }
 export function fetchUserChats (sessionid, data, handleFunction) {
   return (dispatch) => {
-    callApi(`whatsAppChat/getChat/${sessionid}`, 'post', data)
+    callApi(dispatch, `whatsAppChat/getChat/${sessionid}`, 'post', data)
       .then(res => {
         dispatch(showChat(res.payload, data))
         if (handleFunction) {
@@ -188,7 +188,7 @@ export function fetchUserChats (sessionid, data, handleFunction) {
 }
 export function fetchTeamAgentsWhatsApp (id, handleAgents) {
   return (dispatch) => {
-    callApi(`teams/fetchAgents/${id}`)
+    callApi(dispatch, `teams/fetchAgents/${id}`)
       .then(res => {
         if (res.status === 'success' && handleAgents) {
           handleAgents(res.payload)
@@ -199,7 +199,7 @@ export function fetchTeamAgentsWhatsApp (id, handleAgents) {
 
 export function changeStatusWhatsApp (data, handleActiveSession) {
   return (dispatch) => {
-    callApi('whatsAppSessions/changeStatus', 'post', data).then(res => {
+    callApi(dispatch, 'whatsAppSessions/changeStatus', 'post', data).then(res => {
       handleActiveSession()
     })
   }
@@ -207,7 +207,7 @@ export function changeStatusWhatsApp (data, handleActiveSession) {
 
 export function assignToTeamWhatsApp (data, handleResponse) {
   return (dispatch) => {
-    callApi('whatsAppSessions/assignTeam', 'post', data).then(res => {
+    callApi(dispatch, 'whatsAppSessions/assignTeam', 'post', data).then(res => {
       dispatch(updateSessions(data))
       if (handleResponse) {
         handleResponse(res)
@@ -218,7 +218,7 @@ export function assignToTeamWhatsApp (data, handleResponse) {
 
 export function assignToAgentWhatsApp (data, handleResponse) {
   return (dispatch) => {
-    callApi('whatsAppSessions/assignAgent', 'post', data).then(res => {
+    callApi(dispatch, 'whatsAppSessions/assignAgent', 'post', data).then(res => {
       dispatch(updateSessions(data))
       if (handleResponse) {
         handleResponse(res)

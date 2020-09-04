@@ -12,7 +12,7 @@ export function showTeamsList (data) {
 
 export function loadTeamsList (data) {
   return (dispatch) => {
-    callApi('teams', 'post', data)
+    callApi(dispatch, 'teams', 'post', data)
       .then(res => {
         if (res.status === 'success') {
           dispatch(showTeamsList(res.payload))

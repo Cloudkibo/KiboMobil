@@ -23,7 +23,7 @@ export function updateZoomIntegrations (data) {
 
 export function loadcannedResponses () {
   return (dispatch) => {
-    callApi('cannedResponses')
+    callApi(dispatch, 'cannedResponses')
       .then(res => {
         if (res.status === 'success') {
           dispatch(showcannedResponses(res.payload))
@@ -35,7 +35,7 @@ export function loadcannedResponses () {
 
 export function getZoomIntegrations () {
   return (dispatch) => {
-    callApi('zoom/users')
+    callApi(dispatch, 'zoom/users')
       .then(res => {
         dispatch(updateZoomIntegrations(res.payload ? res.payload : []))
       })
@@ -44,7 +44,7 @@ export function getZoomIntegrations () {
 
 export function createZoomMeeting (data, callback) {
   return (dispatch) => {
-    callApi('zoom/meetings', 'post', data)
+    callApi(dispatch, 'zoom/meetings', 'post', data)
       .then(res => {
         if (callback) {
           callback(res)
@@ -55,7 +55,7 @@ export function createZoomMeeting (data, callback) {
 
 export function getWhatsAppMessageTemplates () {
   return (dispatch) => {
-    callApi('company/getWhatsAppMessageTemplates')
+    callApi(dispatch, 'company/getWhatsAppMessageTemplates')
       .then(res => {
         dispatch(updateWhatsAppMessageTemplates(res.payload))
     })

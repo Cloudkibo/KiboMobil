@@ -1,6 +1,5 @@
 import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
-import {AsyncStorage} from 'react-native'
 
 export function setSocketStatus (data) {
   return {
@@ -27,9 +26,10 @@ export function showuserdetails (data) {
 
 export function getuserdetails (callback, joinRoom) {
   return (dispatch) => {
-    callApi('users').then(res => {
-      if (res.status === 'Unauthorized') {
-        AsyncStorage.removeItem('token')
+    callApi(dispatch, 'users').then(res => {
+      if (res.status === 'Unauthorized' || res.status === 'failed') {
+        // AsyncStorage.removeItem('token')
+        // if (callback) callback(res)
       } else {
         if (joinRoom) joinRoom(res.payload.companyId)
         if (callback) callback(res)
@@ -41,7 +41,7 @@ export function getuserdetails (callback, joinRoom) {
 
 export function saveNotificationToken(user, logOut) {
   return (dispatch) => {
-    callApi(`companyUsers/update/${user._id}`, 'post', {expoListToken: user.expoListToken}).then(res => {
+    callApi(dispatch, `companyUsers/update/${user._id}`, 'post', {expoListToken: user.expoListToken}).then(res => {
       if (res.status === 'success') {
         if(logOut){
           logOut()
@@ -53,7 +53,7 @@ export function saveNotificationToken(user, logOut) {
 }
 export function updatePicture (data, callback) {
   return (dispatch) => {
-    callApi('updatePicture', 'post', data, 'accounts')
+    callApi(dispatch, 'updatePicture', 'post', data, 'accounts')
       .then(res => {
         if (res.status === 'success') {
           dispatch(getuserdetails())
@@ -67,7 +67,7 @@ export function updatePicture (data, callback) {
 
 export function updatePlatform (data) {
   return (dispatch) => {
-    callApi('users/updatePlatform', 'post', data).then(res => {
+    callApi(dispatch, 'users/updatePlatform', 'post', data).then(res => {
       if (res.status === 'success') {
         dispatch(getuserdetails())
       } else {
@@ -78,6 +78,6 @@ export function updatePlatform (data) {
 
 export function getAutomatedOptions () {
   return (dispatch) => {
-    callApi('company/getAutomatedOptions').then(res => dispatch(showAutomatedOptions(res.payload)))
+    callApi(dispatch, 'company/getAutomatedOptions').then(res => dispatch(showAutomatedOptions(res.payload)))
   }
 }
