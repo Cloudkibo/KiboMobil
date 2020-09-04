@@ -2,6 +2,7 @@ import React from 'react'
 import { registerRootComponent } from 'expo'
 import { GalioProvider } from 'galio-framework'
 import { NavigationContainer } from '@react-navigation/native'
+import { navigationRef } from './rootNavigation'
 import { Provider } from 'react-redux'
 import { configureStore } from './redux/store/store'
 import SubApp from './sub.app'
@@ -27,7 +28,7 @@ class App extends React.Component {
   render () {
     return (
       <Provider store={store}>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <GalioProvider theme={materialTheme}>
             <SubApp />
           </GalioProvider>

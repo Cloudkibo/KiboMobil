@@ -27,7 +27,7 @@ export function updateContact (id, data) {
 
 export function loadWhatsAppContactsList (data, prepareExport) {
   return (dispatch) => {
-    callApi('whatsAppContacts', 'post', data)
+    callApi(dispatch, 'whatsAppContacts', 'post', data)
       .then(res => {
         dispatch(showContacts(res.payload, data))
         if (prepareExport) {
@@ -38,7 +38,7 @@ export function loadWhatsAppContactsList (data, prepareExport) {
 }
 export function editSubscriberWhatsApp (id, data, callback) {
   return (dispatch) => {
-    callApi(`whatsAppContacts/update/${id}`, 'post', data)
+    callApi(dispatch, `whatsAppContacts/update/${id}`, 'post', data)
       .then(res => {
         dispatch(updateContact(id, data))
         callback(res)

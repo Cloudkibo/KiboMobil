@@ -19,9 +19,11 @@ export function updateSubscribers (payload, data) {
 
 export function fetchSubscribers (data, callback) {
   return (dispatch) => {
-    callApi('subscribers/getAll', 'post', data).then(res => {
-      callback()
-      dispatch(updateSubscribers(res.payload, data))
+    callApi(dispatch, 'subscribers/getAll', 'post', data).then(res => {
+      if (res.status === 'success') {
+        callback()
+        dispatch(updateSubscribers(res.payload, data))
+      }
     })
   }
 }
@@ -36,7 +38,7 @@ export function updateSubscriberPicture (subscriberId, profilePic) {
 
 export function updatePicture (subscriberData, callback) {
   return (dispatch) => {
-    callApi('subscribers/updatePicture', 'post', subscriberData).then(res => {
+    callApi(dispatch, 'subscribers/updatePicture', 'post', subscriberData).then(res => {
       if (res.status === 'success') {
         if (callback) {
           callback(res.payload)

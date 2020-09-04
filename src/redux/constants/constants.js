@@ -1,6 +1,7 @@
 // constants for basicinfo
 export const LOAD_USER_DETAILS = 'LOAD_USER_DETAILS'
 export const GET_AUTOMATED_OPTIONS = 'GET_AUTOMATED_OPTIONS'
+
 // constants for dashboard
 export const UPDATE_DASHBOARD = 'UPDATE_DASHBOARD'
 

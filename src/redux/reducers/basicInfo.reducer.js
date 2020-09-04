@@ -9,10 +9,10 @@ export function basicInfo (state = initialState, action) {
       return Object.assign({}, state, {
         user: action.data
       })
-      case ActionTypes.GET_AUTOMATED_OPTIONS:
-        return Object.assign({}, state, {
-          automated_options: action.data
-        })
+    case ActionTypes.GET_AUTOMATED_OPTIONS:
+      return Object.assign({}, state, {
+        automated_options: action.data
+      })
     default:
       return state
   }

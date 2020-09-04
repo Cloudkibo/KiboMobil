@@ -244,7 +244,7 @@ export function clearData () {
 
 export function fetchOpenSessions (data) {
   return (dispatch) => {
-    callApi('sessions/getOpenSessions', 'post', data)
+    callApi(dispatch, 'sessions/getOpenSessions', 'post', data)
       .then(res => {
         dispatch(showOpenChatSessions(res.payload, data))
       })
@@ -253,7 +253,7 @@ export function fetchOpenSessions (data) {
 
 export function fetchCloseSessions (data) {
   return (dispatch) => {
-    callApi('sessions/getClosedSessions', 'post', data)
+    callApi(dispatch, 'sessions/getClosedSessions', 'post', data)
       .then(res => {
         dispatch(showCloseChatSessions(res.payload, data.first_page))
       })
@@ -262,7 +262,7 @@ export function fetchCloseSessions (data) {
 
 export function fetchSingleSession (sessionid, appendDeleteInfo) {
   return (dispatch) => {
-    callApi(`sessions/${sessionid}`)
+    callApi(dispatch, `sessions/${sessionid}`)
       .then(res => {
         dispatch(updateChatSessions(res.payload, appendDeleteInfo))
       })
@@ -271,7 +271,7 @@ export function fetchSingleSession (sessionid, appendDeleteInfo) {
 
 export function fetchUserChats (sessionid, data, handleFunction) {
   return (dispatch) => {
-    callApi(`livechat/${sessionid}`, 'post', data)
+    callApi(dispatch, `livechat/${sessionid}`, 'post', data)
       .then(res => {
         dispatch(showUserChats(res.payload, data))
         if (handleFunction) {
@@ -332,7 +332,7 @@ export function uploadAttachment (fileData, handleUpload) {
 
 export function deletefile (data, handleRemove) {
   return (dispatch) => {
-    callApi(`broadcasts/delete/${data}`)
+    callApi(dispatch, `broadcasts/delete/${data}`)
       .then(res => {
         if (handleRemove) {
           handleRemove(res)
@@ -343,7 +343,7 @@ export function deletefile (data, handleRemove) {
 
 export function sendAttachment (data, handleSendAttachment) {
   return (dispatch) => {
-    callApi('livechat/', 'post', data).then(res => {
+    callApi(dispatch, 'livechat/', 'post', data).then(res => {
       handleSendAttachment(res)
     })
   }
@@ -351,7 +351,7 @@ export function sendAttachment (data, handleSendAttachment) {
 
 export function searchChat (data) {
   return (dispatch) => {
-    callApi('livechat/search', 'post', data).then(res => {
+    callApi(dispatch, 'livechat/search', 'post', data).then(res => {
       if (res.status === 'success') {
         dispatch(showSearchChat(res.payload))
       } else {
@@ -362,7 +362,7 @@ export function searchChat (data) {
 
 export function sendChatMessage (data, fetchOpenSessions) {
   return (dispatch) => {
-    callApi('livechat/', 'post', data).then(res => {
+    callApi(dispatch, 'livechat/', 'post', data).then(res => {
       // dispatch(fetchSessions())
       //  fetchOpenSessions({first_page: true, last_id: 'none', number_of_records: 10, filter: false, filter_criteria: {sort_value: -1, page_value: '', search_value: ''}})
     })
@@ -371,7 +371,7 @@ export function sendChatMessage (data, fetchOpenSessions) {
 
 export function getSMPStatus (callback) {
   return (dispatch) => {
-    callApi('livechat/SMPStatus').then(res => {
+    callApi(dispatch, 'livechat/SMPStatus').then(res => {
       callback(res)
     })
   }
@@ -380,7 +380,7 @@ export function getSMPStatus (callback) {
 export function fetchUrlMeta (url) {
   return (dispatch) => {
     dispatch(loadingUrlMeta(url))
-    callApi('livechat/geturlmeta', 'post', {url: url}).then(res => {
+    callApi(dispatch, 'livechat/geturlmeta', 'post', {url: url}).then(res => {
       if (res.status === 'success') {
         dispatch(urlMetaReceived(res.payload))
       } else {
@@ -393,14 +393,14 @@ export function fetchUrlMeta (url) {
 export function markRead (sessionid) {
   console.log('Mark Read called')
   return (dispatch) => {
-    callApi(`sessions/markread/${sessionid}`).then(res => {
+    callApi(dispatch, `sessions/markread/${sessionid}`).then(res => {
     })
   }
 }
 
 export function changeStatus (data, handleActiveSession) {
   return (dispatch) => {
-    callApi('sessions/changeStatus', 'post', data).then(res => {
+    callApi(dispatch, 'sessions/changeStatus', 'post', data).then(res => {
       handleActiveSession()
     })
   }
@@ -408,7 +408,7 @@ export function changeStatus (data, handleActiveSession) {
 
 export function assignToAgent (data, handleResponse) {
   return (dispatch) => {
-    callApi('sessions/assignAgent', 'post', data).then(res => {
+    callApi(dispatch, 'sessions/assignAgent', 'post', data).then(res => {
       dispatch(updateSessions(data))
       if (handleResponse) {
         handleResponse(res)
@@ -419,13 +419,13 @@ export function assignToAgent (data, handleResponse) {
 
 export function sendNotifications (data) {
   return (dispatch) => {
-    callApi('notifications/create', 'post', data).then(res => {})
+    callApi(dispatch, 'notifications/create', 'post', data).then(res => {})
   }
 }
 
 export function assignToTeam (data, handleResponse) {
   return (dispatch) => {
-    callApi('sessions/assignTeam', 'post', data).then(res => {
+    callApi(dispatch, 'sessions/assignTeam', 'post', data).then(res => {
       dispatch(updateSessions(data))
       if (handleResponse) {
         handleResponse(res)
@@ -436,7 +436,7 @@ export function assignToTeam (data, handleResponse) {
 
 export function fetchTeamAgents (id, handleAgents) {
   return (dispatch) => {
-    callApi(`teams/fetchAgents/${id}`)
+    callApi(dispatch, `teams/fetchAgents/${id}`)
       .then(res => {
         if (res.status === 'success' && handleAgents) {
           handleAgents(res.payload)

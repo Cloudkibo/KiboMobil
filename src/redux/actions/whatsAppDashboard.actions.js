@@ -16,7 +16,7 @@ export function clearWhatsappDashboardData() {
 
 export function loadCardBoxesDataWhatsApp () {
     return (dispatch) => {
-      callApi('whatsAppDashboard')
+      callApi(dispatch, 'whatsAppDashboard')
         .then(res => {
           if (res.status === 'success') {
             dispatch(showCardBoxesData(res.payload))

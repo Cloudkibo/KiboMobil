@@ -121,9 +121,14 @@ class Loading extends React.Component {
     }
   }
 }
+function mapStateToProps (state) {
+  return {
+    user: (state.basicInfo.user)
+  }
+}
 function mapDispatchToProps (dispatch) {
   return bindActionCreators(
     {getuserdetails},
     dispatch)
 }
-export default connect(null, mapDispatchToProps)(Loading)
+export default connect(mapStateToProps, mapDispatchToProps)(Loading)
