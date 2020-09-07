@@ -13,6 +13,7 @@ import {fetchOpenSessions, fetchCloseSessions, markRead, updateLiveChatInfo} fro
 import { handleSocketEvent } from './socket'
 import * as Notifications from 'expo-notifications'
 import { clearSocketDataWhatsapp } from '../../redux/actions/socket.actions'
+import {clearSession} from '../../redux/actions/liveChat.actions'
 // import { CommonActions } from '@react-navigation/native'
 
 const { width } = Dimensions.get('screen')
@@ -50,6 +51,7 @@ class WhastappLiveChat extends React.Component {
     this.getPushNotificationsAsync = this.getPushNotificationsAsync.bind(this)
     // this.fetchSessions(true, 'none', true)
     this.props.getWhatsAppMessageTemplates()
+    this.props.clearSession(false)
   }
 
   getPushNotificationsAsync = async (sessionId) => {
@@ -82,10 +84,9 @@ class WhastappLiveChat extends React.Component {
   }
 
   componentDidMount () {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+    console.log('componentDidMount called in whastappLivechat')
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
-    })
     if (this.props.route.params && this.props.route.params.activeSession) {
       this.getPushNotificationsAsync(this.props.route.params.activeSession._id)
       this.props.markRead(this.props.route.params.activeSession._id)
@@ -95,12 +96,17 @@ class WhastappLiveChat extends React.Component {
   }
 
   componentWillUnmount () {
-    this._unsubscribe()
   }
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
+  console.log('component_will_receive_called in whatsapp', nextProps.chatLoading)
+
+    if(nextProps.chatLoading) {
+    this.setState({loading: true, activeSession: {}})
+   }
+  
     if (this.props.route.params && this.props.route.params.activeSession) {
       this.props.markRead(this.props.route.params.activeSession._id)
       this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
@@ -279,7 +285,7 @@ class WhastappLiveChat extends React.Component {
             onChangeText={text => this.handleSearch(text)}
             id='generalSearch'
           />
-          {this.state.loading
+          {(this.state.loading || this.props.chatLoading)
             ? <Block flex={0.8} middle><ActivityIndicator size='large' /></Block>
             : <FlatList
               data={this.state.sessions}
@@ -320,7 +326,8 @@ function mapStateToProps (state) {
     automated_options: (state.basicInfo.automated_options),
     socketData: (state.socketInfo.socketDataWhatsapp),
     userChat: (state.whatsAppChatInfo.chat),
-    chatCount: (state.whatsAppChatInfo.chatCount)
+    chatCount: (state.whatsAppChatInfo.chatCount),
+    chatLoading: (state.liveChat.chatLoading)
   }
 }
 
@@ -331,7 +338,8 @@ function mapDispatchToProps (dispatch) {
     getWhatsAppMessageTemplates,
     markRead,
     clearSocketDataWhatsapp,
-    updateLiveChatInfo
+    updateLiveChatInfo,
+    clearSession
   }, dispatch)
 }
 

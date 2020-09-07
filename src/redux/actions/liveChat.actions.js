@@ -13,6 +13,13 @@ export function updateSessionProfilePicture (subscriber, profilePic) {
   }
 }
 
+export function clearSession (data) {
+  return {
+    type: ActionTypes.LOADING_CHAT,
+    data: data
+  }
+}
+
 export function clearUserChat () {
   return {
     type: ActionTypes.CLEAR_USER_CHAT
@@ -244,8 +251,10 @@ export function clearData () {
 
 export function fetchOpenSessions (data) {
   return (dispatch) => {
+    console.log('fetch open session called in chat')
     callApi(dispatch, 'sessions/getOpenSessions', 'post', data)
       .then(res => {
+        // console.log('res in livechat', res)
         dispatch(showOpenChatSessions(res.payload, data))
       })
   }
@@ -444,3 +453,10 @@ export function fetchTeamAgents (id, handleAgents) {
       })
   }
 }
+
+// export function clearSession() {
+//   console.log('')
+//   return (dispatch) => {
+//     dispatch(chatLoading(true))
+//   }
+// }

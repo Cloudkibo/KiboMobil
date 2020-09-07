@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator,Platform } from 'react-native'
+import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator,Platform} from 'react-native'
 import { Block, Text, theme, Input, Button } from 'galio-framework'
 import { MaterialIcons } from '@expo/vector-icons'
 import Icon from '../../components/Icon'
@@ -9,7 +9,7 @@ import { materialTheme } from '../../constants/'
 import * as Notifications from 'expo-notifications'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
-import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead} from '../../redux/actions/liveChat.actions'
+import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead, clearSession} from '../../redux/actions/liveChat.actions'
 import { updatePicture } from '../../redux/actions/subscribers.actions'
 import { handleSocketEvent } from './socket'
 import { clearSocketData } from '../../redux/actions/socket.actions'
@@ -47,7 +47,7 @@ class LiveChat extends React.Component {
     this.changeActiveSession = this.changeActiveSession.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
     this.getPushNotificationsAsync=  this.getPushNotificationsAsync.bind(this)
-
+    this.props.clearSession(false)
     // this.fetchSessions(true, 'none', true)
   }
 
@@ -78,10 +78,9 @@ class LiveChat extends React.Component {
   }
 
   componentDidMount () {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      console.log('componentDidMount called in chat file')
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
-    })
     console.log('this.props.route.params', this.props.route)
     if (this.props.route.params && this.props.route.params.activeSession){
       this.props.markRead(this.props.route.params.activeSession._id)
@@ -91,11 +90,15 @@ class LiveChat extends React.Component {
   }
 
   componentWillUnmount () {
-    this._unsubscribe()
   }
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
+      
+    console.log('nextProps.chatLoading in chat', nextProps.chatLoading)
+     if(nextProps.chatLoading) {
+      this.setState({loading: true, activeSession: {}})
+     }
 
     if (this.props.route.params && this.props.route.params.activeSession){
       this.props.markRead(this.props.route.params.activeSession._id)
@@ -301,7 +304,7 @@ class LiveChat extends React.Component {
             onChangeText={text => this.handleSearch(text)}
             id='generalSearch'
           />
-          {this.state.loading
+          { (this.state.loading ||this.props.chatLoading)
             ? <Block flex={0.8} middle><ActivityIndicator size='large' /></Block>
             : <FlatList
               data={this.state.sessions}
@@ -342,7 +345,8 @@ function mapStateToProps (state) {
     user: (state.basicInfo.user),
     socketData: (state.socketInfo.socketData),
     userChat: (state.liveChat.userChat),
-    chatCount: (state.liveChat.chatCount)
+    chatCount: (state.liveChat.chatCount),
+    chatLoading: (state.liveChat.chatLoading)
   }
 }
 
@@ -354,7 +358,8 @@ function mapDispatchToProps (dispatch) {
     updatePicture,
     clearSocketData,
     updateLiveChatInfo,
-    markRead
+    markRead,
+    clearSession
   }, dispatch)
 }
 

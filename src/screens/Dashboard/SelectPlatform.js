@@ -19,6 +19,7 @@ class SelectPlatform extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
+        loading: false,
         currentSelectedValue : this.props.user ? {value: this.props.user.platform,label: this.props.user.platform === 'messenger' ? 'Messenger' : 'WhatsApp'}: '',
         data : [{value: 'messenger',label: 'Messenger'}, {value: 'whatsApp',label: 'WhatsApp'}]
     }
@@ -42,12 +43,16 @@ class SelectPlatform extends React.Component {
     this.setState({currentSelectedValue: value})
 }
 
+
+
   assign () {
+      this.props.clearSession(true)
       this.props.updatePlatform({platform :this.state.currentSelectedValue.value})
       this.props.toggleAssignmentModal(false)
       if(this.state.currentSelectedValue.value ==='messenger') {
         this.props.clearDashboardData()
         this.props.clearWhatsappDashboardData()
+
       } else {
         this.props.clearWhatsappDashboardData()
         this.props.clearDashboardData()
@@ -94,7 +99,8 @@ class SelectPlatform extends React.Component {
             keyExtractor={(item) => item.value}
             ListEmptyComponent={this.renderEmpty()} />
           <Block center style={{marginTop: 15}}>
-            <Button radius={10}
+            <Button radius={10} 
+              loading = {this.state.loading}
               style={{marginVertical: 10, marginHorizontal: 16}}
               onPress={this.assign}>Done</Button>
           </Block>

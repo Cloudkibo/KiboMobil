@@ -33,6 +33,7 @@ export function getuserdetails (callback, joinRoom) {
       } else {
         if (joinRoom) joinRoom(res.payload.companyId)
         if (callback) callback(res)
+        console.log('res.payload',res.payload)
         dispatch(showuserdetails(res.payload))
       }
     })
@@ -65,11 +66,14 @@ export function updatePicture (data, callback) {
   }
 }
 
-export function updatePlatform (data) {
+export function updatePlatform (data, cb) {
   return (dispatch) => {
     callApi(dispatch, 'users/updatePlatform', 'post', data).then(res => {
       if (res.status === 'success') {
         dispatch(getuserdetails())
+        if(cb) {
+          cb(false)
+        }
       } else {
       }
     })

@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { saveNotificationToken } from '../../redux/actions/basicInfo.actions'
 import { StyleSheet, Dimensions, Platform, Image, TouchableOpacity, View, Text, TextInput, AsyncStorage, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native'
 import { Block, Button, Input, theme } from 'galio-framework'
+import {getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 
 import { LinearGradient } from 'expo-linear-gradient'
 import { materialTheme } from '../../constants/'
@@ -95,6 +96,7 @@ class SignIn extends React.Component {
     this.setState({loading: false})
     if (res.status === 'success') {
       await AsyncStorage.setItem('token', res.token)
+      this.props.getAutomatedOptions()
       this.props.navigation.navigate('App Loading')
     } else if (res.status === 'failed') {
       this.setState({errorMessage: res.description})
@@ -170,7 +172,7 @@ function mapStateToProps (state) {
 }
 function mapDispatchToProps (dispatch) {
   return bindActionCreators(
-    {signIn, logOut, saveNotificationToken},
+    {signIn, logOut, saveNotificationToken, getAutomatedOptions},
     dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn)

@@ -75,6 +75,7 @@ export function UpdateUnreadCount (data) {
   }
 }
 export function fetchOpenSessions (data) {
+  console.log('fetch open session', data)
   return (dispatch) => {
     callApi(dispatch, 'whatsAppSessions/getOpenSessions', 'post', data)
       .then(res => {

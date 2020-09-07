@@ -107,7 +107,7 @@ function LiveChatStack (props) {
         component={LiveChatSessionScreen}
         options={{
           header: ({ navigation, scene }) => (
-            <Header
+            <DashboardHeader
               search
               options
               title='Live Chat'
@@ -147,7 +147,7 @@ function WhatsappLivechat (props) {
         component={WhatsappLiveChatSessionScreen}
         options={{
           header: ({ navigation, scene }) => (
-            <Header
+            <DashboardHeader
               search
               options
               title='Live Chat'
@@ -292,7 +292,7 @@ function AppStack (props, param) {
           fontWeight: 'normal'
         }
       }}
-      initialRouteName='Dashboard'
+      initialRouteName='Live Chat'
     >
       <Drawer.Screen
         name='Dashboard'

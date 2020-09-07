@@ -5,6 +5,8 @@ import { withNavigation } from '@react-navigation/compat';
 import { updatePlatform } from '../../redux/actions/basicInfo.actions'
 import { clearWhatsappDashboardData } from '../../redux/actions/whatsAppDashboard.actions'
 import { clearDashboardData} from '../../redux/actions/dashboard.actions'
+import {clearSession} from '../../redux/actions/liveChat.actions'
+
 import { TouchableOpacity, StyleSheet, Platform, Dimensions,View } from 'react-native';
 import { Button, Block, NavBar, Input, Text, theme } from 'galio-framework';
 import {ListItem, Card } from 'react-native-elements'
@@ -66,6 +68,12 @@ class DashboardHeader extends React.Component {
       this.setState({automated_options: nextProps.automated_options})
     }
   }
+  componentDidMount () {
+    console.log('this.props.automated_options', this.props.automated_options)
+    if(this.props.automated_options) {
+      this.setState({automated_options: this.props.automated_options})
+    }
+  }
   handleLeftPress = () => {
     const { back, navigation } = this.props;
     return (back ? navigation.goBack() : navigation.openDrawer());
@@ -94,6 +102,7 @@ class DashboardHeader extends React.Component {
           updatePlatform = {this.props.updatePlatform}
           clearWhatsappDashboardData = {this.props.clearWhatsappDashboardData}
           clearDashboardData = {this.props.clearDashboardData}
+          clearSession= {this.props.clearSession}
         />
     </Block>
     )
@@ -209,7 +218,8 @@ function mapStateToProps (state) {
     return bindActionCreators({
         updatePlatform: updatePlatform,
         clearWhatsappDashboardData: clearWhatsappDashboardData,
-        clearDashboardData: clearDashboardData
+        clearDashboardData: clearDashboardData,
+        clearSession: clearSession
     }, dispatch)
   }
 
