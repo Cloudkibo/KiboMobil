@@ -83,11 +83,6 @@ class LiveChat extends React.Component {
         let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
        }
     }
-    // console.log('notification[0].identifier', notification[0].request.identifier)
-    // let removeNotification = await Notifications.dismissNotificationAsync(notification[0].request.identifier)
-    // // console.log('notification in Live chat', data)
-    // console.log('remove_notidication', removeNotification)
-
   }
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -108,10 +103,6 @@ class LiveChat extends React.Component {
       } else if (nextProps.userChat.length === 0) {
         state.loadingChat = false
       }
-      // if (this.state.activeSession.unreadCount && this.state.activeSession.unreadCount > 0) {
-      //   console.log('in markread')
-      //   this.props.markRead(this.state.activeSession._id)
-      // }
     }
 
     this.setState({

@@ -62,10 +62,6 @@ class WhastappLiveChat extends React.Component {
          let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
        }
     }
-    // console.log('notification[0].identifier', notification[0].request.identifier)
-    // let removeNotification = await Notifications.dismissNotificationAsync(notification[0].request.identifier)
-    // // console.log('notification in Live chat', data)
-    // console.log('remove_notidication', removeNotification)
 
   }
 
@@ -84,15 +80,8 @@ class WhastappLiveChat extends React.Component {
   }
 
   componentDidMount () {
-    console.log('componentDidMount called in whastappLivechat')
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
-    // if (this.props.route.params && this.props.route.params.activeSession) {
-    //   this.getPushNotificationsAsync(this.props.route.params.activeSession._id)
-    //   this.props.markRead(this.props.route.params.activeSession._id)
-    //   this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
-    //   this.props.route.params = null
-    // }
   }
 
   componentWillUnmount () {

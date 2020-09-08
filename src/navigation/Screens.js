@@ -188,61 +188,6 @@ function LiveChatStack (props) {
   )
 }
 
-function WhatsappLivechat (props) {
-  // return (
-  //   <Stack.Navigator mode='card' headerMode='screen'>
-  //     <Stack.Screen
-  //       name='Whatsapp Live Chat'
-  //       component={WhatsappLiveChatSessionScreen}
-  //       options={{
-  //         header: ({ navigation, scene }) => (
-  //           <DashboardHeader
-  //             search
-  //             options
-  //             title='Live Chat'
-  //             navigation={navigation}
-  //             scene={scene}
-  //           />
-  //         )
-  //       }}
-  //     />
-  //     <Stack.Screen
-  //       name='WhatsappChat'
-  //       component={WhatsappChatScreen}
-  //       options={{
-  //         header: ({ navigation, scene }) => {
-  //           const activeSession = scene.__memo[0].params.activeSession
-  //           return (
-  //             <ChatHeader
-  //               back
-  //               activeSession={activeSession}
-  //               isWhatspHeader
-  //               title={activeSession.name}
-  //               navigation={navigation}
-  //               scene={scene}
-  //             />
-  //           )
-  //         }
-  //       }}
-  //     />
-  //       <Stack.Screen
-  //       name='WhatsappTemplateMessage'
-  //       component={WhatsappTemplateMessage}
-  //       options={{
-  //         header: ({ navigation, scene }) => (
-  //           <Header
-  //             back
-  //             title='Send Whastapp Message'
-  //             navigation={navigation}
-  //             scene={scene}
-  //           />
-  //         )
-  //       }}
-  //     />
-  //   </Stack.Navigator>
-  // )
-}
-
 function WhatsappSubscribersStack (props) {
   return (
     <Stack.Navigator mode='card' headerMode='screen'>

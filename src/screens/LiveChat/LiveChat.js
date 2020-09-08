@@ -70,23 +70,12 @@ class LiveChat extends React.Component {
         let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
        }
     }
-    // console.log('notification[0].identifier', notification[0].request.identifier)
-    // let removeNotification = await Notifications.dismissNotificationAsync(notification[0].request.identifier)
-    // // console.log('notification in Live chat', data)
-    // console.log('remove_notidication', removeNotification)
 
   }
 
   componentDidMount () {
-      console.log('componentDidMount called in chat file')
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
-    console.log('this.props.route.params', this.props.route)
-    // if (this.props.route.params && this.props.route.params.activeSession){
-    //   this.props.markRead(this.props.route.params.activeSession._id)
-    //   this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
-    //   this.props.route.params = null
-    // }
   }
 
   componentWillUnmount () {

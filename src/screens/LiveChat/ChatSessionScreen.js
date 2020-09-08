@@ -41,7 +41,6 @@ class ChatSessionScreen extends React.Component {
         this.registerForPushNotificationsAsync(this.props.user)
         this._notificationSubscription = Notifications.addNotificationResponseReceivedListener(this._handleNotification)
         this._notificationListener = Notifications.addNotificationReceivedListener(notification => {
-          // console.log('received_notification', notification)
         });
     }
 
@@ -70,8 +69,6 @@ class ChatSessionScreen extends React.Component {
             return;
         }
         token = (await Notifications.getExpoPushTokenAsync()).data
-        //   let user = this.props.user
-        console.log('user in chat', user)
         console.log(token);
         if(!user.expoListToken.includes(token)) {
             user.expoListToken.push(token)
