@@ -33,7 +33,6 @@ export function getuserdetails (callback, joinRoom) {
       } else {
         if (joinRoom) joinRoom(res.payload.companyId)
         if (callback) callback(res)
-        console.log('res.payload',res.payload)
         dispatch(showuserdetails(res.payload))
       }
     })
@@ -42,7 +41,6 @@ export function getuserdetails (callback, joinRoom) {
 
 export function saveNotificationToken(user, logOut) {
   return (dispatch) => {
-    console.log('save token')
     callApi(dispatch, `companyUsers/update/${user._id}`, 'post', {expoListToken: user.expoListToken}).then(res => {
       if (res.status === 'success') {
         if(logOut){

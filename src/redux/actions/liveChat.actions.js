@@ -452,10 +452,3 @@ export function fetchTeamAgents (id, handleAgents) {
       })
   }
 }
-
-// export function clearSession() {
-//   console.log('')
-//   return (dispatch) => {
-//     dispatch(chatLoading(true))
-//   }
-// }
