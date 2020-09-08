@@ -3,12 +3,11 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { getuserdetails } from '../../redux/actions/basicInfo.actions'
 import { AppLoading } from 'expo'
-import { Image, AsyncStorage, ActivityIndicator } from 'react-native'
+import { Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking } from 'react-native'
 import { Asset } from 'expo-asset'
-import { Notifications } from 'expo'
-import { NavigationActions } from 'react-navigation'
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
+import * as Updates from 'expo-updates'
 
 const assetImages = [
   Images.Profile,
@@ -39,6 +38,23 @@ class Loading extends React.Component {
   }
 
   componentDidMount () {
+    let url = Platform.OS === 'android'
+      ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
+      : 'https://apps.apple.com/us/app/kibopush/id1519207005'
+    Updates.checkForUpdateAsync()
+      .then((isAvailable) => {
+        if (isAvailable) {
+          Alert.alert(
+            'Update KiboPush?',
+            'KiboPush recommends that you update to the latest version. This version includes few bug fixes and performance improvements. You can keep using the app while downloading the update.',
+            [{ text: 'No Thanks', onPress: () => console.log('no thanks Pressed'), style: 'destructive' },
+              { text: 'Update', onPress: () => Linking.openURL(url) }],
+            { cancelable: true })
+        }
+      })
+      .catch((err) => {
+        console.log('err', err)
+      })
     // if (Platform.OS === 'android') {
     //   Notifications.createChannelAndroidAsync('default', {
     //     name: 'default',
