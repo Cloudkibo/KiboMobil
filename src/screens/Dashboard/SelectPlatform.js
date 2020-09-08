@@ -46,6 +46,7 @@ class SelectPlatform extends React.Component {
 
 
   assign () {
+      if(this.state.currentSelectedValue.value !== this.props.user.platform) {
       this.props.clearSession(true)
       this.props.updatePlatform({platform :this.state.currentSelectedValue.value})
       this.props.toggleAssignmentModal(false)
@@ -57,6 +58,9 @@ class SelectPlatform extends React.Component {
         this.props.clearWhatsappDashboardData()
         this.props.clearDashboardData()
       }
+    } else {
+      this.props.toggleAssignmentModal(false)
+    }
   }
 
   renderItem ({ item }) {
