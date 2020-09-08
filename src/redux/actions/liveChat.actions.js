@@ -251,7 +251,6 @@ export function clearData () {
 
 export function fetchOpenSessions (data) {
   return (dispatch) => {
-    console.log('fetch open session called in chat')
     callApi(dispatch, 'sessions/getOpenSessions', 'post', data)
       .then(res => {
         // console.log('res in livechat', res)

@@ -82,11 +82,11 @@ class LiveChat extends React.Component {
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
     console.log('this.props.route.params', this.props.route)
-    if (this.props.route.params && this.props.route.params.activeSession){
-      this.props.markRead(this.props.route.params.activeSession._id)
-      this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
-      this.props.route.params = null
-    }
+    // if (this.props.route.params && this.props.route.params.activeSession){
+    //   this.props.markRead(this.props.route.params.activeSession._id)
+    //   this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
+    //   this.props.route.params = null
+    // }
   }
 
   componentWillUnmount () {
@@ -95,16 +95,25 @@ class LiveChat extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
       
-    console.log('nextProps.chatLoading in chat', nextProps.chatLoading)
      if(nextProps.chatLoading) {
       this.setState({loading: true, activeSession: {}})
      }
 
-    if (this.props.route.params && this.props.route.params.activeSession){
-      this.props.markRead(this.props.route.params.activeSession._id)
-      this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
-      this.props.route.params = null
-    }
+     if(nextProps.activeSession) {
+       this.props.clearSessionState()
+      //  nextProps.activeSession.unreadCount = 0
+       this.props.markRead(nextProps.activeSession._id)
+      this.getPushNotificationsAsync(nextProps.activeSession._id)
+      let activeSession = this.state.sessions.filter(session => session._id === nextProps.activeSession._id)[0]
+      activeSession.unreadCount = 0
+       this.props.navigation.navigate('Chat', { activeSession: nextProps.activeSession, session: this.state.sessions, tabValue: this.state.tab})
+     }
+
+    // if (this.props.route.params && this.props.route.params.activeSession){
+    //   this.props.markRead(this.props.route.params.activeSession._id)
+    //   this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
+    //   this.props.route.params = null
+    // }
     
   /* eslint-enable */
     let state = {}

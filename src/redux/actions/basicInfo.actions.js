@@ -42,6 +42,7 @@ export function getuserdetails (callback, joinRoom) {
 
 export function saveNotificationToken(user, logOut) {
   return (dispatch) => {
+    console.log('save token')
     callApi(dispatch, `companyUsers/update/${user._id}`, 'post', {expoListToken: user.expoListToken}).then(res => {
       if (res.status === 'success') {
         if(logOut){

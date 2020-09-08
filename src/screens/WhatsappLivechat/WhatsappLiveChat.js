@@ -87,12 +87,12 @@ class WhastappLiveChat extends React.Component {
     console.log('componentDidMount called in whastappLivechat')
       this.setState({loading: true, activeSession: {}})
       this.fetchSessions(true, 'none', true)
-    if (this.props.route.params && this.props.route.params.activeSession) {
-      this.getPushNotificationsAsync(this.props.route.params.activeSession._id)
-      this.props.markRead(this.props.route.params.activeSession._id)
-      this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
-      this.props.route.params = null
-    }
+    // if (this.props.route.params && this.props.route.params.activeSession) {
+    //   this.getPushNotificationsAsync(this.props.route.params.activeSession._id)
+    //   this.props.markRead(this.props.route.params.activeSession._id)
+    //   this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
+    //   this.props.route.params = null
+    // }
   }
 
   componentWillUnmount () {
@@ -101,17 +101,25 @@ class WhastappLiveChat extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
-  console.log('component_will_receive_called in whatsapp', nextProps.chatLoading)
-
     if(nextProps.chatLoading) {
     this.setState({loading: true, activeSession: {}})
    }
+
+   if(nextProps.activeSession) {
+    this.props.clearSessionState()
+    // nextProps.activeSession.unreadCount = 0
+    this.props.markRead(nextProps.activeSession._id)
+    this.getPushNotificationsAsync(nextProps.activeSession._id)
+    let activeSession = this.state.sessions.filter(session => session._id === nextProps.activeSession._id)[0]
+    activeSession.unreadCount = 0
+    this.props.navigation.navigate('WhatsappChat', { activeSession: nextProps.activeSession, session: this.state.sessions, tabValue: this.state.tab})
+  }
   
-    if (this.props.route.params && this.props.route.params.activeSession) {
-      this.props.markRead(this.props.route.params.activeSession._id)
-      this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
-      this.props.route.params = null
-    }
+    // if (this.props.route.params && this.props.route.params.activeSession) {
+    //   this.props.markRead(this.props.route.params.activeSession._id)
+    //   this.props.navigation.navigate('WhatsappChat', { activeSession: this.props.route.params.activeSession, sessions: this.state.sessions, tabValue: this.state.tabValue })
+    //   this.props.route.params = null
+    // }
     let state = {}
     if (nextProps.openSessions || nextProps.closeSessions) {
       state.loading = false
