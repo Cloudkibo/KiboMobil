@@ -101,7 +101,6 @@ class LiveChat extends React.Component {
 
      if(nextProps.activeSession) {
        this.props.clearSessionState()
-      //  nextProps.activeSession.unreadCount = 0
        this.props.markRead(nextProps.activeSession._id)
       this.getPushNotificationsAsync(nextProps.activeSession._id)
       let activeSession = this.state.sessions.filter(session => session._id === nextProps.activeSession._id)[0]
@@ -109,11 +108,6 @@ class LiveChat extends React.Component {
        this.props.navigation.navigate('Chat', { activeSession: nextProps.activeSession, session: this.state.sessions, tabValue: this.state.tab})
      }
 
-    // if (this.props.route.params && this.props.route.params.activeSession){
-    //   this.props.markRead(this.props.route.params.activeSession._id)
-    //   this.props.navigation.navigate('Chat', { activeSession: this.props.route.params.activeSession, session: this.state.sessions, tabValue: this.state.tab})
-    //   this.props.route.params = null
-    // }
     
   /* eslint-enable */
     let state = {}

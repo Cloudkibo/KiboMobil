@@ -102,7 +102,6 @@ class ChatSessionScreen extends React.Component {
     }
 
     render () {
-        // console.log('this.props.user.Platform', this.props.user.platform)
         return (
             this.props.user && this.props.user.platform === 'messenger' ? 
             <MessengerLiveChat navigation = {this.props.navigation} activeSession= {this.state.messengerActiveSession} clearSessionState= {this.clearSessionState}/>
