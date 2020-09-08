@@ -9,7 +9,6 @@ import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
 import * as Updates from 'expo-updates'
 import * as Sentry from 'sentry-expo'
-import Constants from 'expo-constants'
 
 const assetImages = [
   Images.Profile,
@@ -40,7 +39,6 @@ class Loading extends React.Component {
   }
 
   componentDidMount () {
-    console.log('Constants.manifest.releaseChannel', Constants.manifest.releaseChannel)
     let url = Platform.OS === 'android'
       ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
       : 'https://apps.apple.com/us/app/kibopush/id1519207005'
