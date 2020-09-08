@@ -39,5 +39,17 @@
       "versionCode": 9,
       "useNextNotificationsApi": true
     }
+  },
+  "hooks": {
+    "postPublish": [
+      {
+        "file": "sentry-expo/upload-sourcemaps",
+        "config": {
+          "organization": "cloudkibo",
+          "project": "kibopush",
+          "authToken": "4aabb937462d4bb3acc72a75caaa249a7fc1d746c0c74fffb09bc7285710012f"
+        }
+      }
+    ]
   }
 }

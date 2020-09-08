@@ -8,6 +8,8 @@ import { Asset } from 'expo-asset'
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
 import * as Updates from 'expo-updates'
+import * as Sentry from 'sentry-expo'
+import Constants from 'expo-constants'
 
 const assetImages = [
   Images.Profile,
@@ -38,6 +40,7 @@ class Loading extends React.Component {
   }
 
   componentDidMount () {
+    console.log('Constants.manifest.releaseChannel', Constants.manifest.releaseChannel)
     let url = Platform.OS === 'android'
       ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
       : 'https://apps.apple.com/us/app/kibopush/id1519207005'
@@ -54,6 +57,7 @@ class Loading extends React.Component {
       })
       .catch((err) => {
         console.log('err', err)
+        Sentry.captureException(err)
       })
     // if (Platform.OS === 'android') {
     //   Notifications.createChannelAndroidAsync('default', {
@@ -107,6 +111,7 @@ class Loading extends React.Component {
     // In this case, you might want to report the error to your error
     // reporting service, for example Sentry
     console.warn(error)
+    Sentry.captureException(error)
   };
 
   async _handleFinishLoading () {

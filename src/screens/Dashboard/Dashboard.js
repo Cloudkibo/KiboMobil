@@ -70,7 +70,7 @@ class Dashboard extends React.Component {
   _handleNotification = notification => {
     this.setState({ notification: notification.notification })
     console.log('notification.origin', notification.notification.request.content.data)
-     
+
     if(notification.notification.request.content.data.action === 'chat_whatsapp') {
       let activeSubscriber = notification.notification.request.content.data.subscriber
       activeSubscriber.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
@@ -82,7 +82,7 @@ class Dashboard extends React.Component {
      this.props.navigation.navigate('Live Chat', {
         screen: 'Live Chat',
         params: {activeSession: notification.notification.request.content.data.subscriber}
-      });    
+      });
     }
   };
   registerForPushNotificationsAsync = async () => {
