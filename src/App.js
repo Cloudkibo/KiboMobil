@@ -11,6 +11,7 @@ import { enableScreens } from 'react-native-screens'
 import { initiateSocket } from './utility/socketio'
 
 import { materialTheme } from './constants/'
+import * as Sentry from 'sentry-expo'
 
 enableScreens()
 // cache product images
@@ -23,7 +24,12 @@ enableScreens()
 
 const store = configureStore()
 initiateSocket(store)
-
+Sentry.init({
+  dsn: 'https://6c7958e0570f455381d6f17122fbd117@o132281.ingest.sentry.io/292307',
+  enableInExpoDevelopment: true,
+  debug: true,
+  attachStacktrace: true
+})
 class App extends React.Component {
   render () {
     return (

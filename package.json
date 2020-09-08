@@ -36,6 +36,7 @@
     "expo-media-library": "~8.2.1",
     "expo-notifications": "~0.3.3",
     "expo-permissions": "~9.0.1",
+    "expo-updates": "~0.2.8",
     "expo-video-player": "^1.5.8",
     "galio-framework": "^0.6.3",
     "react": "16.11.0",
@@ -61,9 +62,9 @@
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "sentry-expo": "^2.1.2",
     "socket.io-client": "^2.3.0",
-    "superagent": "^5.2.2",
-    "expo-updates": "~0.2.8"
+    "superagent": "^5.2.2"
   },
   "devDependencies": {
     "babel-preset-expo": "^8.2.3",
