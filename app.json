@@ -15,7 +15,7 @@
     "icon": "./assets/images/appstore.png",
     "notification": {
       "icon": "./assets/images/notification.png",
-      "androidMode": "default1"
+      "androidMode": "default"
       },
     "splash": {
       "image": "./assets/images/splash.png",
