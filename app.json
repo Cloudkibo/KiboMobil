@@ -10,12 +10,12 @@
       "android"
     ],
     "entryPoint": "./src/App.js",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "orientation": "portrait",
     "icon": "./assets/images/appstore.png",
     "notification": {
       "icon": "./assets/images/notification.png",
-      "androidMode": "default"
+      "androidMode": "default1"
       },
     "splash": {
       "image": "./assets/images/splash.png",
@@ -31,12 +31,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.cloudkibo.kibopush",
-      "buildNumber": "1.0.8",
+      "buildNumber": "1.0.9",
       "usesIcloudStorage": true
     },
     "android": {
       "package": "com.cloudkibo.kibopush",
-      "versionCode": 8,
+      "versionCode": 9,
       "useNextNotificationsApi": true
     }
   }
