@@ -122,10 +122,6 @@ class LiveChat extends React.Component {
       } else if (nextProps.userChat.length === 0) {
         state.loadingChat = false
       }
-      // if (this.state.activeSession.unreadCount && this.state.activeSession.unreadCount > 0) {
-      //   console.log('in markread')
-      //   this.props.markRead(this.state.activeSession._id)
-      // }
     }
 
     this.setState({

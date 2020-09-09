@@ -248,6 +248,11 @@ export function liveChat (state = initialState, action) {
         customers: action.data
       })
 
+      case ActionTypes.LOADING_CHAT:
+      return Object.assign({}, state, {
+        chatLoading: action.data
+      })
+
     case ActionTypes.UPDATE_OPEN_SESSIONS_WITH_CUSTOMERID:
       let tempOpen = state.openSessions
       for (let i = 0; i < tempOpen.length; i++) {

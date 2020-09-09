@@ -13,7 +13,7 @@ import DashboardScreen from '../screens/Dashboard/Dashboard'
 import PagesScreen from '../screens/Pages/Pages'
 import SubscribersScreen from '../screens/Subscribers/Subscribers'
 import InviteSubscribersScreen from '../screens/InviteSubscribers/InviteSubscribers'
-import LiveChatSessionScreen from '../screens/LiveChat/LiveChat'
+import LiveChatSessionScreen from '../screens/LiveChat/ChatSessionScreen'
 import WhatsappLiveChatSessionScreen from '../screens/WhatsappLivechat/WhatsappLiveChat'
 import WhatsappTemplateMessage from '../screens/WhatsappLivechat/WhatsappTemplateMessage'
 import ChatScreen from '../screens/LiveChat/Chat'
@@ -107,7 +107,7 @@ function LiveChatStack (props) {
         component={LiveChatSessionScreen}
         options={{
           header: ({ navigation, scene }) => (
-            <Header
+            <DashboardHeader
               search
               options
               title='Live Chat'
@@ -135,19 +135,12 @@ function LiveChatStack (props) {
           }
         }}
       />
-    </Stack.Navigator>
-  )
-}
-
-function WhatsappLivechat (props) {
-  return (
-    <Stack.Navigator mode='card' headerMode='screen'>
-      <Stack.Screen
+        <Stack.Screen
         name='Whatsapp Live Chat'
         component={WhatsappLiveChatSessionScreen}
         options={{
           header: ({ navigation, scene }) => (
-            <Header
+            <DashboardHeader
               search
               options
               title='Live Chat'
@@ -191,6 +184,7 @@ function WhatsappLivechat (props) {
         }}
       />
     </Stack.Navigator>
+
   )
 }
 
@@ -292,7 +286,7 @@ function AppStack (props, param) {
           fontWeight: 'normal'
         }
       }}
-      initialRouteName='Dashboard'
+      initialRouteName='Live Chat'
     >
       <Drawer.Screen
         name='Dashboard'
@@ -310,7 +304,7 @@ function AppStack (props, param) {
       />
       <Drawer.Screen
         name='Live Chat'
-        component={user ? user.platform === 'messenger' ? LiveChatStack : WhatsappLivechat : LiveChatStack}
+        component={LiveChatStack}
         options={{
           drawerIcon: ({ focused }) => (
             <Icon

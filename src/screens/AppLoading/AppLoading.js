@@ -7,6 +7,7 @@ import { Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking } from
 import { Asset } from 'expo-asset'
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
+import {getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import * as Updates from 'expo-updates'
 import * as Sentry from 'sentry-expo'
 
@@ -118,6 +119,7 @@ class Loading extends React.Component {
 
   handleResponse (res) {
     if (res.status === 'success') {
+      this.props.getAutomatedOptions()
       this.props.navigation.navigate('App')
     } else {
       this.props.navigation.navigate('Sign In')
@@ -147,7 +149,7 @@ function mapStateToProps (state) {
 }
 function mapDispatchToProps (dispatch) {
   return bindActionCreators(
-    {getuserdetails},
+    {getuserdetails, getAutomatedOptions},
     dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Loading)

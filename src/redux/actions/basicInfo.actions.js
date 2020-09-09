@@ -65,11 +65,14 @@ export function updatePicture (data, callback) {
   }
 }
 
-export function updatePlatform (data) {
+export function updatePlatform (data, cb) {
   return (dispatch) => {
     callApi(dispatch, 'users/updatePlatform', 'post', data).then(res => {
       if (res.status === 'success') {
         dispatch(getuserdetails())
+        if(cb) {
+          cb(false)
+        }
       } else {
       }
     })
