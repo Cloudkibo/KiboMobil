@@ -53,9 +53,6 @@ class Dashboard extends React.Component {
       }
     })
   }
-  componentWillUnmount () {
-    this._unsubscribe()
-  }
 
   render () {
     return (

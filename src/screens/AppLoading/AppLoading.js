@@ -9,6 +9,7 @@ import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
 import {getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import * as Updates from 'expo-updates'
+import * as Sentry from 'sentry-expo'
 
 const assetImages = [
   Images.Profile,
@@ -55,6 +56,7 @@ class Loading extends React.Component {
       })
       .catch((err) => {
         console.log('err', err)
+        Sentry.captureException(err)
       })
     // if (Platform.OS === 'android') {
     //   Notifications.createChannelAndroidAsync('default', {
@@ -108,6 +110,7 @@ class Loading extends React.Component {
     // In this case, you might want to report the error to your error
     // reporting service, for example Sentry
     console.warn(error)
+    Sentry.captureException(error)
   };
 
   async _handleFinishLoading () {
