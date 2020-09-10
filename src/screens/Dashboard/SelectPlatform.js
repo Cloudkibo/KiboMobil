@@ -1,27 +1,17 @@
 import React from 'react'
-import { Dimensions, FlatList, Platform } from 'react-native'
+import { FlatList } from 'react-native'
 import Modal from 'react-native-modal'
 import { Button, Block, Text } from 'galio-framework'
-import Tabs from '../../components/Tabs';
-import materialTheme from '../../constants/Theme';
+import materialTheme from '../../constants/Theme'
 import { CheckBox } from 'react-native-elements'
-
-const { height } = Dimensions.get('screen')
-
-let Toast = null
-if (Platform.OS === 'ios') {
-  Toast = require('react-native-tiny-toast')
-} else {
-  Toast = require('react-native-simple-toast')
-}
 
 class SelectPlatform extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-        loading: false,
-        currentSelectedValue : this.props.user ? {value: this.props.user.platform,label: this.props.user.platform === 'messenger' ? 'Messenger' : 'WhatsApp'}: '',
-        data : [{value: 'messenger',label: 'Messenger'}, {value: 'whatsApp',label: 'WhatsApp'}]
+      loading: false,
+      currentSelectedValue: this.props.user ? {value: this.props.user.platform, label: this.props.user.platform === 'messenger' ? 'Messenger' : 'WhatsApp'} : '',
+      data: [{value: 'messenger', label: 'Messenger'}, {value: 'whatsApp', label: 'WhatsApp'}]
     }
     this.renderItem = this.renderItem.bind(this)
     this.changeSelected = this.changeSelected.bind(this)
@@ -31,33 +21,25 @@ class SelectPlatform extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
-      if(nextProps.user) {
-        let currentSelectedValue  = {value: nextProps.user.platform,label: nextProps.user.platform === 'messenger' ? 'Messenger' : 'WhatsApp'}
-        this.setState({currentSelectedValue: currentSelectedValue})
-    }
   /* eslint-enable */
+    if (nextProps.user) {
+      let currentSelectedValue = {value: nextProps.user.platform, label: nextProps.user.platform === 'messenger' ? 'Messenger' : 'WhatsApp'}
+      this.setState({currentSelectedValue: currentSelectedValue})
+    }
   }
 
   changeSelected (item) {
-    let value =  {value: item.value,label: item.value === 'messenger' ? 'Messenger' : 'WhatsApp'}
+    let value = {value: item.value, label: item.value === 'messenger' ? 'Messenger' : 'WhatsApp'}
     this.setState({currentSelectedValue: value})
-}
-
-
+  }
 
   assign () {
-      if(this.state.currentSelectedValue.value !== this.props.user.platform) {
+    if (this.state.currentSelectedValue.value !== this.props.user.platform) {
       this.props.clearSession(true)
-      this.props.updatePlatform({platform :this.state.currentSelectedValue.value})
+      let user = JSON.parse(JSON.stringify(this.props.user))
+      user.platform = this.state.currentSelectedValue.value
+      this.props.updatePlatform(user, {platform: this.state.currentSelectedValue.value})
       this.props.toggleAssignmentModal(false)
-      if(this.state.currentSelectedValue.value ==='messenger') {
-        this.props.clearDashboardData()
-        this.props.clearWhatsappDashboardData()
-
-      } else {
-        this.props.clearWhatsappDashboardData()
-        this.props.clearDashboardData()
-      }
     } else {
       this.props.toggleAssignmentModal(false)
     }
@@ -85,7 +67,7 @@ class SelectPlatform extends React.Component {
 
   closeModal () {
     this.props.toggleAssignmentModal(false)
-    let value =  {value: this.props.user.platform,label: this.props.user.platform === 'messenger' ? 'Messenger' : 'WhatsApp'}
+    let value = {value: this.props.user.platform, label: this.props.user.platform === 'messenger' ? 'Messenger' : 'WhatsApp'}
     this.setState({currentSelectedValue: value})
   }
 
@@ -103,8 +85,8 @@ class SelectPlatform extends React.Component {
             keyExtractor={(item) => item.value}
             ListEmptyComponent={this.renderEmpty()} />
           <Block center style={{marginTop: 15}}>
-            <Button radius={10} 
-              loading = {this.state.loading}
+            <Button radius={10}
+              loading={this.state.loading}
               style={{marginVertical: 10, marginHorizontal: 16}}
               onPress={this.assign}>Done</Button>
           </Block>

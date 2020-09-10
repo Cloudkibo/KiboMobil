@@ -96,7 +96,6 @@ class LiveChat extends React.Component {
     }
     if (nextProps.userChat) {
       if (nextProps.userChat.length > 0) {
-        console.log('nextProps.userChat.length', nextProps.userChat.length)
         this.getPushNotificationsAsync(this.state.activeSession._id)
         state.userChat = nextProps.userChat
         state.loadingChat = false

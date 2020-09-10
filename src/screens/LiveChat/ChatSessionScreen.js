@@ -45,7 +45,6 @@ class ChatSessionScreen extends React.Component {
     }
 
     _handleNotification = notification => {
-        console.log('notification.origin in livechat', notification.notification.request.content.data)
         if(notification.notification.request.content.data.action === 'chat_whatsapp') {
           let activeSubscriber = notification.notification.request.content.data.subscriber
           activeSubscriber.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
@@ -80,7 +79,7 @@ class ChatSessionScreen extends React.Component {
         } else {
         alert('Must use physical device for Push Notifications');
         }
-    
+
         if (Platform.OS === 'android') {
         Notifications.setNotificationChannelAsync('default', {
             name: 'default',
@@ -100,7 +99,7 @@ class ChatSessionScreen extends React.Component {
 
     render () {
         return (
-            this.props.user && this.props.user.platform === 'messenger' ? 
+            this.props.user && this.props.user.platform === 'messenger' ?
             <MessengerLiveChat navigation = {this.props.navigation} activeSession= {this.state.messengerActiveSession} clearSessionState= {this.clearSessionState}/>
             : <WhatsappChatScreen navigation = {this.props.navigation} activeSession= {this.state.whatsappActiveSession} clearSessionState= {this.clearSessionState}/>
 

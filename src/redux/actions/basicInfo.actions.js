@@ -16,8 +16,6 @@ export function showAutomatedOptions (data) {
 }
 
 export function showuserdetails (data) {
-  // NOTE: don't remove following auth method call
-  // auth.putUserId(data._id)
   return {
     type: ActionTypes.LOAD_USER_DETAILS,
     data
@@ -27,10 +25,7 @@ export function showuserdetails (data) {
 export function getuserdetails (callback, joinRoom) {
   return (dispatch) => {
     callApi(dispatch, 'users').then(res => {
-      if (res.status === 'Unauthorized' || res.status === 'failed') {
-        // AsyncStorage.removeItem('token')
-        // if (callback) callback(res)
-      } else {
+      if (res.status === 'success') {
         if (joinRoom) joinRoom(res.payload.companyId)
         if (callback) callback(res)
         dispatch(showuserdetails(res.payload))
@@ -39,11 +34,11 @@ export function getuserdetails (callback, joinRoom) {
   }
 }
 
-export function saveNotificationToken(user, logOut) {
+export function saveNotificationToken (user, logOut) {
   return (dispatch) => {
     callApi(dispatch, `companyUsers/update/${user._id}`, 'post', {expoListToken: user.expoListToken}).then(res => {
       if (res.status === 'success') {
-        if(logOut){
+        if (logOut) {
           logOut()
         }
         dispatch(showuserdetails(user))
@@ -65,22 +60,22 @@ export function updatePicture (data, callback) {
   }
 }
 
-export function updatePlatform (data, cb) {
+export function updatePlatform (user, data, cb) {
   return (dispatch) => {
     callApi(dispatch, 'users/updatePlatform', 'post', data).then(res => {
       if (res.status === 'success') {
-        dispatch(getuserdetails())
-        if(cb) {
-          cb(false)
-        }
-      } else {
+        dispatch(showuserdetails(user))
+        if (cb) cb()
       }
     })
   }
 }
 
-export function getAutomatedOptions () {
+export function getAutomatedOptions (cb) {
   return (dispatch) => {
-    callApi(dispatch, 'company/getAutomatedOptions').then(res => dispatch(showAutomatedOptions(res.payload)))
+    callApi(dispatch, 'company/getAutomatedOptions').then(res => {
+      dispatch(showAutomatedOptions(res.payload))
+      if (cb) cb(res)
+    })
   }
 }
