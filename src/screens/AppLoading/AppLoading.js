@@ -1,13 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getuserdetails } from '../../redux/actions/basicInfo.actions'
+import { getuserdetails, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import { AppLoading } from 'expo'
 import { Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking } from 'react-native'
 import { Asset } from 'expo-asset'
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
-import {getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
+import { loadDashboardData } from '../../redux/actions/dashboard.actions'
+import { fetchPages } from '../../redux/actions/pages.actions'
+import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
+
 import * as Updates from 'expo-updates'
 import * as Sentry from 'sentry-expo'
 
@@ -30,12 +33,14 @@ class Loading extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-      isLoadingComplete: false
+      isLoadingComplete: true
     }
     this._handleFinishLoading = this._handleFinishLoading.bind(this)
     this.handleResponse = this.handleResponse.bind(this)
     this._loadResourcesAsync = this._loadResourcesAsync.bind(this)
     this.cacheImages = this.cacheImages.bind(this)
+    this.handleAutomatedResponse = this.handleAutomatedResponse.bind(this)
+    this.fetchInActiveData = this.fetchInActiveData.bind(this)
     // this._handleNotification = this._handleNotification.bind(this)
   }
 
@@ -49,7 +54,7 @@ class Loading extends React.Component {
           Alert.alert(
             'Update KiboPush?',
             'KiboPush recommends that you update to the latest version. This version includes few bug fixes and performance improvements. You can keep using the app while downloading the update.',
-            [{ text: 'No Thanks', onPress: () => console.log('no thanks Pressed'), style: 'destructive' },
+            [{ text: 'No Thanks' },
               { text: 'Update', onPress: () => Linking.openURL(url) }],
             { cancelable: true })
         }
@@ -71,6 +76,7 @@ class Loading extends React.Component {
       AsyncStorage.getItem('token').then(token => {
         if (token) {
           this.props.getuserdetails(this.handleResponse, joinRoom)
+          this.props.getAutomatedOptions(this.handleAutomatedResponse)
         } else {
           this.props.navigation.navigate('Sign In')
         }
@@ -118,11 +124,26 @@ class Loading extends React.Component {
   };
 
   handleResponse (res) {
-    if (res.status === 'success') {
-      this.props.getAutomatedOptions()
+    if (res.status === 'success' && this.props.automated_options) {
+      this.fetchInActiveData(res.payload, this.props.automated_options)
       this.props.navigation.navigate('App')
-    } else {
-      this.props.navigation.navigate('Sign In')
+    }
+  }
+
+  fetchInActiveData (user, automatedOptions) {
+    if (user.connectFacebook) {
+      this.props.loadDashboardData()
+      this.props.fetchPages()
+    }
+    if (automatedOptions.whatsApp) {
+      this.props.loadCardBoxesDataWhatsApp()
+    }
+  }
+
+  handleAutomatedResponse (res) {
+    if (res.status === 'success' && this.props.user) {
+      this.fetchInActiveData(this.props.user, res.payload)
+      this.props.navigation.navigate('App')
     }
   }
 
@@ -144,12 +165,17 @@ class Loading extends React.Component {
 }
 function mapStateToProps (state) {
   return {
-    user: (state.basicInfo.user)
+    user: (state.basicInfo.user),
+    automated_options: (state.basicInfo.automated_options)
   }
 }
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators(
-    {getuserdetails, getAutomatedOptions},
-    dispatch)
+  return bindActionCreators({
+    getuserdetails,
+    getAutomatedOptions,
+    loadDashboardData,
+    fetchPages,
+    loadCardBoxesDataWhatsApp
+  }, dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Loading)

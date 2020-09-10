@@ -62,7 +62,6 @@ socket.on('message', (data) => {
 })
 
 export function log (tag, data) {
-  console.log(`${tag}: ${data}`)
   socket.emit('logClient', {
     tag,
     data
