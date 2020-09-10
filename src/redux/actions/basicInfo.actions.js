@@ -61,7 +61,6 @@ export function updatePicture (data, callback) {
 }
 
 export function updatePlatform (user, data, cb) {
-  console.log('in updatePlatform', user.platform)
   return (dispatch) => {
     callApi(dispatch, 'users/updatePlatform', 'post', data).then(res => {
       if (res.status === 'success') {
