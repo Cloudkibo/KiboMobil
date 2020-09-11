@@ -83,7 +83,7 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
-      
+
      if(nextProps.chatLoading) {
       this.setState({loading: true, activeSession: {}})
      }
@@ -97,11 +97,11 @@ class LiveChat extends React.Component {
        this.props.navigation.navigate('Chat', { activeSession: nextProps.activeSession, session: this.state.sessions, tabValue: this.state.tab})
      }
 
-    
+
   /* eslint-enable */
     let state = {}
     if (nextProps.openSessions || nextProps.closeSessions) {
-      
+
       state.loading = false
       state.sessionsLoading = false
       let sessions = this.state.tabValue === 'open' ? nextProps.openSessions : nextProps.closeSessions

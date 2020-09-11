@@ -102,7 +102,7 @@ class WhastappLiveChat extends React.Component {
     activeSession.unreadCount = 0
     this.props.navigation.navigate('WhatsappChat', { activeSession: nextProps.activeSession, session: this.state.sessions, tabValue: this.state.tab})
   }
-  
+
     let state = {}
     if (nextProps.openSessions || nextProps.closeSessions) {
       state.loading = false

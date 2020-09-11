@@ -10,6 +10,7 @@ import { joinRoom } from '../../utility/socketio'
 import { loadDashboardData } from '../../redux/actions/dashboard.actions'
 import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
+import * as Notifications from 'expo-notifications'
 
 import * as Updates from 'expo-updates'
 import * as Sentry from 'sentry-expo'
@@ -72,6 +73,14 @@ class Loading extends React.Component {
     //   });
     // }
     // this._notificationSubscription = Notifications.addListener(this._handleNotification)
+    // const subscription = Notifications.addNotificationReceivedListener(notification => {
+    //   console.log('notification got');
+    // });
+    // Notifications.setNotificationHandler({
+    //   handleNotification: async (notification) => {
+    //     console.log('handleNotification')
+    //   }
+    // })
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
         if (token) {

@@ -2,17 +2,33 @@ import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 
 export function updateSubscribers (payload, data) {
-  if (data.first_page === 'first') {
-    return {
-      type: ActionTypes.FETCH_SUBSCRIBERS_OVERRIDE,
-      data: payload.subscribers,
-      count: payload.count
+  if (data.filter_criteria.search_value === '') {
+    if (data.first_page === 'first') {
+      return {
+        type: ActionTypes.FETCH_SUBSCRIBERS_OVERRIDE,
+        data: payload.subscribers,
+        count: payload.count
+      }
+    } else {
+      return {
+        type: ActionTypes.FETCH_SUBSCRIBERS,
+        data: payload.subscribers,
+        count: payload.count
+      }
     }
   } else {
-    return {
-      type: ActionTypes.FETCH_SUBSCRIBERS,
-      data: payload.subscribers,
-      count: payload.count
+    if (data.first_page === 'first') {
+      return {
+        type: ActionTypes.FETCH_SUBSCRIBERS_SEARCH_OVERRIDE,
+        data: payload.subscribers,
+        count: payload.count
+      }
+    } else {
+      return {
+        type: ActionTypes.FETCH_SUBSCRIBERS_SEARCH,
+        data: payload.subscribers,
+        count: payload.count
+      }
     }
   }
 }
