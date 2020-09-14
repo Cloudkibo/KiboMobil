@@ -68,7 +68,7 @@ class ChatSessionScreen extends React.Component {
             alert('Failed to get push token for push notification!');
             return;
         }
-        token = (await Notifications.getExpoPushTokenAsync()).data
+        let token = (await Notifications.getExpoPushTokenAsync()).data
         console.log(token);
         if(!user.expoListToken.includes(token)) {
             user.expoListToken.push(token)
@@ -89,7 +89,7 @@ class ChatSessionScreen extends React.Component {
             lightColor: '#FF231F7C',
         });
         }
-    }
+     }
     }
 
     UNSAFE_componentWillReceiveProps (nextProps) {
