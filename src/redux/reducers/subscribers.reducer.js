@@ -13,6 +13,16 @@ export function subscribersInfo (state = {}, action) {
         subscribers: [...state.subscribers, ...action.data],
         count: action.count
       })
+    case ActionTypes.FETCH_SUBSCRIBERS_SEARCH_OVERRIDE:
+      return Object.assign({}, state, {
+        searchedSubscribers: action.data,
+        searchedCount: action.count
+      })
+    case ActionTypes.FETCH_SUBSCRIBERS_SEARCH:
+      return Object.assign({}, state, {
+        searchedSubscribers: [...state.searchedSubscribers, ...action.data],
+        searchedCount: action.count
+      })
     case ActionTypes.UPDATE_SUBSCRIBER_PICTURE:
       if (subscribers) {
         let subscriberIndex = subscribers.findIndex(s => s._id === action.subscriberId)

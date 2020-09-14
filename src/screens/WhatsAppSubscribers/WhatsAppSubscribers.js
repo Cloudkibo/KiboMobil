@@ -52,12 +52,12 @@ class Subscribers extends React.Component {
   }
 
   componentDidMount () {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.loadSubscribers()
-    })
+    this.loadSubscribers()
+    // this._unsubscribe = this.props.navigation.addListener('focus', () => {
+    // })
   }
   componentWillUnmount () {
-    this._unsubscribe()
+    // this._unsubscribe()
   }
 
   changeSearchValue (value) {
