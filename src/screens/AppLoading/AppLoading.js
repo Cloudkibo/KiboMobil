@@ -39,15 +39,15 @@ class Loading extends React.Component {
     // this._handleNotification = this._handleNotification.bind(this)
   }
 
-  componentDidMount () {
+  async componentDidMount () {
     let url = Platform.OS === 'android'
       ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
       : 'https://apps.apple.com/us/app/kibopush/id1519207005'
     Updates.checkForUpdateAsync()
-      .then((isAvailable) => {
+      .then(({isAvailable, manifest}) => {
         if (isAvailable) {
           Alert.alert(
-            'Update KiboPush?',
+            'Update KiboPush??',
             'KiboPush recommends that you update to the latest version. This version includes few bug fixes and performance improvements. You can keep using the app while downloading the update.',
             [{ text: 'No Thanks', onPress: () => console.log('no thanks Pressed'), style: 'destructive' },
               { text: 'Update', onPress: () => Linking.openURL(url) }],
