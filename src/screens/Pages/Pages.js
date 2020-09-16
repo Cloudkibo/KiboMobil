@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, Image, FlatList, Alert, ActivityIndicator, Platform } from 'react-native'
 import { Button, Block, Text, theme } from 'galio-framework'
-import { connectPage, disconnectPage, fetchPages } from '../../redux/actions/pages.actions'
+import { connectPage, disconnectPage} from '../../redux/actions/pages.actions'
 
 import { materialTheme } from '../../constants/'
 
@@ -20,11 +20,9 @@ class Pages extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-      loading: false
     }
     this.renderPage = this.renderPage.bind(this)
     this.showErrorDialog = this.showErrorDialog.bind(this)
-    this.handleResponse = this.handleResponse.bind(this)
   }
 
   /* eslint-disable */
@@ -33,17 +31,10 @@ class Pages extends React.Component {
   }
 
   componentDidMount () {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.setState({loading: true})
-      this.props.fetchPages(this.handleResponse)
-    })
+
   }
   componentWillUnmount () {
     this._unsubscribe()
-  }
-
-  handleResponse () {
-    this.setState({loading: false})
   }
 
   showSucessMessage (message) {
@@ -96,9 +87,6 @@ class Pages extends React.Component {
   }
 
   render () {
-    if (this.state.loading) {
-      return <ActivityIndicator size='large' style={{flex: 0.8}} />
-    } else {
       return (
         <Block flex center style={styles.block}>
           <Block shadow style={styles.pages}>
@@ -113,7 +101,6 @@ class Pages extends React.Component {
           </Block>
         </Block>
       )
-    }
   }
 }
 
@@ -127,7 +114,6 @@ function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     connectPage,
     disconnectPage,
-    fetchPages
   }, dispatch)
 }
 
