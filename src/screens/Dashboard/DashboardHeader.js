@@ -17,7 +17,9 @@ class DashboardHeader extends React.Component {
     this.state = {
       showAssignmentModal: false
     }
+    this.handleLeftPress = this.handleLeftPress.bind(this)
     this.toggleAssignmentModal = this.toggleAssignmentModal.bind(this)
+    this.renderRight = this.renderRight.bind(this)
   }
   handleLeftPress () {
     const { back, navigation } = this.props
