@@ -3,17 +3,19 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { getuserdetails, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import { AppLoading } from 'expo'
-import { Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking } from 'react-native'
+import { Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking, Dimensions, StyleSheet } from 'react-native'
+import { Block, Text, theme, Button } from 'galio-framework'
 import { Asset } from 'expo-asset'
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
 import { loadDashboardData } from '../../redux/actions/dashboard.actions'
 import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
-import * as Notifications from 'expo-notifications'
 
 import * as Updates from 'expo-updates'
 import * as Sentry from 'sentry-expo'
+
+const { width } = Dimensions.get('screen')
 
 const assetImages = [
   Images.Profile,
@@ -34,7 +36,8 @@ class Loading extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-      isLoadingComplete: true
+      isLoadingComplete: false,
+      loadingData: true
     }
     this._handleFinishLoading = this._handleFinishLoading.bind(this)
     this.handleResponse = this.handleResponse.bind(this)
@@ -134,8 +137,11 @@ class Loading extends React.Component {
 
   handleResponse (res) {
     if (res.status === 'success' && this.props.automated_options) {
+      this.setState({loadingData: false})
       this.fetchInActiveData(res.payload, this.props.automated_options)
-      this.props.navigation.navigate('App')
+      res.payload.connectFacebook || this.props.automated_options.whatsApp
+        ? this.props.navigation.navigate('App')
+        : this.setState({loadingData: false})
     }
   }
 
@@ -152,7 +158,9 @@ class Loading extends React.Component {
   handleAutomatedResponse (res) {
     if (res.status === 'success' && this.props.user) {
       this.fetchInActiveData(this.props.user, res.payload)
-      this.props.navigation.navigate('App')
+      res.payload.whatsApp || this.props.user.connectFacebook
+        ? this.props.navigation.navigate('App')
+        : this.setState({loadingData: false})
     }
   }
 
@@ -165,9 +173,20 @@ class Loading extends React.Component {
           onFinish={this._handleFinishLoading}
         />
       )
-    } else {
+    } else if (this.state.loadingData) {
       return (
         <ActivityIndicator size='large' style={{flex: 1}} />
+      )
+    } else {
+      return (
+        <Block flex center style={styles.block}>
+          <Block style={styles.pages} flex middle>
+            <Text h6>You do not have any platform (Facebook or whatsApp) connected. In order to start using the app, you have to connect any one of the platforms. Please go to our website and connect them.</Text>
+            <Button radius={10}
+              style={{marginTop: 30}}
+              onPress={() => Linking.openURL('https://kibochat.cloudkibo.com')}>Connect Platform</Button>
+          </Block>
+        </Block>
       )
     }
   }
@@ -188,3 +207,12 @@ function mapDispatchToProps (dispatch) {
   }, dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Loading)
+const styles = StyleSheet.create({
+  block: {
+    width: width,
+    backgroundColor: theme.COLORS.WHITE
+  },
+  pages: {
+    marginHorizontal: 20
+  }
+})

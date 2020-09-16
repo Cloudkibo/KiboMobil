@@ -31,7 +31,7 @@ class DashboardHeader extends React.Component {
   renderRight () {
     return (
       <Block flex={0.8} row>
-        { this.props.automated_options && this.props.automated_options.whatsApp &&
+        { this.props.automated_options && this.props.automated_options.whatsApp && this.props.user && this.props.user.connectFacebook &&
         <TouchableOpacity onPress={() => this.setState({showAssignmentModal: true})}>
           <Icon
             size={20}
