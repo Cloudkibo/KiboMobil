@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { getuserdetails, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import { AppLoading } from 'expo'
-import { Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking, Dimensions, StyleSheet } from 'react-native'
+import { AppState, Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking, Dimensions, StyleSheet } from 'react-native'
 import { Block, Text, theme, Button } from 'galio-framework'
 import { Asset } from 'expo-asset'
 import { Images } from '../../constants/'
@@ -36,7 +36,8 @@ class Loading extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-      isLoadingComplete: false,
+      isLoadingComplete: true,
+      appState: AppState.currentState,
       loadingData: true
     }
     this._handleFinishLoading = this._handleFinishLoading.bind(this)
@@ -84,6 +85,7 @@ class Loading extends React.Component {
     //     console.log('handleNotification')
     //   }
     // })
+    AppState.addEventListener('change', this._handleAppStateChange);
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
         if (token) {
@@ -104,8 +106,19 @@ class Loading extends React.Component {
   //     });
   //   }
   // }
+
+
+  _handleAppStateChange = (nextAppState) => {
+    console.log('AppState.currentState', this.state.appState)
+    console.log('AppState.nextAppState', nextAppState)
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      console.log('App has come to the foreground!')
+    }
+    this.setState({appState: nextAppState});
+  }
   componentWillUnmount () {
     this._unsubscribe()
+    AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
   async _loadResourcesAsync () {
