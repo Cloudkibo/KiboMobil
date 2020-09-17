@@ -17,7 +17,9 @@ class DashboardHeader extends React.Component {
     this.state = {
       showAssignmentModal: false
     }
+    this.handleLeftPress = this.handleLeftPress.bind(this)
     this.toggleAssignmentModal = this.toggleAssignmentModal.bind(this)
+    this.renderRight = this.renderRight.bind(this)
   }
   handleLeftPress () {
     const { back, navigation } = this.props
@@ -29,7 +31,7 @@ class DashboardHeader extends React.Component {
   renderRight () {
     return (
       <Block flex={0.8} row>
-        { this.props.automated_options && this.props.automated_options.whatsApp &&
+        { this.props.automated_options && this.props.automated_options.whatsApp && this.props.user && this.props.user.connectFacebook &&
         <TouchableOpacity onPress={() => this.setState({showAssignmentModal: true})}>
           <Icon
             size={20}
