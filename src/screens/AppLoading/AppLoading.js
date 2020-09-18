@@ -12,25 +12,15 @@ import * as Updates from 'expo-updates'
 import * as Sentry from 'sentry-expo'
 
 const assetImages = [
-  Images.Profile,
-  Images.Avatar,
-  Images.Onboarding,
-  Images.Products.Auto,
-  Images.Products.Motocycle,
-  Images.Products.Watches,
-  Images.Products.Makeup,
-  Images.Products.Accessories,
-  Images.Products.Fragrance,
-  Images.Products.BMW,
-  Images.Products.Mustang,
-  Images.Products['Harley-Davidson']
+  Images.Onboarding
 ]
 
 class Loading extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-      isLoadingComplete: false
+      isLoadingComplete: false,
+      showLoader: false
     }
     this._handleFinishLoading = this._handleFinishLoading.bind(this)
     this.handleResponse = this.handleResponse.bind(this)
@@ -114,7 +104,18 @@ class Loading extends React.Component {
   };
 
   async _handleFinishLoading () {
-    this.setState({isLoadingComplete: true})
+    console.log('_handleFinishLoading')
+    this.setState({isLoadingComplete: true}, () => {
+      AsyncStorage.getItem('token').then(token => {
+        console.log('AsyncStorage')
+        if (token) {
+          this.setState({showLoader: true})
+          this.props.getuserdetails(this.handleResponse, joinRoom)
+        } else {
+          this.props.navigation.navigate('Sign In')
+        }
+      })
+    })
   };
 
   handleResponse (res) {
@@ -127,19 +128,20 @@ class Loading extends React.Component {
   }
 
   render () {
-    if (!this.state.isLoadingComplete) {
-      return (
-        <AppLoading
-          startAsync={this._loadResourcesAsync}
-          onError={this._handleLoadingError}
-          onFinish={this._handleFinishLoading}
-        />
-      )
-    } else {
-      return (
-        <ActivityIndicator size='large' style={{flex: 1}} />
-      )
-    }
+    console.log('re-render')
+    // if (!this.state.isLoadingComplete) {
+    //   return (
+    //     <AppLoading
+    //       startAsync={this._loadResourcesAsync}
+    //       onError={this._handleLoadingError}
+    //       onFinish={this._handleFinishLoading}
+    //     />
+    //   )
+    // } else {
+    return (
+      <ActivityIndicator size='large' style={{flex: 1}} />
+    )
+    // }
   }
 }
 function mapStateToProps (state) {
