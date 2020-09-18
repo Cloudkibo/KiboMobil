@@ -4,7 +4,7 @@
 import io from 'socket.io-client'
 import { setSocketStatus } from '../redux/actions/basicInfo.actions'
 import { socketUpdate, updateSessions } from './../redux/actions/liveChat.actions'
-import { handleSocketEvent, handleSocketEventWhatsapp } from '../redux/actions/socket.actions'
+import { handleSocketEvent, handleSocketEventWhatsapp, handleSocketEventSubscribers, handleSocketEventSubscribersWhatsApp } from '../redux/actions/socket.actions'
 const whatsAppActions = require('./../redux/actions/whatsAppChat.actions')
 
 const socket = io('https://kibochat.cloudkibo.com')
@@ -55,6 +55,12 @@ socket.on('message', (data) => {
   if (['new_chat_whatsapp', 'agent_replied_whatsapp', 'session_pending_response_whatsapp', 'unsubscribe_whatsapp', 'session_status_whatsapp', 'new_session_created_whatsapp', 'message_delivered_whatsApp', 'message_seen_whatsApp'].includes(data.action)) {
     if (data.action === 'new_chat_whatsapp') data.showNotification = true
     store.dispatch(handleSocketEventWhatsapp(data))
+  }
+  if (['new_subscriber'].includes(data.action)) {
+    store.dispatch(handleSocketEventSubscribers(data))
+  }
+  if (['new_subscriber_whatsapp'].includes(data.action)) {
+    store.dispatch(handleSocketEventSubscribersWhatsApp(data))
   }
   if (callbacks[data.action]) {
     callbacks[data.action](data.payload)

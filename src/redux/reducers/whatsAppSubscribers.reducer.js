@@ -31,6 +31,8 @@ export function whatsAppSubscribersInfo (state = initialState, action) {
         contacts: [...state.contacts, ...action.data],
         count: action.count
       })
+    case ActionTypes.UPDATE_SUBSCRIBERS_INFO_WHATSAPP:
+      return Object.assign({}, state, action, action.data)
     default:
       return state
   }

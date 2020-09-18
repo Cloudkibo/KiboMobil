@@ -1,6 +1,13 @@
 import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 
+export function updateSubscribersInfo (data) {
+  return {
+    type: ActionTypes.UPDATE_SUBSCRIBERS_INFO_WHATSAPP,
+    data
+  }
+}
+
 export function showContacts (payload, data) {
   if (data.first_page === 'first') {
     return {

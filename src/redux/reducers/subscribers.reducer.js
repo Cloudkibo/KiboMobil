@@ -34,6 +34,8 @@ export function subscribersInfo (state = {}, action) {
       } else {
         return state
       }
+    case ActionTypes.UPDATE_SUBSCRIBERS_INFO:
+      return Object.assign({}, state, action, action.data)
     default:
       return state
   }

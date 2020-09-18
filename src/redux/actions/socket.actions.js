@@ -25,3 +25,29 @@ export function clearSocketDataWhatsapp () {
     type: ActionTypes.CLEAR_SOCKET_DATA_WHATSAPP
   }
 }
+
+export function handleSocketEventSubscribers (data) {
+  return {
+    type: ActionTypes.SOCKET_EVENT_SUBSCRIBERS,
+    data
+  }
+}
+
+export function clearSocketDataSubscribers () {
+  return {
+    type: ActionTypes.CLEAR_SOCKET_DATA_SUBSCRIBERS
+  }
+}
+
+export function handleSocketEventSubscribersWhatsApp (data) {
+  return {
+    type: ActionTypes.SOCKET_EVENT_SUBSCRIBERS_WHATSAPP,
+    data
+  }
+}
+
+export function clearSocketDataSubscribersWhatsApp () {
+  return {
+    type: ActionTypes.CLEAR_SOCKET_DATA_SUBSCRIBERS_WHATSAPP
+  }
+}
