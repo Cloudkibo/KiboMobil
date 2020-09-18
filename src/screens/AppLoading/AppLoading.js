@@ -46,6 +46,7 @@ class Loading extends React.Component {
     this.cacheImages = this.cacheImages.bind(this)
     this.handleAutomatedResponse = this.handleAutomatedResponse.bind(this)
     this.fetchInActiveData = this.fetchInActiveData.bind(this)
+    this._handleAppStateChange = this._handleAppStateChange.bind(this)
     // this._handleNotification = this._handleNotification.bind(this)
   }
 
@@ -108,7 +109,7 @@ class Loading extends React.Component {
   // }
 
 
-  _handleAppStateChange = (nextAppState) => {
+  _handleAppStateChange (nextAppState) {
     console.log('AppState.currentState', this.state.appState)
     console.log('AppState.nextAppState', nextAppState)
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {

@@ -6,6 +6,8 @@ export function smsWhatsAppDashboardInfo (state = {}, action) {
       return Object.assign({}, state, {
         cardBoxesData: action.data
       })
+    case ActionTypes.UPDATE_DASHBOARD_INFO_WHATSAPP:
+      return Object.assign({}, state, action, action.data)
     default:
       return state
   }

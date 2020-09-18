@@ -3,10 +3,13 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
 import { Block, Text, theme, Input } from 'galio-framework'
-import { fetchSubscribers, updatePicture } from '../../redux/actions/subscribers.actions'
+import { fetchSubscribers, updatePicture, updateSubscribersInfo } from '../../redux/actions/subscribers.actions'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SubscribersListItem from '../../components/Subscribers/SubscribersListItem'
+import { handleSocketEvent } from './socket'
+import { clearSocketDataSubscribers } from '../../redux/actions/socket.actions'
+import { updateDashboardInfo } from '../../redux/actions/dashboard.actions'
 
 const { width } = Dimensions.get('screen')
 
@@ -28,6 +31,21 @@ class Subscribers extends React.Component {
     this._loadMoreData = this._loadMoreData.bind(this)
     this._onMomentumScrollBegin = this._onMomentumScrollBegin.bind(this)
     this.updateLoading = this.updateLoading.bind(this)
+  }
+
+  /* eslint-disable */
+  UNSAFE_componentWillReceiveProps (nextProps) {
+  /* eslint-enable */
+    if (nextProps.socketData) {
+      handleSocketEvent(
+        nextProps.socketData,
+        this.state,
+        this.props,
+        this.props.updateSubscribersInfo,
+        this.props.updateDashboardInfo,
+        this.props.clearSocketDataSubscribers
+      )
+    }
   }
 
   /* eslint-disable */
@@ -199,14 +217,19 @@ function mapStateToProps (state) {
     subscribers: (state.subscribersInfo.subscribers),
     count: (state.subscribersInfo.count),
     searchedSubscribers: (state.subscribersInfo.searchedSubscribers),
-    searchedCount: (state.subscribersInfo.searchedCount)
+    searchedCount: (state.subscribersInfo.searchedCount),
+    socketData: (state.socketInfo.socketDataSubscribers),
+    dashboard: (state.dashboardInfo.dashboard)
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     fetchSubscribers,
-    updatePicture
+    updatePicture,
+    clearSocketDataSubscribers,
+    updateSubscribersInfo,
+    updateDashboardInfo
   }, dispatch)
 }
 

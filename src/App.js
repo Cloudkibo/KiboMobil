@@ -24,12 +24,12 @@ enableScreens()
 
 const store = configureStore()
 initiateSocket(store)
-Sentry.init({
-  dsn: 'https://6c7958e0570f455381d6f17122fbd117@o132281.ingest.sentry.io/292307',
-  enableInExpoDevelopment: true,
-  debug: true,
-  attachStacktrace: true
-})
+// Sentry.init({
+//   dsn: 'https://6c7958e0570f455381d6f17122fbd117@o132281.ingest.sentry.io/292307',
+//   enableInExpoDevelopment: true,
+//   debug: true,
+//   attachStacktrace: true
+// })
 class App extends React.Component {
   render () {
     return (
