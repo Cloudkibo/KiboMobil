@@ -69,7 +69,7 @@ class ChatSessionScreen extends React.Component {
         }
         token = (await Notifications.getExpoPushTokenAsync()).data
         console.log(token);
-        if(!user.expoListToken.includes(token)) {
+        if(user && !user.expoListToken.includes(token)) {
             user.expoListToken.push(token)
             this.props.saveNotificationToken(user)
             user.currentDeviceToken = token

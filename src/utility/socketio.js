@@ -4,7 +4,8 @@
 import io from 'socket.io-client'
 import { setSocketStatus } from '../redux/actions/basicInfo.actions'
 import { socketUpdate, updateSessions } from './../redux/actions/liveChat.actions'
-import { handleSocketEvent, handleSocketEventWhatsapp, handleSocketEventSubscribers, handleSocketEventSubscribersWhatsApp } from '../redux/actions/socket.actions'
+import { handleSocketEvent, handleSocketEventWhatsapp, handleSocketEventSubscribers, handleSocketEventSubscribersWhatsApp} from '../redux/actions/socket.actions'
+import {connectFbPage, disConnectFbPage} from '../redux/actions/pages.actions'
 const whatsAppActions = require('./../redux/actions/whatsAppChat.actions')
 
 const socket = io('https://kibochat.cloudkibo.com')
@@ -61,6 +62,12 @@ socket.on('message', (data) => {
   }
   if (['new_subscriber_whatsapp'].includes(data.action)) {
     store.dispatch(handleSocketEventSubscribersWhatsApp(data))
+  }
+  if (['page_connect'].includes(data.action)) {
+    store.dispatch(connectFbPage(data.payload))
+  }
+  if (['page_disconnect'].includes(data.action)) {
+    store.dispatch(disConnectFbPage(data.payload))
   }
   if (callbacks[data.action]) {
     callbacks[data.action](data.payload)

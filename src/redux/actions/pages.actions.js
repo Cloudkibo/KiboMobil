@@ -8,6 +8,20 @@ export function updatePages (data) {
   }
 }
 
+export function connectFbPage (data) {
+  return {
+    type: ActionTypes.CONNECT_FB_PAGE,
+    data
+  }
+}
+
+export function disConnectFbPage (data) {
+  return {
+    type: ActionTypes.DISCONNECT_FB_PAGE,
+    data
+  }
+}
+
 export function updateConnectedPages (data) {
   return {
     type: ActionTypes.FETCH_CONNECTED_PAGES_LIST,
@@ -58,3 +72,5 @@ export function fetchConnectedPages (callback) {
     })
   }
 }
+
+

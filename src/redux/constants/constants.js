@@ -9,6 +9,8 @@ export const UPDATE_DASHBOARD_INFO = 'UPDATE_DASHBOARD_INFO'
 // constants for pages
 export const FETCH_PAGES_LIST = 'FETCH_PAGES_LIST'
 export const FETCH_CONNECTED_PAGES_LIST = 'FETCH_CONNECTED_PAGES_LIST'
+export const CONNECT_FB_PAGE = 'CONNECT_FB_PAGE'
+export const DISCONNECT_FB_PAGE = 'DISCONNECT_FB_PAGE'
 
 // constants for subscribers
 export const FETCH_SUBSCRIBERS = 'FETCH_SUBSCRIBERS'
