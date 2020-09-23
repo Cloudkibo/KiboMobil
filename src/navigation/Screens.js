@@ -250,7 +250,7 @@ function DashboardStack (props) {
           )
         }}
       />
-      
+
     </Stack.Navigator>
   )
 }

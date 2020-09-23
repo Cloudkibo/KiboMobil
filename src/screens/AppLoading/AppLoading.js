@@ -13,23 +13,14 @@ import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
 
 import * as Updates from 'expo-updates'
-import * as Sentry from 'sentry-expo'
+// import * as Sentry from 'sentry-expo'
+import Bugsnag from '@bugsnag/expo'
+import VersionCheck from 'react-native-version-check-expo'
 
 const { width } = Dimensions.get('screen')
 
 const assetImages = [
-  Images.Profile,
-  Images.Avatar,
-  Images.Onboarding,
-  Images.Products.Auto,
-  Images.Products.Motocycle,
-  Images.Products.Watches,
-  Images.Products.Makeup,
-  Images.Products.Accessories,
-  Images.Products.Fragrance,
-  Images.Products.BMW,
-  Images.Products.Mustang,
-  Images.Products['Harley-Davidson']
+  Images.Onboarding
 ]
 
 class Loading extends React.Component {
@@ -50,13 +41,15 @@ class Loading extends React.Component {
     // this._handleNotification = this._handleNotification.bind(this)
   }
 
-  componentDidMount () {
-    let url = Platform.OS === 'android'
-      ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
-      : 'https://apps.apple.com/us/app/kibopush/id1519207005'
-    Updates.checkForUpdateAsync()
-      .then((isAvailable) => {
-        if (isAvailable) {
+  async componentDidMount () {
+    VersionCheck.needUpdate()
+      .then(result => {
+        let currentVersion = parseInt(result.currentVersion, 10)
+        let latestVersion = parseInt(result.latestVersion, 10)
+        if (currentVersion < latestVersion || result.isNeeded) {
+          let url = Platform.OS === 'android'
+            ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
+            : 'https://apps.apple.com/us/app/kibopush/id1519207005'
           Alert.alert(
             'Update KiboPush?',
             'KiboPush recommends that you update to the latest version. This version includes few bug fixes and performance improvements. You can keep using the app while downloading the update.',
@@ -66,8 +59,8 @@ class Loading extends React.Component {
         }
       })
       .catch((err) => {
-        console.log('err', err)
-        Sentry.captureException(err)
+        Bugsnag.notify(err)
+        // Sentry.captureException(err)
       })
     // if (Platform.OS === 'android') {
     //   Notifications.createChannelAndroidAsync('default', {
@@ -142,11 +135,22 @@ class Loading extends React.Component {
     // In this case, you might want to report the error to your error
     // reporting service, for example Sentry
     console.warn(error)
-    Sentry.captureException(error)
+    // Sentry.captureException(error)
   };
 
   async _handleFinishLoading () {
-    this.setState({isLoadingComplete: true})
+    console.log('_handleFinishLoading')
+    this.setState({isLoadingComplete: true}, () => {
+      AsyncStorage.getItem('token').then(token => {
+        console.log('AsyncStorage')
+        if (token) {
+          this.setState({showLoader: true})
+          this.props.getuserdetails(this.handleResponse, joinRoom)
+        } else {
+          this.props.navigation.navigate('Sign In')
+        }
+      })
+    })
   };
 
   handleResponse (res) {

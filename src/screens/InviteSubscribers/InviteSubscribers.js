@@ -22,7 +22,7 @@ class InviteSubscribers extends React.Component {
       pagesFetched: false,
       listData: [{id: '0'}],
       selectedPage: '',
-      showToast: false
+      showToast: false,
     }
     this.renderList = this.renderList.bind(this)
     this.getPageOptions = this.getPageOptions.bind(this)
@@ -31,6 +31,7 @@ class InviteSubscribers extends React.Component {
     this.writeToClipboard = this.writeToClipboard.bind(this)
     this.handleFetchPagesResponse = this.handleFetchPagesResponse.bind(this)
   }
+
 
   handleFetchPagesResponse (connectedPages) {
     this.setState({pagesFetched: true, selectedPage: connectedPages[0]})
@@ -50,13 +51,19 @@ class InviteSubscribers extends React.Component {
     this._unsubscribe()
   }
 
-  handlePageSelect (index, value) {
+  handlePageSelect (value, index) {
     let selectedPage = this.props.connectedPages[index]
     this.setState({selectedPage: selectedPage})
   }
 
   getPageOptions () {
-    return this.props.connectedPages.map(page => page.pageName)
+
+    let options = []
+    options = this.props.connectedPages.map(z => {
+      return {label: z.pageName, value: z.pageName}
+    })
+    console.log('options', options)
+    return options
   }
 
   getMessengerLink () {
@@ -73,7 +80,7 @@ class InviteSubscribers extends React.Component {
 
   renderList () {
     return (
-      <Block style={{paddingVertical: 20}}>
+      <Block style={{paddingVertical: 50}}>
         <Block flex row style={styles.options}>
           <Block flex={0.3} middle><Text size={16}> Select Page:</Text></Block>
           <Block flex={0.7} middle>
@@ -82,7 +89,7 @@ class InviteSubscribers extends React.Component {
               style={{width: width * 0.5}}
               value={this.state.selectedPage.pageName}
               options={this.getPageOptions()}
-              onSelect={(index, value) => this.handlePageSelect(index, value)}
+              onSelect={(value, index) => this.handlePageSelect(value, index)}
             />
           </Block>
         </Block>
@@ -100,12 +107,7 @@ class InviteSubscribers extends React.Component {
       return (
         <Block flex center style={styles.block}>
           <Block style={styles.subBlock}>
-            <FlatList
-              data={this.state.listData}
-              renderItem={this.renderList}
-              showsVerticalScrollIndicator={false}
-              keyExtractor={(item) => item.id}
-            />
+            {this.renderList()}
             <Block style={{marginHorizontal: 16}}>
               <Text h6>This is the link to your Facebook Page on Messenger. Copy this link and share it with people to invite them to become subscribers of your page.</Text>
               <Input
