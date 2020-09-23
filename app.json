@@ -10,13 +10,13 @@
       "android"
     ],
     "entryPoint": "./src/App.js",
-    "version": "1.1.3",
+    "version": "1.1.5",
     "orientation": "portrait",
     "icon": "./assets/images/appstore.png",
     "notification": {
       "icon": "./assets/images/notification.png",
       "androidMode": "default"
-      },
+    },
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "cover",
@@ -31,13 +31,26 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.cloudkibo.kibopush",
-      "buildNumber": "1.1.3",
+      "buildNumber": "1.1.5",
       "usesIcloudStorage": true
     },
     "android": {
       "package": "com.cloudkibo.kibopush",
-      "versionCode": 13,
+      "versionCode": 15,
       "useNextNotificationsApi": true
+    },
+    "extra": {
+      "bugsnag": {
+        "apiKey": "da30f077041596fbe19b2cef3f1bee66"
+      }
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "@bugsnag/expo/hooks/post-publish.js",
+          "config": {}
+        }
+      ]
     }
   },
   "hooks": {
