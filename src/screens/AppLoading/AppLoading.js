@@ -9,7 +9,9 @@ import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
 import {getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import * as Updates from 'expo-updates'
-import * as Sentry from 'sentry-expo'
+// import * as Sentry from 'sentry-expo'
+import Bugsnag from '@bugsnag/expo'
+import VersionCheck from 'react-native-version-check-expo'
 
 const assetImages = [
   Images.Onboarding
@@ -30,12 +32,14 @@ class Loading extends React.Component {
   }
 
   async componentDidMount () {
-    let url = Platform.OS === 'android'
-      ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
-      : 'https://apps.apple.com/us/app/kibopush/id1519207005'
-    Updates.checkForUpdateAsync()
-      .then((result) => {
-        if (result.isAvailable) {
+    VersionCheck.needUpdate()
+      .then(result => {
+        let currentVersion = parseInt(result.currentVersion, 10)
+        let latestVersion = parseInt(result.latestVersion, 10)
+        if (currentVersion < latestVersion || result.isNeeded) {
+          let url = Platform.OS === 'android'
+            ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
+            : 'https://apps.apple.com/us/app/kibopush/id1519207005'
           Alert.alert(
             'Update KiboPush?',
             'KiboPush recommends that you update to the latest version. This version includes few bug fixes and performance improvements. You can keep using the app while downloading the update.',
@@ -45,8 +49,8 @@ class Loading extends React.Component {
         }
       })
       .catch((err) => {
-        console.log('err', err)
-        Sentry.captureException(err)
+        Bugsnag.notify(err)
+        // Sentry.captureException(err)
       })
     // if (Platform.OS === 'android') {
     //   Notifications.createChannelAndroidAsync('default', {
@@ -100,7 +104,7 @@ class Loading extends React.Component {
     // In this case, you might want to report the error to your error
     // reporting service, for example Sentry
     console.warn(error)
-    Sentry.captureException(error)
+    // Sentry.captureException(error)
   };
 
   async _handleFinishLoading () {

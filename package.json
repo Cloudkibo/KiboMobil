@@ -18,6 +18,7 @@
     "deprecated-react-native-listview": "0.0.6"
   },
   "dependencies": {
+    "@bugsnag/expo": "^7.3.5",
     "@react-native-community/async-storage": "~1.11.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/netinfo": "5.9.2",
@@ -44,6 +45,7 @@
     "react-giphy-picker": "^1.1.1",
     "react-image-appear": "^1.2.23",
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
+    "react-native-appstore-version-checker": "^3.0.0",
     "react-native-dropdown-picker": "^3.1.11",
     "react-native-elements": "^2.0.1",
     "react-native-emoji-selector": "^0.1.8",
@@ -58,6 +60,8 @@
     "react-native-screens": "~2.9.0",
     "react-native-simple-toast": "^1.1.2",
     "react-native-tiny-toast": "^1.0.7",
+    "react-native-version-check": "^3.4.1",
+    "react-native-version-check-expo": "^3.4.1",
     "react-navigation": "^4.3.9",
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
