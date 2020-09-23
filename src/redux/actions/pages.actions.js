@@ -31,7 +31,9 @@ export function updateConnectedPages (data) {
 
 export function fetchPages (callback) {
   return (dispatch) => {
+    console.log('fetch Pages called')
     callApi(dispatch, `pages/addpages/`).then(res => {
+      console.log('fetch Pages called After', res.payload)
       dispatch(updatePages(res.payload))
       if (callback) callback()
     })
