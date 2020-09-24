@@ -69,6 +69,7 @@ socket.on('message', (data) => {
     store.dispatch(disConnectFbPage(data.payload))
   }
   if (callbacks[data.action]) {
+    console.log('callback')
     callbacks[data.action](data.payload)
   }
 })

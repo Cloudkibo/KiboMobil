@@ -2,26 +2,18 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { getuserdetails, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
-import { AppLoading } from 'expo'
-import { AppState, Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking, Dimensions, StyleSheet } from 'react-native'
+import { AppState, AsyncStorage, ActivityIndicator, Platform, Alert, Linking, Dimensions, StyleSheet } from 'react-native'
 import { Block, Text, theme, Button } from 'galio-framework'
-import { Asset } from 'expo-asset'
-import { Images } from '../../constants/'
-import { joinRoom } from '../../utility/socketio'
+import { joinRoom } from '../../socket/index'
 import { loadDashboardData } from '../../redux/actions/dashboard.actions'
 import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
 
-import * as Updates from 'expo-updates'
 // import * as Sentry from 'sentry-expo'
 import Bugsnag from '@bugsnag/expo'
 import VersionCheck from 'react-native-version-check-expo'
 
 const { width } = Dimensions.get('screen')
-
-const assetImages = [
-  Images.Onboarding
-]
 
 class Loading extends React.Component {
   constructor (props, context) {
@@ -31,10 +23,7 @@ class Loading extends React.Component {
       appState: AppState.currentState,
       loadingData: true
     }
-    this._handleFinishLoading = this._handleFinishLoading.bind(this)
     this.handleResponse = this.handleResponse.bind(this)
-    this._loadResourcesAsync = this._loadResourcesAsync.bind(this)
-    this.cacheImages = this.cacheImages.bind(this)
     this.handleAutomatedResponse = this.handleAutomatedResponse.bind(this)
     this.fetchInActiveData = this.fetchInActiveData.bind(this)
     this._handleAppStateChange = this._handleAppStateChange.bind(this)
@@ -79,7 +68,7 @@ class Loading extends React.Component {
     //     console.log('handleNotification')
     //   }
     // })
-    AppState.addEventListener('change', this._handleAppStateChange);
+    AppState.addEventListener('change', this._handleAppStateChange)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
         if (token) {
@@ -101,62 +90,22 @@ class Loading extends React.Component {
   //   }
   // }
 
-
   _handleAppStateChange (nextAppState) {
     console.log('AppState.currentState', this.state.appState)
     console.log('AppState.nextAppState', nextAppState)
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
       console.log('App has come to the foreground!')
     }
-    this.setState({appState: nextAppState});
+    this.setState({appState: nextAppState})
   }
   componentWillUnmount () {
     this._unsubscribe()
-    AppState.removeEventListener('change', this._handleAppStateChange);
+    AppState.removeEventListener('change', this._handleAppStateChange)
   }
-
-  async _loadResourcesAsync () {
-    return Promise.all([
-      ...this.cacheImages(assetImages)
-    ])
-  }
-
-  cacheImages (images) {
-    return images.map(image => {
-      if (typeof image === 'string') {
-        return Image.prefetch(image)
-      } else {
-        return Asset.fromModule(image).downloadAsync()
-      }
-    })
-  }
-
-  _handleLoadingError (error) {
-    // In this case, you might want to report the error to your error
-    // reporting service, for example Sentry
-    console.warn(error)
-    // Sentry.captureException(error)
-  };
-
-  async _handleFinishLoading () {
-    console.log('_handleFinishLoading')
-    this.setState({isLoadingComplete: true}, () => {
-      AsyncStorage.getItem('token').then(token => {
-        console.log('AsyncStorage')
-        if (token) {
-          this.setState({showLoader: true})
-          this.props.getuserdetails(this.handleResponse, joinRoom)
-        } else {
-          this.props.navigation.navigate('Sign In')
-        }
-      })
-    })
-  };
 
   handleResponse (res) {
     if (res.status === 'success' && this.props.automated_options) {
       this.setState({loadingData: false})
-      console.log('res.payload', res.payload)
       this.fetchInActiveData(res.payload.user, this.props.automated_options)
       res.payload.user.connectFacebook || this.props.automated_options.whatsApp
         ? this.props.navigation.navigate('App')
@@ -184,15 +133,7 @@ class Loading extends React.Component {
   }
 
   render () {
-    if (!this.state.isLoadingComplete) {
-      return (
-        <AppLoading
-          startAsync={this._loadResourcesAsync}
-          onError={this._handleLoadingError}
-          onFinish={this._handleFinishLoading}
-        />
-      )
-    } else if (this.state.loadingData) {
+    if (this.state.loadingData) {
       return (
         <ActivityIndicator size='large' style={{flex: 1}} />
       )

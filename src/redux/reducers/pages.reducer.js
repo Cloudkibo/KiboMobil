@@ -18,7 +18,6 @@ export function pagesInfo (state = [], action) {
       })
       case ActionTypes.CONNECT_FB_PAGE: {
         let pages = JSON.parse(JSON.stringify(state.pages))
-        console.log('pages in pages', pages)
         let pageIndex = pages.findIndex(page => page._id === action.data._id)
         pages[pageIndex] = action.data
         return Object.assign({}, state, {
