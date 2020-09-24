@@ -51,3 +51,17 @@ export function clearSocketDataSubscribersWhatsApp () {
     type: ActionTypes.CLEAR_SOCKET_DATA_SUBSCRIBERS_WHATSAPP
   }
 }
+
+export function connectFbPage (data) {
+  return {
+    type: ActionTypes.CONNECT_FB_PAGE_EVENT,
+    data
+  }
+}
+
+export function disConnectFbPage (data) {
+  return {
+    type: ActionTypes.DISCONNECT_FB_PAGE_EVENT,
+    data
+  }
+}

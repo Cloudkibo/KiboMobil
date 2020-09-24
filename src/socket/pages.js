@@ -1,4 +1,4 @@
-import { connectFbPage, disConnectFbPage } from '../redux/actions/pages.actions'
+import { connectFbPage, disConnectFbPage } from '../redux/actions/socket.actions'
 
 export function handleFBPageEvent (store, data) {
     console.log('in handle pages', data)
