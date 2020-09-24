@@ -8,13 +8,6 @@ export function updateSubscribersInfo (data) {
   }
 }
 
-export function newSubscriberEvent (data) {
-  return {
-    type: ActionTypes.NEW_SUBSCRIBER_EVENT,
-    data
-  }
-}
-
 export function updateSubscribers (payload, data) {
   if (data.filter_criteria.search_value === '') {
     if (data.first_page === 'first') {
