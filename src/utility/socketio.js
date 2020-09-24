@@ -44,7 +44,6 @@ socket.on('new_chat', (data) => {
 })
 
 socket.on('message', (data) => {
-  console.log('socket called', data.action)
   if (['new_chat', 'agent_replied', 'session_pending_response', 'unsubscribe', 'session_status'].includes(data.action)) {
     if (data.action === 'new_chat') data.showNotification = true
     store.dispatch(handleSocketEvent(data))
@@ -64,7 +63,7 @@ socket.on('message', (data) => {
     store.dispatch(handleSocketEventSubscribersWhatsApp(data))
   }
   if (['page_connect'].includes(data.action)) {
-    store.dispatch(connectFbPage(data.payload))
+    store.dispatch(connectFbPage(data.payload.data))
   }
   if (['page_disconnect'].includes(data.action)) {
     store.dispatch(disConnectFbPage(data.payload))

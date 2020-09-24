@@ -6,7 +6,7 @@ import * as ActionTypes from '../constants/constants'
 // }
 
 export function pagesInfo (state = [], action) {
-  console.log('action.data', action.data)
+  // console.log('action.data', action.data)
   switch (action.type) {
     case ActionTypes.FETCH_PAGES_LIST:
       return Object.assign({}, state, {
@@ -17,7 +17,8 @@ export function pagesInfo (state = [], action) {
         connectedPages: action.data
       })
       case ActionTypes.CONNECT_FB_PAGE: {
-        let pages = state.pages
+        let pages = JSON.parse(JSON.stringify(state.pages))
+        console.log('pages in pages', pages)
         let pageIndex = pages.findIndex(page => page._id === action.data._id)
         pages[pageIndex] = action.data
         return Object.assign({}, state, {
@@ -25,9 +26,9 @@ export function pagesInfo (state = [], action) {
       })
     }
       case ActionTypes.DISCONNECT_FB_PAGE: {
-        let pages = state.pages
-        let pageIndex = pages.findIndex(page => page._id === action.data._id)
-        pages[pageIndex] = action.data
+        let pages = JSON.parse(JSON.stringify(state.pages))
+        let pageIndex = pages.findIndex(page => page.pageId === action.data.page_id)
+        pages[pageIndex].connected = false
         return Object.assign({}, state, {
           pages: pages
       })

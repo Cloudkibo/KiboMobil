@@ -157,8 +157,8 @@ class Loading extends React.Component {
     if (res.status === 'success' && this.props.automated_options) {
       this.setState({loadingData: false})
       console.log('res.payload', res.payload)
-      this.fetchInActiveData(res.payload, this.props.automated_options)
-      res.payload.connectFacebook || this.props.automated_options.whatsApp
+      this.fetchInActiveData(res.payload.user, this.props.automated_options)
+      res.payload.user.connectFacebook || this.props.automated_options.whatsApp
         ? this.props.navigation.navigate('App')
         : this.setState({loadingData: false})
     }

@@ -26,9 +26,9 @@ export function getuserdetails (callback, joinRoom) {
   return (dispatch) => {
     callApi(dispatch, 'users').then(res => {
       if (res.status === 'success') {
-        if (joinRoom) joinRoom(res.payload.companyId)
+        if (joinRoom) joinRoom(res.payload.user.companyId)
         if (callback) callback(res)
-        dispatch(showuserdetails(res.payload))
+        dispatch(showuserdetails(res.payload.user))
       }
     })
   }
