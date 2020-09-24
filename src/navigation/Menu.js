@@ -20,7 +20,6 @@ function CustomDrawerContent ({
   const screens = profile && profile.platform === 'whatsApp' ? [
     'Dashboard',
     'Live Chat',
-    'Invite Subscribers',
     'Subscribers',
     'User Guide'
   ] : [

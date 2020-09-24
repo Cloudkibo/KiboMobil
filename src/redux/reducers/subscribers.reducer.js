@@ -36,6 +36,10 @@ export function subscribersInfo (state = {}, action) {
       }
     case ActionTypes.UPDATE_SUBSCRIBERS_INFO:
       return Object.assign({}, state, action, action.data)
+    case ActionTypes.NEW_SUBSCRIBER_EVENT:
+      console.log('new subscriber reducer', action.data)
+      return Object.assign({}, state, {
+      })
     default:
       return state
   }
