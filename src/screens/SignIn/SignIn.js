@@ -9,8 +9,7 @@ import { HeaderHeight } from '../../constants/utils'
 
 import { signIn } from '../../redux/actions/signIn.actions'
 import { logOut } from '../../redux/actions/logOut.actions'
-import { Notifications } from 'expo'
-
+import * as Notifications from 'expo-notifications';
 const { width } = Dimensions.get('window')
 
 class SignIn extends React.Component {
@@ -33,7 +32,7 @@ class SignIn extends React.Component {
   }
 
   async removeExpoToken () {
-    let currentDeviceToken = await Notifications.getExpoPushTokenAsync()
+    let currentDeviceToken = (await Notifications.getExpoPushTokenAsync()).data
     let user = this.props.user
     if (user) {
       let expoListToken = user.expoListToken.filter(expoToken => expoToken !== currentDeviceToken)

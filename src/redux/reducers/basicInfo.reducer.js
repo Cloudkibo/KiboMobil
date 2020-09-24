@@ -7,7 +7,7 @@ export function basicInfo (state = initialState, action) {
   switch (action.type) {
     case ActionTypes.LOAD_USER_DETAILS:
       return Object.assign({}, state, {
-        user: action.data
+        user: action.data.user
       })
     case ActionTypes.GET_AUTOMATED_OPTIONS:
       return Object.assign({}, state, {
