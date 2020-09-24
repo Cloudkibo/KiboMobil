@@ -9,7 +9,7 @@ import { configureStore } from './redux/store/store'
 import SubApp from './sub.app'
 // Before rendering any navigation stack
 import { enableScreens } from 'react-native-screens'
-import { initiateSocket } from './utility/socketio'
+import { initiateSocket } from './socket/index'
 
 import { materialTheme, Images } from './constants/'
 // import * as Sentry from 'sentry-expo'

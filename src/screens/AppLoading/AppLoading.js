@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { getuserdetails, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import { AppState, AsyncStorage, ActivityIndicator, Platform, Alert, Linking, Dimensions, StyleSheet } from 'react-native'
 import { Block, Text, theme, Button } from 'galio-framework'
-import { joinRoom } from '../../utility/socketio'
+import { joinRoom } from '../../socket/index'
 import { loadDashboardData } from '../../redux/actions/dashboard.actions'
 import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
@@ -23,10 +23,7 @@ class Loading extends React.Component {
       appState: AppState.currentState,
       loadingData: true
     }
-    this._handleFinishLoading = this._handleFinishLoading.bind(this)
     this.handleResponse = this.handleResponse.bind(this)
-    this._loadResourcesAsync = this._loadResourcesAsync.bind(this)
-    this.cacheImages = this.cacheImages.bind(this)
     this.handleAutomatedResponse = this.handleAutomatedResponse.bind(this)
     this.fetchInActiveData = this.fetchInActiveData.bind(this)
     this._handleAppStateChange = this._handleAppStateChange.bind(this)
@@ -109,8 +106,8 @@ class Loading extends React.Component {
   handleResponse (res) {
     if (res.status === 'success' && this.props.automated_options) {
       this.setState({loadingData: false})
-      this.fetchInActiveData(res.payload, this.props.automated_options)
-      res.payload.connectFacebook || this.props.automated_options.whatsApp
+      this.fetchInActiveData(res.payload.user, this.props.automated_options)
+      res.payload.user.connectFacebook || this.props.automated_options.whatsApp
         ? this.props.navigation.navigate('App')
         : this.setState({loadingData: false})
     }

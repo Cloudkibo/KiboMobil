@@ -1,4 +1,5 @@
 export function handleSocketEvent (data, state, props, updateLiveChatInfo, user, clearSocketData) {
+  console.log('in livechat')
   switch (data.action) {
     case 'new_chat':
       handleIncomingMessage(data.payload, state, props, updateLiveChatInfo, clearSocketData)
