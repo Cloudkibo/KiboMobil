@@ -19,7 +19,6 @@ export function loadDashboardData () {
   return (dispatch) => {
     callApi(dispatch, 'dashboard/stats')
       .then(res => {
-        console.log('res.payload', res.payload)
         dispatch(updateDashboard(res.payload))
       })
   }

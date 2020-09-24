@@ -16,7 +16,7 @@ export function pagesInfo (state = [], action) {
       return Object.assign({}, state, {
         connectedPages: action.data
       })
-      case ActionTypes.CONNECT_FB_PAGE: {
+      case ActionTypes.CONNECT_FB_PAGE_EVENT: {
         let pages = JSON.parse(JSON.stringify(state.pages))
         let pageIndex = pages.findIndex(page => page._id === action.data._id)
         pages[pageIndex] = action.data
@@ -24,7 +24,7 @@ export function pagesInfo (state = [], action) {
           pages: pages
       })
     }
-      case ActionTypes.DISCONNECT_FB_PAGE: {
+      case ActionTypes.DISCONNECT_FB_PAGE_EVENT: {
         let pages = JSON.parse(JSON.stringify(state.pages))
         let pageIndex = pages.findIndex(page => page.pageId === action.data.page_id)
         pages[pageIndex].connected = false

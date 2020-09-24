@@ -41,10 +41,6 @@ class Pages extends React.Component {
     Toast.default.show(message)
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-
-  }
-
   renderPage ({ item }) {
     return (
       <Block flex row style={styles.page}>

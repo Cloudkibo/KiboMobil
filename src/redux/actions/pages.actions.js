@@ -10,14 +10,14 @@ export function updatePages (data) {
 
 export function connectFbPage (data) {
   return {
-    type: ActionTypes.CONNECT_FB_PAGE,
+    type: ActionTypes.CONNECT_FB_PAGE_EVENT,
     data
   }
 }
 
 export function disConnectFbPage (data) {
   return {
-    type: ActionTypes.DISCONNECT_FB_PAGE,
+    type: ActionTypes.DISCONNECT_FB_PAGE_EVENT,
     data
   }
 }
