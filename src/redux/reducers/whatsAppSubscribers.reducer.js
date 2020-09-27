@@ -33,6 +33,61 @@ export function whatsAppSubscribersInfo (state = initialState, action) {
       })
     case ActionTypes.UPDATE_SUBSCRIBERS_INFO_WHATSAPP:
       return Object.assign({}, state, action, action.data)
+    case ActionTypes.NEW_SUBSCRIBER_WHATSAPP_EVENT:
+      if (state.contacts) {
+        let subscribers = JSON.parse(JSON.stringify(state.contacts))
+        let count = state.count
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        if (index < 0) {
+          count = count + 1
+          subscribers = [action.data.payload.subscriber, ...state.contacts]
+        }
+        return Object.assign({}, state, {
+          contacts: subscribers,
+          count
+        })
+      } else {
+        return state
+      }
+    case ActionTypes.SUBSCRIBE_WHATSAPP_EVENT:
+      if (state.contacts) {
+        let subscribers = JSON.parse(JSON.stringify(state.contacts))
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        if (index >= 0) {
+          subscribers[index].isSubscribed = true
+        }
+        return Object.assign({}, state, {
+          contacts: subscribers
+        })
+      } else {
+        return state
+      }
+    case ActionTypes.UNSUBSCRIBE_WHATSAPP_EVENT:
+      if (state.contacts) {
+        let subscribers = JSON.parse(JSON.stringify(state.contacts))
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        if (index >= 0) {
+          subscribers[index].isSubscribed = false
+        }
+        return Object.assign({}, state, {
+          contacts: subscribers
+        })
+      } else {
+        return state
+      }
+    case ActionTypes.UPDATE_SUBSCRIBER_WHATSAPP_EVENT:
+      if (state.contacts) {
+        let subscribers = JSON.parse(JSON.stringify(state.contacts))
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriberId)
+        if (index >= 0) {
+          subscribers[index].name = action.data.payload.name
+        }
+        return Object.assign({}, state, {
+          contacts: subscribers
+        })
+      } else {
+        return state
+      }
     default:
       return state
   }

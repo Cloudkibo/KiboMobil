@@ -37,9 +37,47 @@ export function subscribersInfo (state = {}, action) {
     case ActionTypes.UPDATE_SUBSCRIBERS_INFO:
       return Object.assign({}, state, action, action.data)
     case ActionTypes.NEW_SUBSCRIBER_EVENT:
-      console.log('new subscriber reducer', action.data)
-      return Object.assign({}, state, {
-      })
+      if (state.subscribers) {
+        let subscribers = JSON.parse(JSON.stringify(state.subscribers))
+        let count = state.count
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        if (index < 0) {
+          count = count + 1
+          subscribers = [action.data.payload.subscriber, ...state.subscribers]
+        }
+        return Object.assign({}, state, {
+          subscribers,
+          count
+        })
+      } else {
+        return state
+      }
+    case ActionTypes.SUBSCRIBE_EVENT:
+      if (state.subscribers) {
+        let subscribers = JSON.parse(JSON.stringify(state.subscribers))
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        if (index >= 0) {
+          subscribers[index].isSubscribed = true
+        }
+        return Object.assign({}, state, {
+          subscribers
+        })
+      } else {
+        return state
+      }
+    case ActionTypes.UNSUBSCRIBE_EVENT:
+      if (state.subscribers) {
+        let subscribers = JSON.parse(JSON.stringify(state.subscribers))
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        if (index >= 0) {
+          subscribers[index].isSubscribed = false
+        }
+        return Object.assign({}, state, {
+          subscribers
+        })
+      } else {
+        return state
+      }
     default:
       return state
   }

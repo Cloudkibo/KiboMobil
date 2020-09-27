@@ -58,10 +58,56 @@ export function connectFbPage (data) {
     data
   }
 }
+export function newSubscriberEvent (data) {
+  return {
+    type: ActionTypes.NEW_SUBSCRIBER_EVENT,
+    data
+  }
+}
 
 export function disConnectFbPage (data) {
   return {
     type: ActionTypes.DISCONNECT_FB_PAGE_EVENT,
+    data
+  }
+}
+export function subscribeEvent (data) {
+  return {
+    type: ActionTypes.SUBSCRIBE_EVENT,
+    data
+  }
+}
+
+export function unsubscribeEvent (data) {
+  return {
+    type: ActionTypes.UNSUBSCRIBE_EVENT,
+    data
+  }
+}
+
+export function newSubscriberWhatsAppEvent (data) {
+  return {
+    type: ActionTypes.NEW_SUBSCRIBER_WHATSAPP_EVENT,
+    data
+  }
+}
+
+export function subscribeWhatsAppEvent (data) {
+  return {
+    type: ActionTypes.SUBSCRIBE_WHATSAPP_EVENT,
+    data
+  }
+}
+
+export function unsubscribeWhatsAppEvent (data) {
+  return {
+    type: ActionTypes.UNSUBSCRIBE_WHATSAPP_EVENT,
+    data
+  }
+}
+export function updateSubscriberWhatsAppEvent (data) {
+  return {
+    type: ActionTypes.UPDATE_SUBSCRIBER_WHATSAPP_EVENT,
     data
   }
 }
