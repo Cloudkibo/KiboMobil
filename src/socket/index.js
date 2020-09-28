@@ -2,7 +2,7 @@
  * Created by sojharo on 20/08/2017.
  */
 import io from 'socket.io-client'
-import { setSocketStatus } from '../redux/actions/basicInfo.actions'
+import { setSocketStatus } from '../redux/actions/socket.actions'
 import { socketUpdate, updateSessions } from './../redux/actions/liveChat.actions'
 import { handleSubscribers } from './subscribers'
 import { handleFBPageEvent } from './pages'
@@ -29,6 +29,7 @@ export function initiateSocket (storeObj) {
 }
 
 socket.on('connect', () => {
+  console.log('connectionEstablished')
   if (myId !== '') {
     joinRoom(myId)
   }
@@ -36,6 +37,19 @@ socket.on('connect', () => {
 })
 
 socket.on('disconnect', () => {
+  console.log('disconnect')
+  joined = false
+  store.dispatch(setSocketStatus(false))
+})
+
+socket.on('connect_error', () => {
+  console.log('connect_error')
+  joined = false
+  store.dispatch(setSocketStatus(false))
+})
+
+socket.on('connect_timeout', () => {
+  console.log('connect_timeout')
   joined = false
   store.dispatch(setSocketStatus(false))
 })
@@ -54,6 +68,7 @@ socket.on('message', (data) => {
   }
   if (['page_connect', 'page_disconnect'].includes(data.action)) {
     handleFBPageEvent(store, data)
+  }
   if ([
     'Whatsapp_new_subscriber',
     'Whatsapp_subscribe_subscriber',
