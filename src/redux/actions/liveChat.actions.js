@@ -253,7 +253,6 @@ export function fetchOpenSessions (data) {
   return (dispatch) => {
     callApi(dispatch, 'sessions/getOpenSessions', 'post', data)
       .then(res => {
-        // console.log('res in livechat', res)
         dispatch(showOpenChatSessions(res.payload, data))
       })
   }
@@ -301,7 +300,6 @@ export function uploadRecording (fileData, handleUpload) {
             'Authorization': `Bearer ${token}`
           })
         }).then((res) => res.json()).then((res) => res).then(res => {
-          console.log('response from upload', res)
           handleUpload(res)
         })
           .catch((err) => {
@@ -400,7 +398,6 @@ export function fetchUrlMeta (url) {
 }
 
 export function markRead (sessionid) {
-  console.log('Mark Read called')
   return (dispatch) => {
     callApi(dispatch, `sessions/markread/${sessionid}`).then(res => {
     })
