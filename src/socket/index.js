@@ -5,6 +5,7 @@ import io from 'socket.io-client'
 import { setSocketStatus } from '../redux/actions/basicInfo.actions'
 import { socketUpdate, updateSessions } from './../redux/actions/liveChat.actions'
 import { handleSubscribers } from './subscribers'
+import { handleFBPageEvent } from './pages'
 import { handleWhatsAppSubscribers } from './whatsAppSubscribers'
 import { handleSocketEvent, handleSocketEventWhatsapp, handleSocketEventSubscribers, handleSocketEventSubscribersWhatsApp } from '../redux/actions/socket.actions'
 const whatsAppActions = require('./../redux/actions/whatsAppChat.actions')
@@ -51,6 +52,8 @@ socket.on('message', (data) => {
     'Messenger_unsubscribe_subscriber'].includes(data.action)) {
     handleSubscribers(store, data)
   }
+  if (['page_connect', 'page_disconnect'].includes(data.action)) {
+    handleFBPageEvent(store, data)
   if ([
     'Whatsapp_new_subscriber',
     'Whatsapp_subscribe_subscriber',

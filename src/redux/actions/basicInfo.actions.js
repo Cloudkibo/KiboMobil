@@ -28,7 +28,7 @@ export function getuserdetails (callback, joinRoom) {
       if (res.status === 'success') {
         if (joinRoom) joinRoom(res.payload.user.companyId)
         if (callback) callback(res)
-        dispatch(showuserdetails(res.payload))
+        dispatch(showuserdetails(res.payload.user))
       }
     })
   }

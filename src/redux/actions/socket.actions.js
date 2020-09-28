@@ -52,6 +52,12 @@ export function clearSocketDataSubscribersWhatsApp () {
   }
 }
 
+export function connectFbPage (data) {
+  return {
+    type: ActionTypes.CONNECT_FB_PAGE_EVENT,
+    data
+  }
+}
 export function newSubscriberEvent (data) {
   return {
     type: ActionTypes.NEW_SUBSCRIBER_EVENT,
@@ -59,6 +65,12 @@ export function newSubscriberEvent (data) {
   }
 }
 
+export function disConnectFbPage (data) {
+  return {
+    type: ActionTypes.DISCONNECT_FB_PAGE_EVENT,
+    data
+  }
+}
 export function subscribeEvent (data) {
   return {
     type: ActionTypes.SUBSCRIBE_EVENT,
