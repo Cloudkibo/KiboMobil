@@ -215,7 +215,6 @@ class Footer extends React.Component {
   }
 
   updateChatData (data, payload) {
-    data._id = new Date().getTime()
     let sessions = this.props.sessions
     let session = this.props.activeSession
     let index = sessions.findIndex((s) => s._id === session._id)

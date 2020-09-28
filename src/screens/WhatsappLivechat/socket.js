@@ -101,8 +101,10 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
 }
 
 const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
-  if (user._id !== payload.user_id) {
-    let data = {}
+  let ChatMessages = props.allChatMessages
+  let chatUser = ChatMessages[payload.subscriber_id]
+  if (chatUser && chatUser.length > 0 && chatUser[chatUser.length -1].id !== payload.message._id) {
+  let data = {}
     let sessions = state.sessions
     let session = sessions.find((s) => s._id === payload.subscriber_id)
     const index = sessions.findIndex((s) => s._id === payload.subscriber_id)

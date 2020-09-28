@@ -165,6 +165,7 @@ class LiveChat extends React.Component {
 
   setMessageData (session, payload, urlMeta) {
     const data = {
+      _id : new Date().getTime(),
       senderNumber: this.props.automated_options.whatsApp.businessNumber,
       recipientNumber: this.state.activeSession.number,
       contactId: session._id,
