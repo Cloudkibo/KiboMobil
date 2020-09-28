@@ -193,6 +193,7 @@ class LiveChat extends React.Component {
 
   setMessageData (session, payload) {
     const data = {
+      _id : new Date().getTime(),
       sender_id: session.pageId._id,
       recipient_id: session._id,
       sender_fb_id: session.pageId.pageId,
