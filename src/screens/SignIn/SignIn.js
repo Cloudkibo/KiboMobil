@@ -35,6 +35,7 @@ class SignIn extends React.Component {
   }
 
   async removeExpoToken () {
+    console.log('called removeExpoToken', this.props.user)
     let currentDeviceToken = (await Notifications.getExpoPushTokenAsync()).data
     let user = this.props.user
     if (user) {
