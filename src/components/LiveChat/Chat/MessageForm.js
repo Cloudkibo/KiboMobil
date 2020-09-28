@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, View} from 'react-native'
+import {StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, View, Platform} from 'react-native'
 import Icon from '../../../components/Icon'
 import { materialTheme } from '../../../constants/'
 import { Input, Block, Button, theme } from 'galio-framework'
@@ -49,7 +49,7 @@ class Footer extends React.Component {
       loadingGif: false
     }
 
-    this.recordingSettings = JSON.parse(JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY))
+    this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
 
     this.onInputChange = this.onInputChange.bind(this)
     this.sendMessage = this.sendMessage.bind(this)
