@@ -75,7 +75,6 @@ class Footer extends React.Component {
     this.sendGif = this.sendGif.bind(this)
     this.changeGifSearchValue = this.changeGifSearchValue.bind(this)
     this.addNewLine = this.addNewLine.bind(this)
-    this.getBlob = this.getBlob.bind(this)
   }
 
   componentDidMount () {
@@ -469,20 +468,12 @@ class Footer extends React.Component {
       // Do nothing -- we are already unloaded.
     }
     const info = await FileSystem.getInfoAsync(this.recording.getURI())
-  //   console.log('info', info)
-  // const response = await fetch(this.recording.getURI());
-  // const blob = await response.blob();
-  // console.log('blob', JSON.stringify(blob))
-    // const info = await FileSystem.getInfoAsync(this.recording.getURI())
-    // console.log('this.recording', this.recording)
     this.setState({
       isLoading: false
     })
     const data = this.props.performAction('send attachments', this.props.activeSession)
     if (data.isAllowed) {
-      // const file = new File([blob], 'recorded-audio.mp3', { type: 'audio/mp3', lastModified: new Date() })
       let attachment = {uri: info.uri, type: 'audio/mp3', name: 'recorded-audio.mp3', size: info.size}
-    // console.log('file', JSON.stringify(file))
       this.setState({
         uploadingFile: true,
         attachment: attachment,
@@ -498,33 +489,6 @@ class Footer extends React.Component {
     } else {
       Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
     }
-  }
-
-  getBlob (uri, mime = 'application/octet-stream') {
-    return new Promise((resolve, reject) => {
-      const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
-      let uploadBlob = null
-
-
-      fs.readFile(uploadUri, 'base64')
-        .then((data) => {
-          return Blob.build(data, { type: `${mime};BASE64` })
-        })
-        // .then((blob) => {
-        //   uploadBlob = blob
-        //   return imageRef.put(blob, { contentType: mime })
-        // })
-        // .then(() => {
-        //   uploadBlob.close()
-        //   return imageRef.getDownloadURL()
-        // })
-        .then((url) => {
-          resolve(url)
-        })
-        .catch((error) => {
-          reject(error)
-      })
-    })
   }
 
   _getRecordingTimestamp () {
