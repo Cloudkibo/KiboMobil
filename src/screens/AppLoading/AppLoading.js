@@ -105,7 +105,6 @@ class Loading extends React.Component {
 
   handleResponse (res) {
     if (res.status === 'success' && this.props.automated_options) {
-      this.setState({loadingData: false})
       this.fetchInActiveData(res.payload, this.props.automated_options)
       res.payload.connectFacebook || this.props.automated_options.whatsApp
         ? this.props.navigation.navigate('App')
@@ -133,7 +132,15 @@ class Loading extends React.Component {
   }
 
   render () {
-    if (this.state.loadingData) {
+    if (!this.props.connected) {
+      return (
+        <Block flex center style={styles.block}>
+          <Block style={styles.pages} flex middle>
+            <Text h6>You are not connected to the internet. Make sure you have an active internet connected and try again</Text>
+          </Block>
+        </Block>
+      )
+    } else if (this.state.loadingData) {
       return (
         <ActivityIndicator size='large' style={{flex: 1}} />
       )
@@ -154,7 +161,8 @@ class Loading extends React.Component {
 function mapStateToProps (state) {
   return {
     user: (state.basicInfo.user),
-    automated_options: (state.basicInfo.automated_options)
+    automated_options: (state.basicInfo.automated_options),
+    connected: (state.socketInfo.connected)
   }
 }
 function mapDispatchToProps (dispatch) {

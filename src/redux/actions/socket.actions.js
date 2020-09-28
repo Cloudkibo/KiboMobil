@@ -1,5 +1,12 @@
 import * as ActionTypes from '../constants/constants'
 
+export function setSocketStatus (data) {
+  return {
+    type: ActionTypes.SET_SOCKET_STATUS,
+    data
+  }
+}
+
 export function handleSocketEvent (data) {
   return {
     type: ActionTypes.SOCKET_EVENT,
