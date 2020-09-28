@@ -49,7 +49,7 @@ class Footer extends React.Component {
       loadingGif: false
     }
 
-    this.recordingSettings = JSON.parse(JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY))
+    this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
 
     this.onInputChange = this.onInputChange.bind(this)
     this.sendMessage = this.sendMessage.bind(this)
@@ -468,13 +468,11 @@ class Footer extends React.Component {
     } catch (error) {
       // Do nothing -- we are already unloaded.
     }
-    const uri = this.recording.getURI();
-    console.log('uri got', uri)
     const info = await FileSystem.getInfoAsync(this.recording.getURI())
-    console.log('info', info)
-  const response = await fetch(this.recording.getURI());
-  const blob = await response.blob();
-  console.log('blob', JSON.stringify(blob))
+  //   console.log('info', info)
+  // const response = await fetch(this.recording.getURI());
+  // const blob = await response.blob();
+  // console.log('blob', JSON.stringify(blob))
     // const info = await FileSystem.getInfoAsync(this.recording.getURI())
     // console.log('this.recording', this.recording)
     this.setState({
@@ -482,7 +480,7 @@ class Footer extends React.Component {
     })
     const data = this.props.performAction('send attachments', this.props.activeSession)
     if (data.isAllowed) {
-      const file = new File([blob._data], 'recorded-audio.mp3', { type: 'audio/mp3', lastModified: new Date() })
+      // const file = new File([blob], 'recorded-audio.mp3', { type: 'audio/mp3', lastModified: new Date() })
       let attachment = {uri: info.uri, type: 'audio/mp3', name: 'recorded-audio.mp3', size: info.size}
     // console.log('file', JSON.stringify(file))
       this.setState({
@@ -491,7 +489,7 @@ class Footer extends React.Component {
         componentType: 'audio'
       })
       var fileData = new FormData()
-      fileData.append('file', file)
+      fileData.append('file', attachment)
       fileData.append('filename', 'recorded-audio')
       fileData.append('filetype', 'audio/mp3')
       fileData.append('filesize', info.size)

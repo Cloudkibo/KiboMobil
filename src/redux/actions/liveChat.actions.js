@@ -3,7 +3,7 @@ import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 import { AsyncStorage } from 'react-native'
 
-export const API_URL = 'https://skibochat.cloudkibo.com/api'
+export const API_URL = 'https://kibochat.cloudkibo.com/api'
 
 export function updateSessionProfilePicture (subscriber, profilePic) {
   return {
@@ -293,7 +293,6 @@ export function uploadRecording (fileData, handleUpload) {
     // eslint-disable-next-line no-undef
     AsyncStorage.getItem('token')
       .then(token => {
-        console.log('token', token)
         fetch(`${API_URL}/broadcasts/uploadRecording`, {
           method: 'post',
           body: fileData,
@@ -302,6 +301,7 @@ export function uploadRecording (fileData, handleUpload) {
             'Authorization': `Bearer ${token}`
           })
         }).then((res) => res.json()).then((res) => res).then(res => {
+          console.log('response from upload', res)
           handleUpload(res)
         })
           .catch((err) => {
