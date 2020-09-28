@@ -37,7 +37,8 @@
     "android": {
       "package": "com.cloudkibo.kibopush",
       "versionCode": 16,
-      "useNextNotificationsApi": true
+      "useNextNotificationsApi": true,
+      "googleServicesFile": "./google-services.json"
     },
     "extra": {
       "bugsnag": {
