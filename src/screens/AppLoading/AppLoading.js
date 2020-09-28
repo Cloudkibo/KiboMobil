@@ -6,7 +6,7 @@ import { Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking } from
 import { Asset } from 'expo-asset'
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
-// import * as Sentry from 'sentry-expo'
+import * as Sentry from 'sentry-expo'
 import Bugsnag from '@bugsnag/expo'
 import VersionCheck from 'react-native-version-check-expo'
 
@@ -47,7 +47,7 @@ class Loading extends React.Component {
       })
       .catch((err) => {
         Bugsnag.notify(err)
-        // Sentry.captureException(err)
+        Sentry.captureException(err)
       })
     // if (Platform.OS === 'android') {
     //   Notifications.createChannelAndroidAsync('default', {
