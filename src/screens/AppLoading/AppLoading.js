@@ -1,17 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getuserdetails } from '../../redux/actions/basicInfo.actions'
-import { AppLoading } from 'expo'
+import { getuserdetails, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import { Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking } from 'react-native'
 import { Asset } from 'expo-asset'
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
-import {getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
-import * as Updates from 'expo-updates'
 // import * as Sentry from 'sentry-expo'
 import Bugsnag from '@bugsnag/expo'
 import VersionCheck from 'react-native-version-check-expo'
+import NetInfo from "@react-native-community/netinfo";
 
 const assetImages = [
   Images.Onboarding
@@ -32,6 +30,11 @@ class Loading extends React.Component {
   }
 
   async componentDidMount () {
+      NetInfo.fetch().then(state => {
+      console.log('state', state)
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+    });
     VersionCheck.needUpdate()
       .then(result => {
         let currentVersion = parseInt(result.currentVersion, 10)
@@ -61,8 +64,10 @@ class Loading extends React.Component {
     //   });
     // }
     // this._notificationSubscription = Notifications.addListener(this._handleNotification)
+    this.props.navigation.navigate('Sign In')
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
+        console.log('token', token)
         if (token) {
           this.props.getuserdetails(this.handleResponse, joinRoom)
         } else {

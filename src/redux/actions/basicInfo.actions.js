@@ -26,14 +26,17 @@ export function showuserdetails (data) {
 
 export function getuserdetails (callback, joinRoom) {
   return (dispatch) => {
+    console.log('going to get user')
     callApi(dispatch, 'users').then(res => {
+      console.log('res.payload', res)
       if (res.status === 'Unauthorized' || res.status === 'failed') {
         // AsyncStorage.removeItem('token')
         // if (callback) callback(res)
       } else {
-        if (joinRoom) joinRoom(res.payload.companyId)
+        console.log('res.payload', res)
+        if (joinRoom) joinRoom(res.payload.user.companyId)
         if (callback) callback(res)
-        dispatch(showuserdetails(res.payload))
+        dispatch(showuserdetails(res.payload.user))
       }
     })
   }
