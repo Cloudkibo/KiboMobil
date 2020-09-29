@@ -1,12 +1,14 @@
 import React from 'react'
 import {
   ScrollView,
-  StyleSheet
+  StyleSheet,
+  Platform
 } from 'react-native'
 import { Block, Text, theme } from 'galio-framework'
 import { useSafeArea } from 'react-native-safe-area-context'
 import Profile from './Profile'
 import { Drawer as DrawerCustomItem } from '../components/'
+import app from '../../app.json'
 
 function CustomDrawerContent ({
   drawerPosition,
@@ -66,13 +68,16 @@ function CustomDrawerContent ({
       {profile &&
         <Block style={styles.footer}>
           <Profile profile={profile} />
-          <Block style={{paddingHorizontal: 6, paddingBottom: 15}}>
+          <Block style={{paddingHorizontal: 6, paddingBottom: 10, marginBottom: theme.SIZES.BASE / 2, borderBottomWidth: 1, borderBottomColor: '#979797'}}>
             <DrawerCustomItem
               title='Log Out'
               key={screens.length}
               navigation={navigation}
               focused
             />
+          </Block>
+          <Block style={{paddingHorizontal: 6, marginBottom: theme.SIZES.BASE / 2}}>
+            <Text color='white'>Version: {Platform.OS === 'ios' ? app.expo.ios.buildNumber : app.expo.android.versionCode}</Text>
           </Block>
         </Block>
       }
