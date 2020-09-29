@@ -99,7 +99,7 @@ class Footer extends React.Component {
         uploaded: false,
         loading: false
       }, () => {
-        this.updateChatData(data, payload)
+        // this.updateChatData(data, payload)
       })
     } else {
       this.setState({loading: false})

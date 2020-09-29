@@ -86,12 +86,14 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
 }
 
 const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
+    console.log('payload', payload)
     let data = {}
     let sessions = state.sessions
     let session = sessions.find((s) => s._id === payload.subscriber_id)
     const index = sessions.findIndex((s) => s._id === payload.subscriber_id)
     if (state.activeSession._id === payload.subscriber_id) {
       let userChat = props.userChat
+      console.log('userChat[userChat.length -1]._id', userChat[userChat.length -1]._id)
       if (userChat && userChat.length > 0 && userChat[userChat.length -1]._id !== payload.message._id) {
       payload.message.format = 'convos'
       userChat.push(payload.message)
