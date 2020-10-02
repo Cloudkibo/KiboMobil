@@ -292,7 +292,9 @@ class Footer extends React.Component {
   }
 
   sendMessage () {
+    console.log('in sendMessage')
     const data = this.props.performAction('send messages', this.props.activeSession)
+    console.log('data', data)
     if (data.isAllowed) {
       let payload = {}
       let data = {}

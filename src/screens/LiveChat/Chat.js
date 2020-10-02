@@ -31,6 +31,7 @@ const { width } = Dimensions.get('screen')
 
 class LiveChat extends React.Component {
   constructor (props, context) {
+    console.log('constructor chat')
     super(props, context)
     this.state = {
       fetchingChat: false,

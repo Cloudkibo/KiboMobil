@@ -4,15 +4,18 @@ import { validURL, isEmoji } from '../../../screens/LiveChat/utilities'
 import CARD from './Card'
 import {
   FlatList,
-  Linking,
-  TouchableOpacity
+  Linking
 } from 'react-native'
 import { Block, Text, Button } from 'galio-framework'
+import materialTheme from '../../../constants/Theme'
 
 class TextComponent extends React.Component {
   constructor (props, context) {
     super(props, context)
-    this.state = {}
+    this.state = {
+      opacity: 1.0,
+      isOnPressFire: false
+    }
     this.getText = this.getText.bind(this)
     this.getCardProps = this.getCardProps.bind(this)
   }
@@ -28,29 +31,80 @@ class TextComponent extends React.Component {
   }
 
   getText (text) {
-    if (validURL(text)) {
-      return (
-        <Block>
-          <TouchableOpacity onPress={() => Linking.openURL(text)}>
-            <Text color={this.props.linkColor} style={{textDecorationLine: 'underline'}}>
-              {text}
-            </Text>
-          </TouchableOpacity>
-        </Block>
-      )
-    } else if (text.length === 2 && isEmoji(text)) {
+    if (text.length === 2 && isEmoji(text)) {
       return (
         <Block style={{fontSize: '30px'}}>
           <Text color={this.props.textColor}>{text}</Text>
         </Block>
       )
     } else {
+      let words = text.replace(/\n/g, ' \r\n').split(' ')
+      let wordElements = words.map((word, index) => {
+        if (validURL(word.trim())) {
+          let url = word.trim()
+          var pattern = /^((http|https|ftp):\/\/)/
+          if (!pattern.test(word.trim())) {
+            url = 'http://' + url
+          }
+          return (
+            <Text style={{textDecorationLine: 'underline', color: this.state.opacity === 1.0 ? '#FFF' : materialTheme.COLORS.MUTED, opacity: this.state.opacity}}
+              suppressHighlighting
+              onResponderGrant={() => {
+                this.setState({opacity: 0.5, isOnPressFire: true})
+              }}
+              onResponderRelease={() => {
+                setTimeout(() => {
+                  this.setState({opacity: 1.0, isOnPressFire: false})
+                }, 350)
+              }}
+              onResponderTerminate={() => {
+                this.setState({opacity: 1.0, isOnPressFire: false})
+              }}
+              onPress={() => {
+                if (this.state.isOnPressFire) {
+                  Linking.openURL(url)
+                }
+                this.setState({opacity: 1.0, isOnPressFire: false})
+              }}>
+              {word + (index < words.length - 1 ? ' ' : '')}
+            </Text>
+          )
+        } else {
+          return (
+            <Text color={this.props.textColor}>{word + (index < words.length - 1 ? ' ' : '')}</Text>
+          )
+        }
+      })
       return (
-        <Block>
-          <Text color={this.props.textColor}>{text}</Text>
-        </Block>
+        <Text>
+          {wordElements}
+        </Text>
       )
     }
+
+  //   if (validURL(text)) {
+  //     return (
+  //       <Block>
+  //         <TouchableOpacity onPress={() => Linking.openURL(text)}>
+  //           <Text color={this.props.linkColor} style={{textDecorationLine: 'underline'}}>
+  //             {text}
+  //           </Text>
+  //         </TouchableOpacity>
+  //       </Block>
+  //     )
+  //   } else if (text.length === 2 && isEmoji(text)) {
+  //     return (
+  //       <Block style={{fontSize: '30px'}}>
+  //         <Text color={this.props.textColor}>{text}</Text>
+  //       </Block>
+  //     )
+  //   } else {
+  //     return (
+  //       <Block>
+  //         <Text color={this.props.textColor}>{text}</Text>
+  //       </Block>
+  //     )
+  //   }
   }
 
   render () {

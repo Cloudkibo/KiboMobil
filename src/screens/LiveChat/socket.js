@@ -86,15 +86,13 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
 }
 
 const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
-    console.log('payload', payload)
-    let data = {}
-    let sessions = state.sessions
-    let session = sessions.find((s) => s._id === payload.subscriber_id)
-    const index = sessions.findIndex((s) => s._id === payload.subscriber_id)
-    if (state.activeSession._id === payload.subscriber_id) {
-      let userChat = props.userChat
-      console.log('userChat[userChat.length -1]._id', userChat[userChat.length -1]._id)
-      if (userChat && userChat.length > 0 && userChat[userChat.length -1]._id !== payload.message._id) {
+  let data = {}
+  let sessions = state.sessions
+  let session = sessions.find((s) => s._id === payload.subscriber_id)
+  const index = sessions.findIndex((s) => s._id === payload.subscriber_id)
+  if (state.activeSession._id === payload.subscriber_id) {
+    let userChat = props.userChat
+    if (userChat && userChat.length > 0 && userChat[userChat.length - 1]._id !== payload.message._id) {
       payload.message.format = 'convos'
       userChat.push(payload.message)
       session = sessions.splice(index, 1)[0]
@@ -112,21 +110,22 @@ const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocket
       }
       updateLiveChatInfo(data)
       clearSocketData()
-    } }else if (index >= 0) {
-      session = sessions.splice(index, 1)[0]
-      session.lastPayload = payload.message.payload
-      session.last_activity_time = new Date()
-      session.pendingResponse = false
-      session.lastRepliedBy = payload.message.replied_by
-      if (state.tabValue === 'open') sessions = [session, ...sessions]
-      data = {
-        openSessions: state.tabValue === 'open' ? sessions : props.openSessions,
-        closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions,
-        closeCount: state.tabValue === 'close' ? props.closeCount - 1 : props.closeCount
-      }
-      updateLiveChatInfo(data)
-      clearSocketData()
-    } else {
+    }
+  } else if (index >= 0) {
+    session = sessions.splice(index, 1)[0]
+    session.lastPayload = payload.message.payload
+    session.last_activity_time = new Date()
+    session.pendingResponse = false
+    session.lastRepliedBy = payload.message.replied_by
+    if (state.tabValue === 'open') sessions = [session, ...sessions]
+    data = {
+      openSessions: state.tabValue === 'open' ? sessions : props.openSessions,
+      closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions,
+      closeCount: state.tabValue === 'close' ? props.closeCount - 1 : props.closeCount
+    }
+    updateLiveChatInfo(data)
+    clearSocketData()
+  } else {
     clearSocketData()
   }
 }
