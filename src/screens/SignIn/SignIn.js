@@ -40,7 +40,8 @@ class SignIn extends React.Component {
     if (user) {
       let expoListToken = user.expoListToken.filter(expoToken => expoToken !== currentDeviceToken)
       user.expoListToken = expoListToken
-      this.props.saveNotificationToken(user, this.props.logOut)
+      this.props.saveNotificationToken(user)
+      this.props.logOut()
     }
   }
 
