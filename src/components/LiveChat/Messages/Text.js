@@ -81,30 +81,6 @@ class TextComponent extends React.Component {
         </Text>
       )
     }
-
-  //   if (validURL(text)) {
-  //     return (
-  //       <Block>
-  //         <TouchableOpacity onPress={() => Linking.openURL(text)}>
-  //           <Text color={this.props.linkColor} style={{textDecorationLine: 'underline'}}>
-  //             {text}
-  //           </Text>
-  //         </TouchableOpacity>
-  //       </Block>
-  //     )
-  //   } else if (text.length === 2 && isEmoji(text)) {
-  //     return (
-  //       <Block style={{fontSize: '30px'}}>
-  //         <Text color={this.props.textColor}>{text}</Text>
-  //       </Block>
-  //     )
-  //   } else {
-  //     return (
-  //       <Block>
-  //         <Text color={this.props.textColor}>{text}</Text>
-  //       </Block>
-  //     )
-  //   }
   }
 
   render () {

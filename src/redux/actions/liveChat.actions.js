@@ -440,12 +440,12 @@ export function assignToTeam (data, handleResponse) {
   }
 }
 
-export function fetchTeamAgents (id, handleAgents, type) {
+export function fetchTeamAgents (id, handleAgents) {
   return (dispatch) => {
     callApi(dispatch, `teams/fetchAgents/${id}`)
       .then(res => {
         if (res.status === 'success' && handleAgents) {
-          handleAgents(res.payload, type)
+          handleAgents(res.payload)
         }
       })
   }
