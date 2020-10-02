@@ -22,7 +22,8 @@ class AssignSession extends React.Component {
       currentSelected: this.props.activeSession.is_assigned ? {
         value: this.props.activeSession.assigned_to.id,
         label: this.props.activeSession.assigned_to.name,
-        group: this.props.activeSession.assigned_to.type
+        group: this.props.activeSession.assigned_to.type,
+        loading:false,
       } : '',
       tabValue: 'agents'
     }
@@ -72,19 +73,22 @@ class AssignSession extends React.Component {
 
   assign () {
     if (this.state.currentSelected === '' && this.props.activeSession.is_assigned) {
+      this.setState({loading: true})
       if (this.props.activeSession.assigned_to.type === 'agent') {
         this.unassignAgent()
       } else {
         this.unassignTeam()
       }
     } else if (this.state.currentSelected !== '') {
+      this.setState({loading: true})
       if (this.state.currentSelected.group === 'agent') {
         this.assignToAgent()
       } else {
         this.assignToTeam()
       }
+    } else {
+      Toast.default.show('Please select Team or Agents')
     }
-    this.props.toggleAssignmentModal(false)
   }
 
   unassignAgent () {
@@ -96,11 +100,13 @@ class AssignSession extends React.Component {
     }
     this.props.assignToAgent(data, (res) => {
       if (res.status === 'success') {
+        this.setState({loading: false})
         let activeSession = this.props.activeSession
         activeSession.is_assigned = false
         this.props.handleAssignment(activeSession)
         Toast.default.show('Agent unassigned successfully')
       } else {
+        this.setState({loading: false})
         Toast.default.show('Agent was unable to be unassigned')
       }
     })
@@ -125,11 +131,13 @@ class AssignSession extends React.Component {
     this.props.fetchTeamAgents(this.props.activeSession.assigned_to.id)
     this.props.assignToTeam(data, (res) => {
       if (res.status === 'success') {
+        this.setState({loading: false})
         let activeSession = this.props.activeSession
         activeSession.is_assigned = false
         this.props.handleAssignment(activeSession)
         Toast.default.show('Team unassigned succesfully')
       } else {
+        this.setState({loading: false})
         Toast.default.show('Team was unable to be unassigned')
       }
     })
@@ -149,12 +157,15 @@ class AssignSession extends React.Component {
     }
     this.props.assignToAgent(data, (res) => {
       if (res.status === 'success') {
+        this.setState({loading: false})
+        this.props.toggleAssignmentModal(false)
         let activeSession = this.props.activeSession
         activeSession.is_assigned = true
         activeSession.assigned_to = activeSessionData
         this.props.handleAssignment(activeSession)
         Toast.default.show('Agent assigned succesfully')
       } else {
+        this.setState({loading: false})
         Toast.default.show('Agent was unable to be assigned')
       }
     })
@@ -184,12 +195,15 @@ class AssignSession extends React.Component {
     this.props.fetchTeamAgents(this.state.currentSelected.value)
     this.props.assignToTeam(data, (res) => {
       if (res.status === 'success') {
+        this.setState({loading: false})
+        this.props.toggleAssignmentModal(false)
         let activeSession = this.props.activeSession
         activeSession.is_assigned = true
         activeSession.assigned_to = activeSessionData
         this.props.handleAssignment(activeSession)
         Toast.default.show('Team assigned succesfully')
       } else {
+        this.setState({loading: false})
         Toast.default.show('Team was unable to be assigned')
       }
     })
@@ -244,6 +258,7 @@ class AssignSession extends React.Component {
             ListEmptyComponent={this.renderEmpty()} />
           <Block center style={{marginTop: 15}}>
             <Button radius={10}
+              loading={this.state.loading}
               style={{marginVertical: 10, marginHorizontal: 16}}
               onPress={this.assign}>Done</Button>
           </Block>
