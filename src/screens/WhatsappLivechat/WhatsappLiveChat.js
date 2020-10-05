@@ -80,11 +80,15 @@ class WhastappLiveChat extends React.Component {
   }
 
   componentDidMount () {
-      this.setState({loading: true, activeSession: {}})
-      this.fetchSessions(true, 'none', true)
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({activeSession: {}})
+    })
+    this.setState({loading: true})
+    this.fetchSessions(true, 'none', true)
   }
 
   componentWillUnmount () {
+    this._unsubscribe()
   }
 
   /* eslint-disable */
