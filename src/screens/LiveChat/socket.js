@@ -24,7 +24,34 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
   let session = payload.subscriber
   let data = {}
   const index = sessions && sessions.findIndex((s) => s._id === payload.subscriber._id)
-  if (state.activeSession._id === payload.subscriber._id) {
+  if (index === -1 && state.tabValue === 'open') {
+    let userChat = props.userChat || []
+    if (state.activeSession._id === payload.subscriber._id) {
+      userChat.push(payload.message)
+    }
+    let closeSessions = props.closeSessions
+    let closeCount = props.closeCount
+    let sessionIndex = closeSessions.findIndex((s) => s._id === session._id)
+    if (sessionIndex > -1) {
+      closeSessions.splice(sessionIndex, 1)
+      closeCount -= 1
+    }
+    session.name = `${session.firstName} ${session.lastName}`
+    session.lastPayload = payload.message.payload
+    session.last_activity_time = new Date()
+    session.lastMessagedAt = new Date()
+    session.pendingResponse = true
+    session.status = 'new'
+    sessions = [session, ...sessions]
+    data = {
+      userChat,
+      chatCount: (props.chatCount ? props.chatCount : 0) + 1,
+      openSessions: sessions,
+      openCount: props.openCount + 1,
+      closeSessions,
+      closeCount
+    }
+  } else if (state.activeSession._id === payload.subscriber._id) {
     let userChat = props.userChat
     userChat.push(payload.message)
     session = sessions.splice(index, 1)[0]
@@ -58,27 +85,6 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
       openSessions: state.tabValue === 'open' ? sessions : [session, ...props.openSessions],
       closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions,
       closeCount: state.tabValue === 'close' ? props.closeCount - 1 : props.closeCount
-    }
-  } else if (index === -1 && state.tabValue === 'open') {
-    let closeSessions = props.closeSessions
-    let closeCount = props.closeCount
-    let sessionIndex = closeSessions.findIndex((s) => s._id === session._id)
-    if (sessionIndex > -1) {
-      closeSessions.splice(sessionIndex, 1)
-      closeCount -= 1
-    }
-    session.name = `${session.firstName} ${session.lastName}`
-    session.lastPayload = payload.message.payload
-    session.last_activity_time = new Date()
-    session.lastMessagedAt = new Date()
-    session.pendingResponse = true
-    session.status = 'new'
-    sessions = [session, ...sessions]
-    data = {
-      openSessions: sessions,
-      openCount: props.openCount + 1,
-      closeSessions,
-      closeCount
     }
   }
   updateLiveChatInfo(data)
