@@ -101,12 +101,14 @@ class AssignSession extends React.Component {
     this.props.assignToAgent(data, (res) => {
       if (res.status === 'success') {
         this.setState({loading: false})
+        this.props.toggleAssignmentModal(false)
         let activeSession = this.props.activeSession
         activeSession.is_assigned = false
         this.props.handleAssignment(activeSession)
         Toast.default.show('Agent unassigned successfully')
       } else {
         this.setState({loading: false})
+        this.props.toggleAssignmentModal(false)
         Toast.default.show('Agent was unable to be unassigned')
       }
     })
@@ -132,12 +134,14 @@ class AssignSession extends React.Component {
     this.props.assignToTeam(data, (res) => {
       if (res.status === 'success') {
         this.setState({loading: false})
+        this.props.toggleAssignmentModal(false)
         let activeSession = this.props.activeSession
         activeSession.is_assigned = false
         this.props.handleAssignment(activeSession)
         Toast.default.show('Team unassigned succesfully')
       } else {
         this.setState({loading: false})
+        this.props.toggleAssignmentModal(false)
         Toast.default.show('Team was unable to be unassigned')
       }
     })
