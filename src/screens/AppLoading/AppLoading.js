@@ -105,10 +105,8 @@ class Loading extends React.Component {
   };
 
   async _handleFinishLoading () {
-    console.log('_handleFinishLoading')
     this.setState({isLoadingComplete: true}, () => {
       AsyncStorage.getItem('token').then(token => {
-        console.log('AsyncStorage')
         if (token) {
           this.setState({showLoader: true})
           this.props.getuserdetails(this.handleResponse, joinRoom)
@@ -129,7 +127,6 @@ class Loading extends React.Component {
   }
 
   render () {
-    console.log('re-render')
     // if (!this.state.isLoadingComplete) {
     //   return (
     //     <AppLoading

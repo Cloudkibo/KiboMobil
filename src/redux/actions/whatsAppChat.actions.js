@@ -182,7 +182,7 @@ export function uploadAttachment (fileData, handleUpload) {
       })
   }
 }
-export function fetchUserChats (sessionid, data, handleFunction) {
+export function fetchUserChats (sessionid, data, count, handleFunction) {
   return (dispatch) => {
     callApi(dispatch, `whatsAppChat/getChat/${sessionid}`, 'post', data)
       .then(res => {
