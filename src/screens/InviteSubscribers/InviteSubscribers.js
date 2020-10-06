@@ -79,9 +79,9 @@ class InviteSubscribers extends React.Component {
 
   renderList () {
     return (
-      <Block style={{paddingVertical: 50}}>
+      <Block style={Platform.OS === 'ios' ? {paddingVertical: 50, zIndex: 10} : {paddingVertical: 50}}>
         <Block flex row style={styles.options}>
-          <Block flex={0.3} middle><Text size={16}> Select Page:</Text></Block>
+          <Block flex={0.3} middle style={{marginTop: -15}}><Text size={16}> Select Page:</Text></Block>
           <Block flex={0.7} middle>
             <Select
               dropDownStyle={{width: width * 0.5}}
@@ -105,7 +105,7 @@ class InviteSubscribers extends React.Component {
     } else {
       return (
         <Block flex center style={styles.block}>
-          <Block style={styles.subBlock}>
+          <Block style={{...styles.subBlock, zIndex: 10}}>
             {this.renderList()}
             <Block style={{marginHorizontal: 16}}>
               <Text h6>This is the link to your Facebook Page on Messenger. Copy this link and share it with people to invite them to become subscribers of your page.</Text>
@@ -142,7 +142,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(InviteSubscribers)
 
 const styles = StyleSheet.create({
   block: {
-    width: width
+    width: width,
+    zIndex: 10
   },
   subBlock: {
     width: width,
@@ -156,6 +157,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1
   },
   options: {
-    padding: theme.SIZES.BASE / 2
+    padding: theme.SIZES.BASE / 2,
+    flexWrap: "wrap",
   }
 })
