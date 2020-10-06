@@ -69,7 +69,6 @@ class DashboardHeader extends React.Component {
     }
   }
   componentDidMount () {
-    console.log('this.props.automated_options', this.props.automated_options)
     if(this.props.automated_options) {
       this.setState({automated_options: this.props.automated_options})
     }

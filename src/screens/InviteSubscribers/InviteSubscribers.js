@@ -62,7 +62,6 @@ class InviteSubscribers extends React.Component {
     options = this.props.connectedPages.map(z => {
       return {label: z.pageName, value: z.pageName}
     })
-    console.log('options', options)
     return options
   }
 

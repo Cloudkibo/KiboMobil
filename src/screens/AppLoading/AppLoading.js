@@ -7,7 +7,6 @@ import { Asset } from 'expo-asset'
 import { Images } from '../../constants/'
 import { joinRoom } from '../../utility/socketio'
 import * as Sentry from 'sentry-expo'
-import Bugsnag from '@bugsnag/expo'
 import VersionCheck from 'react-native-version-check-expo'
 
 const assetImages = [
@@ -46,7 +45,6 @@ class Loading extends React.Component {
         }
       })
       .catch((err) => {
-        Bugsnag.notify(err)
         Sentry.captureException(err)
       })
     // if (Platform.OS === 'android') {
@@ -105,10 +103,8 @@ class Loading extends React.Component {
   };
 
   async _handleFinishLoading () {
-    console.log('_handleFinishLoading')
     this.setState({isLoadingComplete: true}, () => {
       AsyncStorage.getItem('token').then(token => {
-        console.log('AsyncStorage')
         if (token) {
           this.setState({showLoader: true})
           this.props.getuserdetails(this.handleResponse, joinRoom)
@@ -129,7 +125,6 @@ class Loading extends React.Component {
   }
 
   render () {
-    console.log('re-render')
     // if (!this.state.isLoadingComplete) {
     //   return (
     //     <AppLoading

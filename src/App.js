@@ -13,7 +13,6 @@ import { initiateSocket } from './utility/socketio'
 
 import { materialTheme, Images } from './constants/'
 import * as Sentry from 'sentry-expo'
-import Bugsnag from '@bugsnag/expo'
 enableScreens()
 
 import Screens from './navigation/Screens';
@@ -52,7 +51,6 @@ function cacheImages(images) {
 
 const store = configureStore()
 initiateSocket(store)
-Bugsnag.start()
 
 Sentry.init({
   dsn: 'https://6c7958e0570f455381d6f17122fbd117@o132281.ingest.sentry.io/292307',

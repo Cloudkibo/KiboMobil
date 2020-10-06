@@ -55,7 +55,7 @@ class LiveChat extends React.Component {
 
     // }
     this.props.loadcannedResponses()
-    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
+    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 }, props.route.params.activeSession.messagesCount)
     props.getSMPStatus(this.handleSMPStatus)
     props.getZoomIntegrations()
     // if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
@@ -105,7 +105,6 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
-
     if (nextProps.openSessions && !this.state.sessions) {
       this.setState({sessions:nextProps.openSessions})
     }
