@@ -11,6 +11,13 @@ export function updateLiveChatInfo (data) {
   }
 }
 
+export function updateAgents (data) {
+  return {
+    type: ActionTypes.UPDATE_TEAM_AGENTS,
+    data
+  }
+}
+
 export function updateSessions (data) {
   return {
     type: ActionTypes.UPDATE_SESSIONS_WHATSAPP,
@@ -193,6 +200,7 @@ export function fetchTeamAgentsWhatsApp (id, handleAgents) {
         if (res.status === 'success' && handleAgents) {
           handleAgents(res.payload)
         }
+        dispatch(updateAgents(res.payload))
       })
   }
 }

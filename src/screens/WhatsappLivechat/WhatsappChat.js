@@ -128,13 +128,13 @@ class LiveChat extends React.Component {
         isAllowed = false
         errorMsg = `Only assigned agent can ${errorMsg}`
       } else if (session.assigned_to.type === 'team') {
-        this.fetchTeamAgents(session._id, (teamAgents) => {
-          const agentIds = teamAgents.map((agent) => agent.agentId._id)
+        // this.fetchTeamAgents(session._id, (teamAgents) => {
+          const agentIds = this.props.teamAgents.map((agent) => agent.agentId._id)
           if (!agentIds.includes(this.props.user._id)) {
             isAllowed = false
             errorMsg = `Only agents who are part of assigned team can ${errorMsg}`
           }
-        })
+        // })
       }
     }
     errorMsg = `You can not perform this action. ${errorMsg}`
@@ -248,7 +248,8 @@ function mapStateToProps (state) {
     user: (state.basicInfo.user),
     cannedResponses: state.settingsInfo.cannedResponses,
     zoomIntegrations: (state.settingsInfo.zoomIntegrations),
-    automated_options: (state.basicInfo.automated_options)
+    automated_options: (state.basicInfo.automated_options),
+    teamAgents: (state.teamsInfo.assignedTeamAgents),
   }
 }
 

@@ -13,6 +13,13 @@ export function updateSessionProfilePicture (subscriber, profilePic) {
   }
 }
 
+export function updateAgents (data) {
+  return {
+    type: ActionTypes.UPDATE_TEAM_AGENTS,
+    data
+  }
+}
+
 export function clearSession (data) {
   return {
     type: ActionTypes.LOADING_CHAT,
@@ -447,6 +454,7 @@ export function fetchTeamAgents (id, handleAgents) {
         if (res.status === 'success' && handleAgents) {
           handleAgents(res.payload)
         }
+        dispatch(updateAgents(res.payload))
       })
   }
 }
