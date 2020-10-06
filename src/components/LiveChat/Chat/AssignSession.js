@@ -205,7 +205,7 @@ class AssignSession extends React.Component {
         activeSession.is_assigned = true
         activeSession.assigned_to = activeSessionData
         this.props.handleAssignment(activeSession)
-        Toast.default.show('Team assigned succesfully')
+        Toast.default.show('Team assigned successfully')
       } else {
         this.setState({loading: false})
         Toast.default.show('Team was unable to be assigned')

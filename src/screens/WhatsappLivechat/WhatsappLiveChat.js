@@ -9,7 +9,7 @@ import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
 import {getWhatsAppMessageTemplates} from '../../redux/actions/settings.action'
-import {fetchOpenSessions, fetchCloseSessions, markRead, updateLiveChatInfo} from '../../redux/actions/whatsAppChat.actions'
+import {fetchOpenSessions, fetchCloseSessions, markRead, updateLiveChatInfo, fetchTeamAgentsWhatsApp} from '../../redux/actions/whatsAppChat.actions'
 import { handleSocketEvent } from './socket'
 import * as Notifications from 'expo-notifications'
 import { clearSocketDataWhatsapp } from '../../redux/actions/socket.actions'
@@ -73,6 +73,9 @@ class WhastappLiveChat extends React.Component {
       session.unreadCount = 0
       this.props.markRead(session._id)
       this.getPushNotificationsAsync(session._id)
+    }
+    if (session.is_assigned && session.assigned_to.type === 'team') {
+      this.props.fetchTeamAgentsWhatsApp(session.assigned_to.id)
     }
     this.setState({activeSession: session})
     this.props.navigation.navigate('WhatsappChat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
@@ -334,7 +337,8 @@ function mapDispatchToProps (dispatch) {
     markRead,
     clearSocketDataWhatsapp,
     updateLiveChatInfo,
-    clearSession
+    clearSession,
+    fetchTeamAgentsWhatsApp
   }, dispatch)
 }
 
