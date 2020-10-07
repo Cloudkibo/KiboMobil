@@ -16,7 +16,7 @@ export default class DropDown extends React.Component {
         itemStyle={{
             justifyContent: 'flex-start'
         }}
-        containerStyle={{height: 45}}
+        containerStyle={{height: 40}}
         style={[styles.qty, style]}
         defaultValue={this.props.value}
         placeholder='Select a Page'

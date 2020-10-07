@@ -14,7 +14,7 @@ import Icon from '../../components/Icon';
 import materialTheme from '../../constants/Theme';
 import Tabs from '../../components/Tabs';
 import SelectPlatform from './SelectPlatform'
-
+import { Select } from '../../components/'
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
@@ -58,9 +58,27 @@ class DashboardHeader extends React.Component {
         super(props, context)
         this.state = {
             showAssignmentModal: false,
-            automated_options: this.props.automated_options
+            automated_options: this.props.automated_options,
+            selectedPlatform: 'messenger',
+            Platforms: [{label: 'messenger', value: 'messenger'}, {label: 'whatsApp', value: 'whatsApp'}]
           }
           this.toggleAssignmentModal = this.toggleAssignmentModal.bind(this)
+          this.handlePlatformSelect = this.handlePlatformSelect.bind(this)
+    }
+    handlePlatformSelect (value, index) {
+      if(value.value !== this.props.user.platform) {
+        this.setState({selectedPlatform: value.value})
+        this.props.clearSession(true)
+        this.props.updatePlatform({platform :value.value})
+        if(value.value ==='messenger') {
+          this.props.clearDashboardData()
+          this.props.clearWhatsappDashboardData()
+  
+        } else {
+          this.props.clearWhatsappDashboardData()
+          this.props.clearDashboardData()
+        }
+      }
     }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -83,8 +101,16 @@ class DashboardHeader extends React.Component {
   renderRight = () => {
     const { white, title, navigation, scene } = this.props;
     return (
-    <Block flex={0.8} row >
-    { this.state.automated_options && this.state.automated_options.whatsApp &&
+    <Block flex={0.8} row style={styles.options}>
+      <Select
+        dropDownStyle={{width: width * 0.5, marginBottom:30}}
+        style={{width: width * 0.35}}
+        value={this.state.selectedPlatform}
+        options={this.state.Platforms}
+        // style={{marginTop: 6}}
+        onSelect={(value, index) => this.handlePlatformSelect(value, index)}
+      />
+    {/* { this.state.automated_options && this.state.automated_options.whatsApp &&
     <TouchableOpacity onPress={() => this.setState({showAssignmentModal: true})}>
     <Icon
         size={20}
@@ -102,7 +128,7 @@ class DashboardHeader extends React.Component {
           clearWhatsappDashboardData = {this.props.clearWhatsappDashboardData}
           clearDashboardData = {this.props.clearDashboardData}
           clearSession= {this.props.clearSession}
-        />
+        /> */}
     </Block>
     )
   }
@@ -189,7 +215,7 @@ class DashboardHeader extends React.Component {
           style={styles.navbar}
           transparent={transparent}
           right={this.renderRight()}
-          rightStyle={{ alignItems: 'center' }}
+          rightStyle={{ alignItems: 'center', paddingRight: 30}}
           leftStyle={{ paddingTop: 3, flex: 0.3 }}
           leftIconName={back ? null : "navicon"}
           // leftIconFamily="font-awesome"
@@ -287,4 +313,8 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontWeight: '300'
   },
+  options: {
+    // paddingRight:0,
+    // flexWrap: "wrap",
+  }
 });
