@@ -50,6 +50,7 @@ class Footer extends React.Component {
     }
 
     this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+    this.recordingSettings.ios.extension = '.m4a'
 
     this.onInputChange = this.onInputChange.bind(this)
     this.sendMessage = this.sendMessage.bind(this)
