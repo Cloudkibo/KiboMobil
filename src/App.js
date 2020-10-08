@@ -33,10 +33,8 @@ const assetImages = [
 function cacheImages(images) {
   return images.map(image => {
     if (typeof image === 'string') {
-      console.log('in if')
       return Image.prefetch(image);
     } else {
-      console.log('in else')
       return Asset.fromModule(image).downloadAsync();
     }
   });
@@ -56,7 +54,6 @@ class App extends React.Component {
     isLoadingComplete: false,
   };
   render () {
-    console.log('this.state.isLoadingComplete', this.state.isLoadingComplete)
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
         <AppLoading
