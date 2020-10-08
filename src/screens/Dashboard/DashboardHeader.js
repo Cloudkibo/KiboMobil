@@ -16,6 +16,7 @@ import Tabs from '../../components/Tabs';
 import SelectPlatform from './SelectPlatform'
 import { Select } from '../../components/'
 const { height, width } = Dimensions.get('window');
+import DropDownPicker from 'react-native-dropdown-picker'
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
 const ChatButton = ({isWhite, style, navigation}) => (
@@ -66,10 +67,11 @@ class DashboardHeader extends React.Component {
           this.handlePlatformSelect = this.handlePlatformSelect.bind(this)
     }
     handlePlatformSelect (value, index) {
-      if(value.value !== this.props.user.platform) {
-        this.setState({selectedPlatform: value.value})
+      console.log('selected value', value)
+      if(value !== this.props.user.platform) {
+        this.setState({selectedPlatform: value})
         this.props.clearSession(true)
-        this.props.updatePlatform({platform :value.value})
+        this.props.updatePlatform({platform :value})
         if(value.value ==='messenger') {
           this.props.clearDashboardData()
           this.props.clearWhatsappDashboardData()
@@ -101,15 +103,29 @@ class DashboardHeader extends React.Component {
   renderRight = () => {
     const { white, title, navigation, scene } = this.props;
     return (
-    <Block flex={0.8} row style={styles.options}>
-      <Select
-        dropDownStyle={{width: width * 0.5, marginBottom:30}}
-        style={{width: width * 0.35}}
-        value={this.state.selectedPlatform}
-        options={this.state.Platforms}
-        // style={{marginTop: 6}}
-        onSelect={(value, index) => this.handlePlatformSelect(value, index)}
-      />
+    // <Block flex={0.8} row style={styles.options}>
+    //   <Select
+    //     dropDownStyle={{width: width * 0.35, marginBottom:30}}
+    //     style={{width: width * 0.35}}
+    //     value={this.state.selectedPlatform}
+    //     options={this.state.Platforms}
+    //     // style={{marginTop: 6}}
+    //     onSelect={(value, index) => this.handlePlatformSelect(value, index)}
+    //   />
+    <Block style={{paddingRight: 170}}>
+
+          <DropDownPicker
+            items={this.state.Platforms}
+            containerStyle={{height: 45}}
+            style={{width: width * 0.35}}
+            itemStyle={{
+              justifyContent: 'flex-start'
+            }}
+            defaultValue={'messenger'}
+            dropDownStyle={{backgroundColor: '#fafafa', width: width * 0.35, marginTop: 2}}
+            onChangeItem={item => this.handlePlatformSelect(item.value)}
+
+          />
     {/* { this.state.automated_options && this.state.automated_options.whatsApp &&
     <TouchableOpacity onPress={() => this.setState({showAssignmentModal: true})}>
     <Icon
@@ -215,7 +231,7 @@ class DashboardHeader extends React.Component {
           style={styles.navbar}
           transparent={transparent}
           right={this.renderRight()}
-          rightStyle={{ alignItems: 'center', paddingRight: 30}}
+          rightStyle={{ alignItems: 'center'}}
           leftStyle={{ paddingTop: 3, flex: 0.3 }}
           leftIconName={back ? null : "navicon"}
           // leftIconFamily="font-awesome"
@@ -264,7 +280,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingBottom: theme.SIZES.BASE * 1.5,
     paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,
-    zIndex: 5,
+    // zIndex: 5,
   },
   shadow: {
     backgroundColor: theme.COLORS.WHITE,
@@ -316,5 +332,6 @@ const styles = StyleSheet.create({
   options: {
     // paddingRight:0,
     // flexWrap: "wrap",
+    // padding: theme.SIZES.BASE / 2
   }
 });

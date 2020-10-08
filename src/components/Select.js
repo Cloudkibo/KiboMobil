@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   qty: {
     width: theme.SIZES.BASE * 6,
     backgroundColor: materialTheme.COLORS.DEFAULT,
-    paddingHorizontal: theme.SIZES.BASE,
+    // paddingHorizontal: theme.SIZES.BASE,
     paddingTop: 10,
     paddingBottom: 9.5,
     borderRadius: 3,
