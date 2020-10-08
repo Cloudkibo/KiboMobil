@@ -19,6 +19,12 @@ const { height, width } = Dimensions.get('window');
 import RNPickerSelect from 'react-native-picker-select';
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
+let Toast = null
+if (Platform.OS === 'ios') {
+  Toast = require('react-native-tiny-toast')
+} else {
+  Toast = require('react-native-simple-toast')
+}
 const ChatButton = ({isWhite, style, navigation}) => (
   <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Chat')}>
     <Icon
@@ -76,6 +82,8 @@ class DashboardHeader extends React.Component {
   }
 
     handlePlatform(value) {
+      console.log('value', value)
+    if( (value === 'messenger' && this.props.automated_options.facebook) || (value === 'whatsApp' && this.props.automated_options.whatsApp)) {
       if(value !== this.props.user.platform) {
       this.props.clearSession(true)
       this.props.updatePlatform({platform :value})
@@ -86,21 +94,29 @@ class DashboardHeader extends React.Component {
       } else {
         this.props.clearWhatsappDashboardData()
         this.props.clearDashboardData()
+     }
     }
-   }
-  }
+   } else {
+    if(value === 'messenger') {
+      this.setState({selectedPlatform: 'whatsApp'})
+      Toast.default.show('Please Connect Facebook Account with KiboPush')
+    } else {
+      this.setState({selectedPlatform: 'messenger'})
+      Toast.default.show('Please Connect WhatsApp Account with KiboPush')
+    }
+   } 
+  } 
 
   UNSAFE_componentWillReceiveProps (nextProps) {
-    console.log('component_ UNSAFE_componentWillReceiveProps')
+    console.log('DidMount called')
     if(nextProps.automated_options) {
       this.setState({automated_options: nextProps.automated_options})
     }
-    if(nextProps.user) {
+    if(nextProps.user !== this.props.user) {
       this.setState({selectedPlatform: nextProps.user.platform})
     }
   }
   componentDidMount () {
-    console.log('component_ Didmount_called')
     if(this.props.automated_options) {
       this.setState({automated_options: this.props.automated_options})
     }
