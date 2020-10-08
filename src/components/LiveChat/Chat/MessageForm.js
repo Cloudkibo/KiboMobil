@@ -12,6 +12,7 @@ import * as Permissions from 'expo-permissions'
 import * as FileSystem from 'expo-file-system'
 import { Audio } from 'expo-av'
 import StickerMenu from '../../StickerPicker/stickers'
+import ATTACHMENTSMODAL from './attachmentsModal'
 const { width } = Dimensions.get('screen')
 
 let Toast = null
@@ -46,7 +47,9 @@ class Footer extends React.Component {
       recordingPermissionGranted: false,
       gifSearchValue: '',
       gifs: [],
-      loadingGif: false
+      loadingGif: false,
+      showAttachmentsModal: false,
+      galleryPermission: false
     }
 
     this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
@@ -76,6 +79,17 @@ class Footer extends React.Component {
     this.sendGif = this.sendGif.bind(this)
     this.changeGifSearchValue = this.changeGifSearchValue.bind(this)
     this.addNewLine = this.addNewLine.bind(this)
+    this.setAttachmentsModal = this.setAttachmentsModal.bind(this)
+    this.setGalleryPermission = this.setGalleryPermission.bind(this)
+    this.uploadAttachment = this.uploadAttachment.bind(this)
+  }
+
+  setGalleryPermission (value) {
+    this.setState({gelleryPermission: value})
+  }
+
+  setAttachmentsModal () {
+    this.setState({showAttachmentsModal: !this.state.showAttachmentsModal})
   }
 
   componentDidMount () {
@@ -143,38 +157,41 @@ class Footer extends React.Component {
     }
   }
 
+  uploadAttachment (file) {
+    if (file.size && file.size > 25000000) {
+      Alert.alert('ERROR!', 'Attachment exceeds the limit of 25MB', [{ text: 'OK' }], { cancelable: true })
+    } else {
+      let type = mime.lookup(file.uri)
+      const data = this.props.performAction('send attachments', this.props.activeSession)
+      if (data.isAllowed) {
+        if (this.state.attachment && this.state.attachment.id) {
+          this.props.deletefile(this.state.attachment.id)
+        }
+        const componentType = this.getComponentType(type)
+        this.setState({
+          uploadingFile: true,
+          attachment: file,
+          componentType
+        })
+        var fileData = new FormData()
+        fileData.append('file', {uri: file.uri, type: type, name: file.name, size: file.size})
+        fileData.append('filename', file.name)
+        fileData.append('filetype', type)
+        fileData.append('filesize', file.size)
+        fileData.append('componentType', componentType)
+        this.props.uploadAttachment(fileData, this.onAttachmentUpload)
+      } else {
+        Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
+      }
+    }
+  }
+
   selectAttachment () {
     this.setState({showPickers: false, selectedPicker: ''})
     DocumentPicker.getDocumentAsync()
       .then(result => {
         if (result && result.type === 'success') {
-          const file = result
-          if (file.size > 25000000) {
-            Alert.alert('ERROR!', 'Attachment exceeds the limit of 25MB', [{ text: 'OK' }], { cancelable: true })
-          } else {
-            let type = mime.lookup(file.uri)
-            const data = this.props.performAction('send attachments', this.props.activeSession)
-            if (data.isAllowed) {
-              if (this.state.attachment && this.state.attachment.id) {
-                this.props.deletefile(this.state.attachment.id)
-              }
-              const componentType = this.getComponentType(type)
-              this.setState({
-                uploadingFile: true,
-                attachment: file,
-                componentType
-              })
-              var fileData = new FormData()
-              fileData.append('file', {uri: file.uri, type: type, name: file.name, size: file.size})
-              fileData.append('filename', file.name)
-              fileData.append('filetype', type)
-              fileData.append('filesize', file.size)
-              fileData.append('componentType', componentType)
-              this.props.uploadAttachment(fileData, this.onAttachmentUpload)
-            } else {
-              Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
-            }
-          }
+          this.uploadAttachment(result)
         }
       })
       .catch((err) => {
@@ -565,6 +582,15 @@ class Footer extends React.Component {
   render () {
     return (
       <Block style={{paddingBottom: 10}}>
+        <ATTACHMENTSMODAL
+          showAttachmentsModal={this.state.showAttachmentsModal}
+          setAttachmentsModal={this.setAttachmentsModal}
+          updateAttachments={this.updateAttachments}
+          selectAttachment={this.selectAttachment}
+          gelleryPermission={this.state.galleryPermission}
+          setGalleryPermission={this.setGalleryPermission}
+          uploadAttachment={this.uploadAttachment}
+        />
         <Block style={styles.messageFormContainer}>
           <Block flex row middle space='between'>
             { this.state.uploadingFile
@@ -647,7 +673,10 @@ class Footer extends React.Component {
                           <TouchableOpacity onPress={this.showPickers}>
                             <Icon size={20} color={theme.COLORS.MUTED} name='emoji-happy' family='entypo' />
                           </TouchableOpacity>
-                          <TouchableOpacity onPress={this.selectAttachment}>
+                          <TouchableOpacity onPress={() => {
+                            Platform.OS === 'ios'
+                              ? this.setAttachmentsModal()
+                              : this.selectAttachment()}}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='attachment' family='entypo' />
                           </TouchableOpacity>
                            {!this.props.isWhatspModule &&

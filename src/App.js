@@ -20,16 +20,7 @@ import Screens from './navigation/Screens';
 const assetImages = [
   Images.Profile,
   Images.Avatar,
-  Images.Onboarding,
-  Images.Products.Auto,
-  Images.Products.Motocycle,
-  Images.Products.Watches,
-  Images.Products.Makeup,
-  Images.Products.Accessories,
-  Images.Products.Fragrance,
-  Images.Products.BMW,
-  Images.Products.Mustang,
-  Images.Products['Harley-Davidson'],
+  Images.Onboarding
 ];
 // cache product images
 // products.map(product => assetImages.push(product.image));
