@@ -20,16 +20,7 @@ import Screens from './navigation/Screens';
 const assetImages = [
   Images.Profile,
   Images.Avatar,
-  Images.Onboarding,
-  Images.Products.Auto,
-  Images.Products.Motocycle,
-  Images.Products.Watches,
-  Images.Products.Makeup,
-  Images.Products.Accessories,
-  Images.Products.Fragrance,
-  Images.Products.BMW,
-  Images.Products.Mustang,
-  Images.Products['Harley-Davidson'],
+  Images.Onboarding
 ];
 // cache product images
 // products.map(product => assetImages.push(product.image));
@@ -42,8 +33,10 @@ const assetImages = [
 function cacheImages(images) {
   return images.map(image => {
     if (typeof image === 'string') {
+      console.log('in if')
       return Image.prefetch(image);
     } else {
+      console.log('in else')
       return Asset.fromModule(image).downloadAsync();
     }
   });
@@ -63,6 +56,7 @@ class App extends React.Component {
     isLoadingComplete: false,
   };
   render () {
+    console.log('this.state.isLoadingComplete', this.state.isLoadingComplete)
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
         <AppLoading
