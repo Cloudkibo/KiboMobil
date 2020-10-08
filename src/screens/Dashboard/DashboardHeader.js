@@ -6,7 +6,7 @@ import { updatePlatform } from '../../redux/actions/basicInfo.actions'
 import { clearWhatsappDashboardData } from '../../redux/actions/whatsAppDashboard.actions'
 import { clearDashboardData} from '../../redux/actions/dashboard.actions'
 import {clearSession} from '../../redux/actions/liveChat.actions'
-
+import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity, StyleSheet, Platform, Dimensions,View } from 'react-native';
 import { Button, Block, NavBar, Input, Text, theme } from 'galio-framework';
 import {ListItem, Card } from 'react-native-elements'
@@ -16,7 +16,7 @@ import Tabs from '../../components/Tabs';
 import SelectPlatform from './SelectPlatform'
 import { Select } from '../../components/'
 const { height, width } = Dimensions.get('window');
-import DropDownPicker from 'react-native-dropdown-picker'
+import RNPickerSelect from 'react-native-picker-select';
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
 const ChatButton = ({isWhite, style, navigation}) => (
@@ -61,34 +61,46 @@ class DashboardHeader extends React.Component {
             showAssignmentModal: false,
             automated_options: this.props.automated_options,
             selectedPlatform: 'messenger',
-            Platforms: [{label: 'messenger', value: 'messenger'}, {label: 'whatsApp', value: 'whatsApp'}]
+            Platforms: [{label: 'Messenger', value: 'messenger'}, {label: 'WhatsApp', value: 'whatsApp'}]
           }
-          this.toggleAssignmentModal = this.toggleAssignmentModal.bind(this)
           this.handlePlatformSelect = this.handlePlatformSelect.bind(this)
+          this.handlePlatform = this.handlePlatform.bind(this)
     }
     handlePlatformSelect (value, index) {
-      console.log('selected value', value)
-      if(value !== this.props.user.platform) {
+      if(value) {
         this.setState({selectedPlatform: value})
-        this.props.clearSession(true)
-        this.props.updatePlatform({platform :value})
-        if(value.value ==='messenger') {
-          this.props.clearDashboardData()
-          this.props.clearWhatsappDashboardData()
-  
-        } else {
-          this.props.clearWhatsappDashboardData()
-          this.props.clearDashboardData()
+        if(Platform.OS === 'android') {
+          this.handlePlatform(value)
         }
-      }
     }
+  }
+
+    handlePlatform(value) {
+      if(value !== this.props.user.platform) {
+      this.props.clearSession(true)
+      this.props.updatePlatform({platform :value})
+      if(value ==='messenger') {
+        this.props.clearDashboardData()
+        this.props.clearWhatsappDashboardData()
+
+      } else {
+        this.props.clearWhatsappDashboardData()
+        this.props.clearDashboardData()
+    }
+   }
+  }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
+    console.log('component_ UNSAFE_componentWillReceiveProps')
     if(nextProps.automated_options) {
       this.setState({automated_options: nextProps.automated_options})
     }
+    if(nextProps.user) {
+      this.setState({selectedPlatform: nextProps.user.platform})
+    }
   }
   componentDidMount () {
+    console.log('component_ Didmount_called')
     if(this.props.automated_options) {
       this.setState({automated_options: this.props.automated_options})
     }
@@ -97,55 +109,35 @@ class DashboardHeader extends React.Component {
     const { back, navigation } = this.props;
     return (back ? navigation.goBack() : navigation.openDrawer());
   }
-  toggleAssignmentModal (value) {
-    this.setState({showAssignmentModal: false})
-  }
   renderRight = () => {
     const { white, title, navigation, scene } = this.props;
+    const placeholder = {
+      label: 'Select a Platform',
+      value: null,
+      color: '#9EA0A4',
+    };
     return (
-    // <Block flex={0.8} row style={styles.options}>
-    //   <Select
-    //     dropDownStyle={{width: width * 0.35, marginBottom:30}}
-    //     style={{width: width * 0.35}}
-    //     value={this.state.selectedPlatform}
-    //     options={this.state.Platforms}
-    //     // style={{marginTop: 6}}
-    //     onSelect={(value, index) => this.handlePlatformSelect(value, index)}
-    //   />
-    <Block style={{paddingRight: 170}}>
-
-          <DropDownPicker
-            items={this.state.Platforms}
-            containerStyle={{height: 45}}
-            style={{width: width * 0.35}}
-            itemStyle={{
-              justifyContent: 'flex-start'
-            }}
-            defaultValue={'messenger'}
-            dropDownStyle={{backgroundColor: '#fafafa', width: width * 0.35, marginTop: 2}}
-            onChangeItem={item => this.handlePlatformSelect(item.value)}
-
-          />
-    {/* { this.state.automated_options && this.state.automated_options.whatsApp &&
-    <TouchableOpacity onPress={() => this.setState({showAssignmentModal: true})}>
-    <Icon
-        size={20}
-        name='dots-three-vertical'
-        family='Entypo'
-        style={{marginLeft: 40, marginTop: 6}}
-    />
-    </TouchableOpacity>
-    }
-         <SelectPlatform
-          showModal={this.state.showAssignmentModal}
-          toggleAssignmentModal={this.toggleAssignmentModal}
-          user = {this.props.user}
-          updatePlatform = {this.props.updatePlatform}
-          clearWhatsappDashboardData = {this.props.clearWhatsappDashboardData}
-          clearDashboardData = {this.props.clearDashboardData}
-          clearSession= {this.props.clearSession}
-        /> */}
-    </Block>
+      <Block flex={0.8} row style={{width:width*0.4}}>
+      <RNPickerSelect
+      placeholder= {placeholder}
+      onValueChange={(value) =>  this.handlePlatformSelect(value)}
+      onDonePress= {(value)=> {this.handlePlatform(this.state.selectedPlatform)}}
+      useNativeAndroidPickerStyle={false}
+      items={this.state.Platforms}
+      value={this.state.selectedPlatform}
+      style={{
+        ...pickerSelectStyles,
+        iconContainer: {
+          top: 5,
+          right:12,
+        },
+      }}
+      textInputProps={{ underlineColor: 'yellow' }}
+      Icon={() => {
+        return <Ionicons name="md-arrow-down" size={24} color="gray" />;
+      }}
+  />
+  </Block>
     )
   }
 
@@ -231,7 +223,7 @@ class DashboardHeader extends React.Component {
           style={styles.navbar}
           transparent={transparent}
           right={this.renderRight()}
-          rightStyle={{ alignItems: 'center'}}
+          rightStyle={{ alignItems: 'center', paddingRight:35, paddingTop: 3}}
           leftStyle={{ paddingTop: 3, flex: 0.3 }}
           leftIconName={back ? null : "navicon"}
           // leftIconFamily="font-awesome"
@@ -334,4 +326,29 @@ const styles = StyleSheet.create({
     // flexWrap: "wrap",
     // padding: theme.SIZES.BASE / 2
   }
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    width:width*0.4,
+    fontSize: 16,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    width:width*0.4,
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 1,
+    borderWidth: 0.5,
+    borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
 });
