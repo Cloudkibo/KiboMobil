@@ -22,11 +22,16 @@ export function showuserdetails (data) {
   }
 }
 
-export function getuserdetails (callback, joinRoom) {
+export function getuserdetails (callback, joinRoomKibochat, joinRoomKiboEngage) {
   return (dispatch) => {
     callApi(dispatch, 'users').then(res => {
       if (res.status === 'success') {
-        if (joinRoom) joinRoom(res.payload.user.companyId)
+        if (joinRoomKibochat) {
+          joinRoomKibochat(res.payload.user.companyId)
+        }
+        if(joinRoomKiboEngage) {
+          joinRoomKiboEngage(res.payload.user.companyId)
+        }
         if (callback) callback(res)
         dispatch(showuserdetails(res.payload.user))
       }
