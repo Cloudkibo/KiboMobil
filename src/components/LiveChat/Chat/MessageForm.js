@@ -53,8 +53,19 @@ class Footer extends React.Component {
     }
 
     this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+    this.recordingSettings.ios.outputFormat = Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4AAC
     this.recordingSettings.ios.extension = '.m4a'
-
+    // this.recordingSettings.ios = {
+    //   extension: '.m4a',
+    //   outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_APPLELOSSLESS,
+    //   audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_MIN,
+    //   sampleRate: 44100,
+    //   numberOfChannels: 2,
+    //   bitRate: 128000,
+    //   linearPCMBitDepth: 16,
+    //   linearPCMIsBigEndian: false,
+    //   linearPCMIsFloat: false
+    // }
     this.onInputChange = this.onInputChange.bind(this)
     this.sendMessage = this.sendMessage.bind(this)
     this.setDataPayload = this.setDataPayload.bind(this)
