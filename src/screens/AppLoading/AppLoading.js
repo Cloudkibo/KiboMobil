@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { getuserdetails, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
 import { AppState, AsyncStorage, ActivityIndicator, Platform, Alert, Linking, Dimensions, StyleSheet } from 'react-native'
 import { Block, Text, theme, Button } from 'galio-framework'
-import { joinRoom } from '../../socket/index'
+import { joinRoomKibochat } from '../../socket/kibochatSocket'
 import { joinRoomKiboEngage } from '../../socket/kiboengageSocket'
 import { loadDashboardData } from '../../redux/actions/dashboard.actions'
 import { fetchPages } from '../../redux/actions/pages.actions'
@@ -73,7 +73,7 @@ class Loading extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
         if (token) {
-          this.props.getuserdetails(this.handleResponse, joinRoom, joinRoomKiboEngage)
+          this.props.getuserdetails(this.handleResponse, joinRoomKibochat, joinRoomKiboEngage)
           this.props.getAutomatedOptions(this.handleAutomatedResponse)
         } else {
           this.props.navigation.navigate('Sign In')

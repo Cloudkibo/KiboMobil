@@ -3,12 +3,12 @@
  */
 import io from 'socket.io-client'
 import { setSocketStatus } from '../redux/actions/socket.actions'
-import { socketUpdate, updateSessions } from './../redux/actions/liveChat.actions'
+import { socketUpdate, updateSessions } from '../redux/actions/liveChat.actions'
 import { handleSubscribers } from './subscribers'
 import { handleFBPageEvent } from './pages'
 import { handleWhatsAppSubscribers } from './whatsAppSubscribers'
 import { handleSocketEvent, handleSocketEventWhatsapp, handleSocketEventSubscribers, handleSocketEventSubscribersWhatsApp } from '../redux/actions/socket.actions'
-const whatsAppActions = require('./../redux/actions/whatsAppChat.actions')
+const whatsAppActions = require('../redux/actions/whatsAppChat.actions')
 const socket = io('https://kibochat.cloudkibo.com')
 let store
 
@@ -23,7 +23,7 @@ export function registerAction (callback) {
   callbacks[callback.event] = callback.action
 }
 
-export function initiateSocket (storeObj) {
+export function initiateKibochatSocket (storeObj) {
   store = storeObj
   socket.connect()
 }
@@ -31,7 +31,7 @@ export function initiateSocket (storeObj) {
 socket.on('connect', () => {
   console.log('connectionEstablished')
   if (myId !== '') {
-    joinRoom(myId)
+    joinRoomKibochat(myId)
   }
   store.dispatch(setSocketStatus(true))
 })
@@ -107,7 +107,7 @@ export function log (tag, data) {
   })
 }
 
-export function joinRoom (data) {
+export function joinRoomKibochat (data) {
   console.log('Trying to join room socket on KiboChat', data)
   myId = data
   if (joined) {
