@@ -5,6 +5,7 @@ import { getuserdetails, getAutomatedOptions } from '../../redux/actions/basicIn
 import { AppState, AsyncStorage, ActivityIndicator, Platform, Alert, Linking, Dimensions, StyleSheet } from 'react-native'
 import { Block, Text, theme, Button } from 'galio-framework'
 import { joinRoom } from '../../socket/index'
+import { joinRoomKiboEngage } from '../../socket/kiboengageSocket'
 import { loadDashboardData } from '../../redux/actions/dashboard.actions'
 import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
@@ -72,7 +73,7 @@ class Loading extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
         if (token) {
-          this.props.getuserdetails(this.handleResponse, joinRoom)
+          this.props.getuserdetails(this.handleResponse, joinRoom, joinRoomKiboEngage)
           this.props.getAutomatedOptions(this.handleAutomatedResponse)
         } else {
           this.props.navigation.navigate('Sign In')
@@ -105,7 +106,7 @@ class Loading extends React.Component {
 
   handleResponse (res) {
     if (res.status === 'success' && this.props.automated_options) {
-      this.fetchInActiveData(res.payload, this.props.automated_options)
+      this.fetchInActiveData(res.payload.user, this.props.automated_options)
       res.payload.connectFacebook || this.props.automated_options.whatsApp
         ? this.props.navigation.navigate('App')
         : this.setState({loadingData: false})

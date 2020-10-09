@@ -10,7 +10,7 @@ import SubApp from './sub.app'
 // Before rendering any navigation stack
 import { enableScreens } from 'react-native-screens'
 import { initiateSocket } from './socket/index'
-
+import { initiateKiboEngageSocket } from './socket/kiboengageSocket'
 import { materialTheme, Images } from './constants/'
 // import * as Sentry from 'sentry-expo'
 import Bugsnag from '@bugsnag/expo'
@@ -52,6 +52,7 @@ function cacheImages(images) {
 
 const store = configureStore()
 initiateSocket(store)
+initiateKiboEngageSocket(store)
 Bugsnag.start()
 
 // Sentry.init({

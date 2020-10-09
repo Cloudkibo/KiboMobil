@@ -9,7 +9,7 @@ import { handleFBPageEvent } from './pages'
 import { handleWhatsAppSubscribers } from './whatsAppSubscribers'
 import { handleSocketEvent, handleSocketEventWhatsapp, handleSocketEventSubscribers, handleSocketEventSubscribersWhatsApp } from '../redux/actions/socket.actions'
 const whatsAppActions = require('./../redux/actions/whatsAppChat.actions')
-const socket = io('https://kibochat.cloudkibo.com')
+const socket = io('https://kiboengage.cloudkibo.com')
 let store
 
 var joined = false
@@ -23,7 +23,7 @@ export function registerAction (callback) {
   callbacks[callback.event] = callback.action
 }
 
-export function initiateSocket (storeObj) {
+export function initiateKiboEngageSocket (storeObj) {
   store = storeObj
   socket.connect()
 }
@@ -59,7 +59,7 @@ socket.on('new_chat', (data) => {
 })
 
 socket.on('message', (data) => {
-  console.log('socket KiboChat called', data.action)
+  console.log('socket KiboEngage called', data.action)
   if ([
     'Messenger_new_subscriber',
     'Messenger_subscribe_subscriber',
@@ -107,8 +107,8 @@ export function log (tag, data) {
   })
 }
 
-export function joinRoom (data) {
-  console.log('Trying to join room socket on KiboChat', data)
+export function joinRoomKiboEngage (data) {
+  console.log('Trying to join room socket on KiboEngage', data)
   myId = data
   if (joined) {
     return
