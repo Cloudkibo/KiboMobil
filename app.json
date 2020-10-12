@@ -10,7 +10,7 @@
       "android"
     ],
     "entryPoint": "./src/App.js",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/images/appstore.png",
     "notification": {
@@ -31,8 +31,13 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.cloudkibo.kibopush",
-      "buildNumber": "1.2.1",
-      "usesIcloudStorage": true
+      "buildNumber": "1.2.2",
+      "usesIcloudStorage": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "KiboPush needs to access your camera roll so that you can upload images and send them on Facebook Messenger",
+        "NSPhotoLibraryAddUsageDescription": "KiboPush needs to access your camera roll so that you can upload images and send them on Facebook Messenger",
+        "NSMicrophoneUsageDescription": "KiboPush needs this permission so that you can record voice notes and send them on Facebook Messenger",
+      }
     },
     "android": {
       "package": "com.cloudkibo.kibopush",
