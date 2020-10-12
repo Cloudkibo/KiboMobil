@@ -25,6 +25,7 @@ class AttachmentsModal extends React.Component {
         quality: 1
       })
       if (result && result.uri) {
+        this.props.setAttachmentsModal()
         let name = result.uri.split('ImagePicker/')[1]
         const info = await FileSystem.getInfoAsync(result.uri)
         result.size = info.size
@@ -39,7 +40,7 @@ class AttachmentsModal extends React.Component {
       <Modal isVisible={this.props.showAttachmentsModal} style={{justifyContent: 'flex-end', margin: 0}} onBackdropPress={this.props.setAttachmentsModal}>
         <Block style={{backgroundColor: 'white', height: 200}}>
           <TouchableOpacity onPress={() => {
-            this.props.setAttachmentsModal()
+            // this.props.setAttachmentsModal()
             this.pickImage()
           }}>
             <Block row style={{marginVertical: 15, marginHorizontal: 16}}>
@@ -57,7 +58,7 @@ class AttachmentsModal extends React.Component {
           <Block style={{borderTopWidth: 1, borderTopColor: '#f4f5f8'}}>
             <TouchableOpacity onPress={() => {
               this.props.selectAttachment()
-              this.props.setAttachmentsModal()
+              // this.props.setAttachmentsModal()
             }}>
               <Block row style={{marginHorizontal: 16, marginVertical: 16}}>
                 <Icon
