@@ -199,15 +199,16 @@ class Footer extends React.Component {
 
   selectAttachment () {
     this.setState({showPickers: false, selectedPicker: ''})
-    DocumentPicker.getDocumentAsync()
-      .then(result => {
-        if (result && result.type === 'success') {
-          this.uploadAttachment(result)
-        }
-      })
-      .catch((err) => {
-        console.log('err in selecting file', err)
-      })
+      DocumentPicker.getDocumentAsync()
+        .then(result => {
+          if (result && result.type === 'success') {
+            this.setState({showAttachmentsModal: false})
+            this.uploadAttachment(result)
+          }
+        })
+        .catch((err) => {
+          console.log('err in selecting file', err)
+        })
   }
 
   onAttachmentUpload (res) {
@@ -687,7 +688,8 @@ class Footer extends React.Component {
                           <TouchableOpacity onPress={() => {
                             Platform.OS === 'ios'
                               ? this.setAttachmentsModal()
-                              : this.selectAttachment()}}>
+                              : this.selectAttachment()
+                          }}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='attachment' family='entypo' />
                           </TouchableOpacity>
                            {!this.props.isWhatspModule &&
