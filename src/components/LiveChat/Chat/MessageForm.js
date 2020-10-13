@@ -445,7 +445,7 @@ class Footer extends React.Component {
     this.setState({
       isLoading: true
     })
-    await Audio.setAudioModeAsync({
+    Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
       playsInSilentModeIOS: true,
@@ -454,20 +454,33 @@ class Footer extends React.Component {
       playThroughEarpieceAndroid: false,
       staysActiveInBackground: true
     })
-    if (this.recording !== null) {
-      this.recording.setOnRecordingStatusUpdate(null)
-      this.recording = null
-    }
-
-    const recording = new Audio.Recording()
-    await recording.prepareToRecordAsync(this.recordingSettings)
-    recording.setOnRecordingStatusUpdate(this._updateScreenForRecordingStatus)
-
-    this.recording = recording
-    await this.recording.startAsync()
-    this.setState({
-      isLoading: false
-    })
+      .then(result => {
+        if (this.recording !== null) {
+          this.recording.setOnRecordingStatusUpdate(null)
+          this.recording = null
+        }
+        const recording = new Audio.Recording()
+        recording.prepareToRecordAsync(this.recordingSettings)
+          .then(result => {
+            recording.setOnRecordingStatusUpdate(this._updateScreenForRecordingStatus)
+            this.recording = recording
+            this.recording.startAsync()
+              .then(result => {
+                this.setState({
+                  isLoading: false
+                })
+              })
+              .catch((err) => {
+                console.log('error in startAsync', err)
+              })
+          })
+          .catch((err) => {
+            console.log('error in prepareToRecordAsync', err)
+          })
+      })
+      .catch((err) => {
+        console.log('error in setAudioModeAsync', err)
+      })
   }
 
   _updateScreenForRecordingStatus (status) {
