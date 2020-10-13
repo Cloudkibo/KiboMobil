@@ -83,6 +83,7 @@ class DashboardHeader extends React.Component {
 
     handlePlatform(value) {
       console.log('value', value)
+      if (this.props.automated_options) {
     if( (value === 'messenger' && this.props.automated_options.facebook) || (value === 'whatsApp' && this.props.automated_options.whatsApp)) {
       if(value !== this.props.user.platform) {
       this.props.clearSession(true)
@@ -104,8 +105,9 @@ class DashboardHeader extends React.Component {
       this.setState({selectedPlatform: 'messenger'})
       Toast.default.show('Please Connect WhatsApp Account with KiboPush')
     }
-   } 
-  } 
+   }
+  }
+  }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
     console.log('DidMount called')

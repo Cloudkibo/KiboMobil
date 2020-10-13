@@ -85,14 +85,15 @@ class AudioComponent extends React.Component {
       isMuted: this.state.muted,
       isLooping: this.state.loopingType === LOOPING_TYPE_ONE
     }
-    const { sound } = await Audio.Sound.createAsync(
-      source,
-      initialStatus,
-      this._onPlaybackStatusUpdate
-    )
-    this.playbackInstance = sound
+    Audio.Sound.createAsync(source, initialStatus, this._onPlaybackStatusUpdate)
+      .then(({sound}) => {
+        this.playbackInstance = sound
 
-    this._updateScreenForLoading(false)
+        this._updateScreenForLoading(false)
+      })
+      .catch((err) => {
+        console.log('error in _loadNewPlaybackInstance', err)
+      })
   }
 
   _updateScreenForLoading (isLoading) {
