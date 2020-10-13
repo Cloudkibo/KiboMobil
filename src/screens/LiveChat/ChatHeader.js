@@ -171,7 +171,6 @@ class Header extends React.Component {
   }
 
   renderRight (activeSession) {
-    console.log('activeSession', activeSession.is_assigned)
     return (
       <Block flex={0.8} row>
         {activeSession.status === 'new'
@@ -252,7 +251,6 @@ class Header extends React.Component {
   }
 
   render () {
-    // console.log('called chatHeader Multiple times')
     const { back, white, transparent } = this.props
     return (
       <Block>
