@@ -67,7 +67,7 @@ class SessionsListItem extends React.Component {
                 color={materialTheme.COLORS.MUTED}
                 style={{marginRight: 5}}
               />
-              <Text h7 muted>
+              <Text h7 muted style={{width: width / 3}} numberOfLines={2}>
                 {moment(this.props.session.last_activity_time).fromNow()}
               </Text>
             </Block>
