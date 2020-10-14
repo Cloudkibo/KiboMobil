@@ -77,6 +77,7 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
     } else {
       session.status = 'new'
     }
+    props.markRead(session._id)
     data = {
       userChat,
       chatCount: props.chatCount + 1,
