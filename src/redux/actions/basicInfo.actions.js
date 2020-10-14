@@ -1,6 +1,14 @@
 import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 
+
+export function saveExpoToken (data) {
+  return {
+    type: ActionTypes.SAVE_EXPOTOKEN,
+    data
+  }
+}
+
 export function setSocketStatus (data) {
   return {
     type: ActionTypes.SET_SOCKET_STATUS,
@@ -84,3 +92,4 @@ export function getAutomatedOptions () {
     callApi(dispatch, 'company/getAutomatedOptions').then(res => dispatch(showAutomatedOptions(res.payload)))
   }
 }
+

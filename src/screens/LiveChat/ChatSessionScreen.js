@@ -10,7 +10,7 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions'
 import Constants from 'expo-constants';
 import WhatsappChatScreen from '../WhatsappLivechat/WhatsappLiveChat'
-import { saveNotificationToken} from '../../redux/actions/basicInfo.actions'
+import { saveNotificationToken, saveExpoToken} from '../../redux/actions/basicInfo.actions'
 import MessengerLiveChat from './LiveChat'
 
 Notifications.setNotificationHandler({
@@ -55,42 +55,51 @@ class ChatSessionScreen extends React.Component {
       };
 
     registerForPushNotificationsAsync = async (user) => {
-     if(user) {
-        if (Constants.isDevice) {
-        const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-        let finalStatus = existingStatus;
-        if (existingStatus !== 'granted') {
-            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-            finalStatus = status;
-        }
-        if (finalStatus !== 'granted') {
-            alert('Failed to get push token for push notification!');
-            return;
-        }
-        let token = (await Notifications.getExpoPushTokenAsync()).data
-        console.log(token);
-        if(!user.expoListToken.includes(token)) {
-            user.expoListToken.push(token)
-            this.props.saveNotificationToken(user)
-            user.currentDeviceToken = token
-        } else {
-            console.log('token already exist in database')
-        }
-        } else {
-        alert('Must use physical device for Push Notifications');
-        }
+        try {
+            if(user) {
+                if (Constants.isDevice) {
+                const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+                let finalStatus = existingStatus;
+                if (existingStatus !== 'granted') {
+                    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+                    finalStatus = status;
+                }
+                if (finalStatus !== 'granted') {
+                    alert('Please enable Notifcation from Device settings to get Push Notifications from KiboPush!');
+                    return;
+                }
+                let token = (await Notifications.getExpoPushTokenAsync()).data
+                console.log(token);
+                if(token) {
+                    this.props.saveExpoToken({expoToken: token})
+                    if(!user.expoListToken.includes(token)) {
+                        user.expoListToken.push(token)
+                        this.props.saveNotificationToken(user)
+                        user.currentDeviceToken = token
+                    } else {
+                        console.log('token already exist in database')
+                    }
+               }
+                } else {
+                  alert('Must use physical device for Push Notifications');
+                }
 
-        if (Platform.OS === 'android') {
-        Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            // importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#FF231F7C',
-        });
-        }
-     }
-    }
-
+                if (Platform.OS === 'android') {
+                Notifications.setNotificationChannelAsync('default', {
+                    name: 'default',
+                    // importance: Notifications.AndroidImportance.MAX,
+                    vibrationPattern: [0, 250, 250, 250],
+                    lightColor: '#FF231F7C',
+                });
+                }
+            }
+        } catch(error) {
+            console.log(error.message);
+            if(error.message.toUpperCase() === 'TOO_MANY_REGISTRATIONS') {
+             alert('Your device has too many apps registered with Firebase Cloud Messaging. Please delete any one app to get Push Notification From KiboPush.')
+            }
+          }
+    } 
     UNSAFE_componentWillReceiveProps (nextProps) {
         if(nextProps.user !== this.props.user) {
             this.registerForPushNotificationsAsync(nextProps.user)
@@ -115,6 +124,7 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
     return bindActionCreators({
     saveNotificationToken,
+    saveExpoToken,
 }, dispatch)
   }
 export default connect(mapStateToProps, mapDispatchToProps)(ChatSessionScreen)

@@ -35,15 +35,19 @@ class SignIn extends React.Component {
   }
 
   async removeExpoToken () {
-    let currentDeviceToken = (await Notifications.getExpoPushTokenAsync()).data
+    let currentDeviceToken = this.props.automated_options ? this.props.automated_options.expoToken : null
     let user = this.props.user
-    if (user) {
-      let expoListToken = user.expoListToken.filter(expoToken => expoToken !== currentDeviceToken)
-      user.expoListToken = expoListToken
-      this.props.saveNotificationToken(user)
-      this.props.logOut()
-    }
+    if(currentDeviceToken) {
+      if (user) {
+        let expoListToken = user.expoListToken.filter(expoToken => expoToken !== currentDeviceToken)
+        user.expoListToken = expoListToken
+        this.props.saveNotificationToken(user)
+        this.props.logOut()
+      }
+  } else {
+    this.props.logOut()
   }
+}
 
   componentDidMount () {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
@@ -167,7 +171,8 @@ class SignIn extends React.Component {
 }
 function mapStateToProps (state) {
   return {
-    user: (state.basicInfo.user)
+    user: (state.basicInfo.user),
+    automated_options: (state.basicInfo.automated_options)
   }
 }
 function mapDispatchToProps (dispatch) {
