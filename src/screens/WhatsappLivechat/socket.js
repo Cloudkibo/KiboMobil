@@ -68,7 +68,6 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
     let userChat = props.userChat
     userChat.push(payload.message)
     session = sessions.splice(index, 1)[0]
-    session.unreadCount = session.unreadCount ? session.unreadCount + 1 : 1
     session.lastPayload = payload.message.payload
     session.last_activity_time = new Date()
     session.lastMessagedAt = new Date()
@@ -78,7 +77,6 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
     } else {
       session.status = 'new'
     }
-    props.markRead(session._id)
     data = {
       userChat,
       chatCount: props.chatCount + 1,
