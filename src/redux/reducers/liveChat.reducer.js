@@ -170,8 +170,8 @@ export function liveChat (state = initialState, action) {
         return new Date(a.datetime) - new Date(b.datetime)
       })
       return Object.assign({}, state, {
-        userChat: orderedChat,
-        chatCount: action.chatCount,
+        userChat: [],
+        chatCount: 0,
         changedStatus: ''
       })
 
