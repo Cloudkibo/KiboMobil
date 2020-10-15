@@ -51,7 +51,6 @@ function CustomDrawerContent ({
               paddingRight: drawerPosition === 'right' ? insets.right : 0
             }
           ]}
-          showsVerticalScrollIndicator={false}
         >
           {screens.map((item, index) => {
             return (
@@ -116,6 +115,7 @@ const styles = StyleSheet.create({
     paddingLeft: 7,
     paddingRight: 14,
     paddingTop: 10,
+    paddingBottom: 15,
     backgroundColor: 'rgb(45, 45, 63)'
   }
 })
