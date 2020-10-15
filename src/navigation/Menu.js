@@ -51,7 +51,6 @@ function CustomDrawerContent ({
               paddingRight: drawerPosition === 'right' ? insets.right : 0
             }
           ]}
-          showsVerticalScrollIndicator={false}
         >
           {screens.map((item, index) => {
             return (
