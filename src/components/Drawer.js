@@ -91,14 +91,13 @@ class DrawerItem extends React.Component {
     const { title, focused, navigation } = this.props
     return (
       <TouchableOpacity
-        style={{ height: 55 }}
+        style={{ height: 56 }}
         onPress={() => {
           title === 'User Guide' ? Linking.openURL('https://kibopush.com/kibopush-mobile')
             : navigation.navigate(title)
         }}
       >
         <Block
-          flex
           row
           style={[
             styles.defaultStyle,
