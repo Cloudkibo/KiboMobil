@@ -71,7 +71,7 @@ export function showOpenSessions (sessions, data) {
     }
   }
 }
-export function showCloseChatSessions (sessions,data) {
+export function showCloseChatSessions (sessions, data) {
   let closeSessions = sessions.closedSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
