@@ -48,7 +48,6 @@ export function updateWhatspSessions (data) {
   }
 }
 export function showOpenSessions (sessions, data) {
-  console.log('data', data)
   let openSessions = sessions.openSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
@@ -104,7 +103,9 @@ export function fetchOpenSessions (data) {
   return (dispatch) => {
     callApi(dispatch, 'whatsAppSessions/getOpenSessions', 'post', data)
       .then(res => {
-        dispatch(showOpenSessions(res.payload, data))
+        if (res.status === 'success') {
+          dispatch(showOpenSessions(res.payload, data))
+        }
       })
   }
 }
@@ -112,7 +113,9 @@ export function fetchCloseSessions (data) {
   return (dispatch) => {
     callApi(dispatch, 'whatsAppSessions/getClosedSessions', 'post', data)
       .then(res => {
-        dispatch(showCloseChatSessions(res.payload, data))
+        if (res.status === 'success') {
+          dispatch(showCloseChatSessions(res.payload, data))
+        }
       })
   }
 }
