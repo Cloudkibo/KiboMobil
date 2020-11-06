@@ -335,10 +335,12 @@ export function uploadAttachment (fileData, handleUpload) {
           handleUpload(res)
         })
           .catch((err) => {
+            handleUpload({status: 'failed'})
             console.log('failed to upload file', err)
           })
       })
       .catch((err) => {
+        handleUpload({status: 'failed'})
         console.log('failed to fetch token', err)
       })
   }
