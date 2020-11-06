@@ -173,42 +173,47 @@ class Footer extends React.Component {
       Alert.alert('ERROR!', 'Attachment exceeds the limit of 25MB', [{ text: 'OK' }], { cancelable: true })
     } else {
       let type = mime.lookup(file.uri)
+      console.log('type', type)
       const data = this.props.performAction('send attachments', this.props.activeSession)
-      if (data.isAllowed) {
-        if (this.state.attachment && this.state.attachment.id) {
-          this.props.deletefile(this.state.attachment.id)
+      if (type) {
+        if (data.isAllowed) {
+          if (this.state.attachment && this.state.attachment.id) {
+            this.props.deletefile(this.state.attachment.id)
+          }
+          const componentType = this.getComponentType(type)
+          this.setState({
+            uploadingFile: true,
+            attachment: file,
+            componentType
+          })
+          var fileData = new FormData()
+          fileData.append('file', {uri: file.uri, type: type, name: file.name, size: file.size})
+          fileData.append('filename', file.name)
+          fileData.append('filetype', type)
+          fileData.append('filesize', file.size)
+          fileData.append('componentType', componentType)
+          this.props.uploadAttachment(fileData, this.onAttachmentUpload)
+        } else {
+          Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
         }
-        const componentType = this.getComponentType(type)
-        this.setState({
-          uploadingFile: true,
-          attachment: file,
-          componentType
-        })
-        var fileData = new FormData()
-        fileData.append('file', {uri: file.uri, type: type, name: file.name, size: file.size})
-        fileData.append('filename', file.name)
-        fileData.append('filetype', type)
-        fileData.append('filesize', file.size)
-        fileData.append('componentType', componentType)
-        this.props.uploadAttachment(fileData, this.onAttachmentUpload)
       } else {
-        Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
+        Alert.alert('ERROR!', 'This file type is not supported', [{ text: 'OK' }], { cancelable: true })
       }
     }
   }
 
   selectAttachment () {
     this.setState({showPickers: false, selectedPicker: ''})
-      DocumentPicker.getDocumentAsync()
-        .then(result => {
-          if (result && result.type === 'success') {
-            this.setState({showAttachmentsModal: false})
-            this.uploadAttachment(result)
-          }
-        })
-        .catch((err) => {
-          console.log('err in selecting file', err)
-        })
+    DocumentPicker.getDocumentAsync()
+      .then(result => {
+        if (result && result.type === 'success') {
+          this.setState({showAttachmentsModal: false})
+          this.uploadAttachment(result)
+        }
+      })
+      .catch((err) => {
+        console.log('err in selecting file', err)
+      })
   }
 
   onAttachmentUpload (res) {
@@ -699,7 +704,7 @@ class Footer extends React.Component {
                             <Icon size={20} color={theme.COLORS.MUTED} name='emoji-happy' family='entypo' />
                           </TouchableOpacity>
                           <TouchableOpacity onPress={() => {
-                            Platform.OS === 'ios'
+                            Platform.OS === 'android'
                               ? this.setAttachmentsModal()
                               : this.selectAttachment()
                           }}>
