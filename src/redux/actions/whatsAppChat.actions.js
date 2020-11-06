@@ -4,6 +4,13 @@ import callApi from '../../utility/api.caller.service'
 import { AsyncStorage } from 'react-native'
 export const API_URL = 'https://kibochat.cloudkibo.com/api'
 
+
+export function backgroundWhatsappSessionFetch(data) {
+    return {
+      type: ActionTypes.BACKGROUND_WHATSAPP_SESSION_FETCH,
+      data: data
+    }
+  }
 export function updateLiveChatInfo (data) {
   return {
     type: ActionTypes.UPDATE_WHATSAPPCHAT_INFO,
@@ -50,12 +57,12 @@ export function updateWhatspSessions (data) {
 export function showOpenSessions (sessions, data) {
   var subscribers = ''
   // var payload = ''
-  console.log('sessions.isBackgroundDataFetch', sessions.isBackgroundDataFetch)
   if(sessions.isBackgroundDataFetch) {
       subscribers = sessions.payload.openSessions.map((s) => {
       let name = s.name.split(' ')
       s.firstName = name[0]
       s.lastName = name[1]
+      s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
       return s
     })
     // payload.subscribers = subscribers
@@ -66,6 +73,7 @@ export function showOpenSessions (sessions, data) {
     let name = s.name.split(' ')
     s.firstName = name[0]
     s.lastName = name[1]
+    s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
     return s
   })
 }
@@ -85,27 +93,45 @@ export function showOpenSessions (sessions, data) {
     }
   }
 }
-export function showCloseChatSessions (sessions, data) {
-  let closeSessions = sessions.closedSessions.map((s) => {
+export function showCloseChatSessions (sessions, firstPage) {
+  var subscribers = ''
+  // var payload = ''
+  console.log('sessions.isBackgroundDataFetch', sessions.isBackgroundDataFetch)
+  if(sessions.isBackgroundDataFetch) {
+      subscribers = sessions.payload.closedSessions.map((s) => {
+      let name = s.name.split(' ')
+      s.firstName = name[0]
+      s.lastName = name[1]
+      s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
+      return s
+    })
+    // payload.subscribers = subscribers
+    // payload.isBackgroundDataFetch= sessions.isBackgroundDataFetch
+
+  } else {
+    subscribers = sessions.closedSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
     s.lastName = name[1]
     s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
     return s
   })
-
-  if (data.first_page) {
+}
+  // var sorted = subscribers.sort(function (a, b) {
+  //   return new Date(b.lastDateTime) - new Date(a.lastDateTime)
+  // })
+  if (firstPage) {
     return {
       type: ActionTypes.SHOW_CLOSE_WHATSAPP_SESSIONS_OVERWRITE,
-      closeSessions,
-      closeCount: sessions.count
+      closeSessions: subscribers,
+      count: sessions.count,
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch 
     }
-  } else {
-    return {
-      type: ActionTypes.FETCH_WHATSAPP_CLOSE_SESSIONS,
-      closeSessions,
-      closeCount: sessions.count
-    }
+  }
+  return {
+    type: ActionTypes.SHOW_CLOSE_CHAT_SESSIONS,
+    closeSessions: subscribers,
+    count: sessions.count
   }
 }
 export function UpdateUnreadCount (data) {

@@ -85,10 +85,10 @@ socket.on('message', (data) => {
   // } else if (data.action === 'new_session_created_whatsapp') {
   //   store.dispatch(whatsAppActions.updateWhatspSessions(data.payload))
   // }
-  // if (['new_chat_whatsapp', 'agent_replied_whatsapp', 'session_pending_response_whatsapp', 'unsubscribe_whatsapp', 'session_status_whatsapp', 'new_session_created_whatsapp', 'message_delivered_whatsApp', 'message_seen_whatsApp'].includes(data.action)) {
-  //   if (data.action === 'new_chat_whatsapp') data.showNotification = true
-  //   store.dispatch(handleSocketEventWhatsapp(data))
-  // }
+  if (['new_chat_whatsapp', 'agent_replied_whatsapp', 'session_pending_response_whatsapp', 'unsubscribe_whatsapp', 'session_status_whatsapp', 'new_session_created_whatsapp', 'message_delivered_whatsApp', 'message_seen_whatsApp'].includes(data.action)) {
+    if (data.action === 'new_chat_whatsapp') data.showNotification = true
+    store.dispatch(handleSocketEventWhatsapp(data))
+  }
   // if (['new_subscriber'].includes(data.action)) {
   //   store.dispatch(handleSocketEventSubscribers(data))
   // }

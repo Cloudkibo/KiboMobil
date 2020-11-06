@@ -191,6 +191,10 @@ export function whatsAppChatInfo (state = initialState, action) {
         openSessions: openSessions ? [...openSessions] : openSessions,
         closeSessions: closeSessions ? [...closeSessions] : closeSessions
       })
+      case ActionTypes.BACKGROUND_WHATSAPP_SESSION_FETCH:
+      return Object.assign({}, state, {
+        isBackgroundWhatsappDataFetch: action.data
+      }) 
     default:
       return state
   }

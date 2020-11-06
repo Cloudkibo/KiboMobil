@@ -10,7 +10,7 @@ import { loadDashboardData } from '../../redux/actions/dashboard.actions'
 import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
 import {backgroundSessionDataFetch} from '../../redux/actions/liveChat.actions'
-
+import { backgroundWhatsappSessionFetch} from '../../redux/actions/whatsAppChat.actions'
 // import * as Sentry from 'sentry-expo'
 import Bugsnag from '@bugsnag/expo'
 import VersionCheck from 'react-native-version-check-expo'
@@ -97,12 +97,16 @@ class Loading extends React.Component {
     console.log('AppState.currentState', this.state.appState)
     console.log('AppState.nextAppState', nextAppState)
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      // console.log('App has come to the foreground!')
-      this.props.backgroundSessionDataFetch(true)
-
-    }
-    this.setState({appState: nextAppState})
+      console.log('App has come to the foreground!')
+      console.log('this.props.user.platform', this.props.user.platform)
+      if(this.props.user.platform === 'messenger') {
+        this.props.backgroundSessionDataFetch(true)
+      } else if(this.props.user.platform === 'whatsApp') {
+        this.props.backgroundWhatsappSessionFetch(true)
+       }
   }
+  this.setState({appState: nextAppState})
+}
   componentWillUnmount () {
     this._unsubscribe()
     AppState.removeEventListener('change', this._handleAppStateChange)
@@ -177,7 +181,8 @@ function mapDispatchToProps (dispatch) {
     loadDashboardData,
     fetchPages,
     loadCardBoxesDataWhatsApp,
-    backgroundSessionDataFetch
+    backgroundSessionDataFetch,
+    backgroundWhatsappSessionFetch
   }, dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Loading)
