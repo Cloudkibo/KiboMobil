@@ -11,6 +11,13 @@ export function updateLiveChatInfo (data) {
   }
 }
 
+export function updateAgents (data) {
+  return {
+    type: ActionTypes.UPDATE_TEAM_AGENTS,
+    data
+  }
+}
+
 export function updateSessions (data) {
   return {
     type: ActionTypes.UPDATE_SESSIONS_WHATSAPP,
@@ -40,32 +47,65 @@ export function updateWhatspSessions (data) {
     data
   }
 }
-export function showOpenSessions (data) {
-  let openSessions = data.openSessions.map((s) => {
+export function showOpenSessions (sessions, data) {
+  var subscribers = ''
+  // var payload = ''
+  console.log('sessions.isBackgroundDataFetch', sessions.isBackgroundDataFetch)
+  if(sessions.isBackgroundDataFetch) {
+      subscribers = sessions.payload.openSessions.map((s) => {
+      let name = s.name.split(' ')
+      s.firstName = name[0]
+      s.lastName = name[1]
+      return s
+    })
+    // payload.subscribers = subscribers
+    // payload.isBackgroundDataFetch= sessions.isBackgroundDataFetch
+
+  } else {
+    subscribers = sessions.openSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
     s.lastName = name[1]
-    s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
     return s
   })
-  return {
-    type: ActionTypes.FETCH_WHATSAPP_OPEN_SESSIONS,
-    openSessions,
-    openCount: data.count
+}
+
+  if (data.first_page && (data.page_value !== '' || data.search_value !== '')) {
+    return {
+      type: ActionTypes.SHOW_OPEN_WHATSAPP_SESSIONS_OVERWRITE,
+      openSessions: subscribers,
+      count: sessions.count,
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch 
+    }
+  } else {
+    return {
+      type: ActionTypes.FETCH_WHATSAPP_OPEN_SESSIONS,
+      openSessions: subscribers,
+      count: sessions.count
+    }
   }
 }
-export function showCloseChatSessions (data) {
-  let closeSessions = data.closedSessions.map((s) => {
+export function showCloseChatSessions (sessions, data) {
+  let closeSessions = sessions.closedSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
     s.lastName = name[1]
     s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
     return s
   })
-  return {
-    type: ActionTypes.FETCH_WHATSAPP_CLOSE_SESSIONS,
-    closeSessions,
-    closeCount: data.count
+
+  if (data.first_page) {
+    return {
+      type: ActionTypes.SHOW_CLOSE_WHATSAPP_SESSIONS_OVERWRITE,
+      closeSessions,
+      closeCount: sessions.count
+    }
+  } else {
+    return {
+      type: ActionTypes.FETCH_WHATSAPP_CLOSE_SESSIONS,
+      closeSessions,
+      closeCount: sessions.count
+    }
   }
 }
 export function UpdateUnreadCount (data) {
@@ -74,19 +114,39 @@ export function UpdateUnreadCount (data) {
     data
   }
 }
-export function fetchOpenSessions (data) {
+export function fetchOpenSessions (data,isBackgroundDataFetch) {
   return (dispatch) => {
     callApi(dispatch, 'whatsAppSessions/getOpenSessions', 'post', data)
       .then(res => {
-        dispatch(showOpenSessions(res.payload))
+        if (res.status === 'success') {
+          if(isBackgroundDataFetch) {
+            let newPayload = {
+              payload : res.payload,
+              isBackgroundDataFetch: isBackgroundDataFetch
+            }
+            dispatch(showOpenSessions(newPayload, data))
+          } else {
+            dispatch(showOpenSessions(res.payload, data))
+          }
+        }
       })
   }
 }
-export function fetchCloseSessions (data) {
+export function fetchCloseSessions (data,isBackgroundDataFetch) {
   return (dispatch) => {
     callApi(dispatch, 'whatsAppSessions/getClosedSessions', 'post', data)
       .then(res => {
-        dispatch(showCloseChatSessions(res.payload, data.first_page))
+        if (res.status === 'success') {
+          if(isBackgroundDataFetch) {
+            let newPayload = {
+              payload : res.payload,
+              isBackgroundDataFetch: isBackgroundDataFetch
+            }
+            dispatch(showCloseChatSessions(newPayload, data.first_page))
+          } else {
+            dispatch(showCloseChatSessions(res.payload, data.first_page))
+          }
+        }
       })
   }
 }
