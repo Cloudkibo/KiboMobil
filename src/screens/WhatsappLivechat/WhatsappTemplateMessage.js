@@ -2,14 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import {validatePhoneNumber} from '../../utility/utils'
-import { StyleSheet, Dimensions, Image, FlatList, Alert, ActivityIndicator, Platform, TextInput,ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Dimensions, FlatList, Alert, Platform ,ScrollView, KeyboardAvoidingView } from 'react-native'
 import { Button, Block, Text, theme, Input } from 'galio-framework'
 import { CheckBox } from 'react-native-elements'
 import {createNewContact, sendChatMessage} from '../../redux/actions/whatsAppChat.actions'
-import { materialTheme } from '../../constants/'
-import { View } from 'react-native-animatable';
+import { View } from 'react-native-animatable'
 import Perview from './Preview'
-const { width } = Dimensions.get('screen')
+const { width, height } = Dimensions.get('screen')
 
 let Toast = null
 if (Platform.OS === 'ios') {
@@ -29,7 +28,7 @@ class WhatsappTemplateMessage extends React.Component {
       number: '',
       isPhoneNumberValid: false,
       isButtonDisabled: true,
-      selectedTemplate: this.props.whatsAppMessageTemplates ? {...this.props.whatsAppMessageTemplates[0]}: null
+      selectedTemplate: this.props.whatsAppMessageTemplates && this.props.whatsAppMessageTemplates.length > 0 ? {...this.props.whatsAppMessageTemplates[0]} : null
     }
     this.renderItem = this.renderItem.bind(this)
     this.onInputPhoneChange = this.onInputPhoneChange.bind(this)
@@ -62,16 +61,16 @@ class WhatsappTemplateMessage extends React.Component {
   }
 
   sendTemplate () {
-    if(!this.state.isButtonDisabled) {
+    if (!this.state.isButtonDisabled) {
       this.setState({sendingTemplate: true, loading: true})
-        this.props.createNewContact({
-          number: '+' + this.state.number.replace(/\D/g, '')
-        }, (res) => {
-            this._sendTemplate(res.payload)
-        })
-      }
+      this.props.createNewContact({
+        number: '+' + this.state.number.replace(/\D/g, '')
+      }, (res) => {
+        this._sendTemplate(res.payload)
+      })
     }
-  _sendTemplate(session) {
+  }
+  _sendTemplate (session) {
     let payload = {
       componentType: 'text',
       text: this.state.selectedTemplate.text,
@@ -81,42 +80,42 @@ class WhatsappTemplateMessage extends React.Component {
     }
     let data = this._setMessageData(session, payload)
     this.props.sendChatMessage(data, (res) => {
-      this.setState({loading:false, activeSession: session})
+      this.setState({loading: false, activeSession: session})
       if (res.status === 'success') {
         Toast.default.show('Message sent successfully')
         this.reset()
-        this.props.navigation.navigate('Live Chat', { activeSession: session})
+        this.props.navigation.navigate('Live Chat', {activeSession: session})
       } else {
         this.showErrorDialog(res.payload)
-     }
-    })
-    }
-    _setMessageData(session, payload, urlMeta) {
-      const data = {
-        senderNumber: this.props.automated_options.whatsApp.businessNumber,
-        recipientNumber: session.number,
-        contactId: session._id,
-        payload,
-        datetime: new Date().toString(),
-        repliedBy: {
-          id: this.props.user._id,
-          name: this.props.user.name,
-          type: 'agent'
-        },
-        url_meta: urlMeta
       }
-      return data
+    })
+  }
+  _setMessageData (session, payload, urlMeta) {
+    const data = {
+      senderNumber: this.props.automated_options.whatsApp.businessNumber,
+      recipientNumber: session.number,
+      contactId: session._id,
+      payload,
+      datetime: new Date().toString(),
+      repliedBy: {
+        id: this.props.user._id,
+        name: this.props.user.name,
+        type: 'agent'
+      },
+      url_meta: urlMeta
     }
+    return data
+  }
   onTextChange (text) {
     let selectedTemplate = this.state.selectedTemplate
-    selectedTemplate.text =  text
+    selectedTemplate.text = text
     this.setState({
       selectedTemplate: selectedTemplate
     })
     this.validateTemplate(text)
   }
 
-  validateTemplate(msg) {
+  validateTemplate (msg) {
     let regex = new RegExp(this.state.selectedTemplate.regex)
     let templateArguments = this.state.selectedTemplate.templateArguments
     let isValid = regex.test(msg)
@@ -130,7 +129,7 @@ class WhatsappTemplateMessage extends React.Component {
       templateArguments = matches.slice(1).join(',')
     }
     let buttonDisabled = true
-    if(this.state.isPhoneNumberValid && isValid) {
+    if (this.state.isPhoneNumberValid && isValid) {
       buttonDisabled = false
     }
     this.setState({
@@ -143,15 +142,15 @@ class WhatsappTemplateMessage extends React.Component {
     this.setState({showAssignmentModal: true})
   }
   reset () {
-    this.setState({number: '', selectedTemplate: {...this.props.whatsAppMessageTemplates[0]}, isPhoneNumberValid:false, isTemplateValid: true, isButtonDisabled: true})
+    this.setState({number: '', selectedTemplate: {...this.props.whatsAppMessageTemplates[0]}, isPhoneNumberValid: false, isTemplateValid: true, isButtonDisabled: true})
   }
 
   changeSelected (item) {
-   this.setState({isTemplateValid: true, selectedTemplate: {...item}})
+    this.setState({isTemplateValid: true, selectedTemplate: {...item}})
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
-    if(nextProps.whatsAppMessageTemplates && !this.state.selectedTemplate) {
+    if (nextProps.whatsAppMessageTemplates && nextProps.whatsAppMessageTemplates.length > 0 && !this.state.selectedTemplate) {
       this.setState({selectedTemplate: {...this.props.whatsAppMessageTemplates[0]}})
     }
   }
@@ -159,7 +158,7 @@ class WhatsappTemplateMessage extends React.Component {
   onInputPhoneChange (text) {
     let isPhoneNumberValid = validatePhoneNumber(text)
     let buttonDisabled = true
-    if(this.state.isTemplateValid && isPhoneNumberValid) {
+    if (this.state.isTemplateValid && isPhoneNumberValid) {
       buttonDisabled = false
     }
     this.setState({
@@ -180,96 +179,101 @@ class WhatsappTemplateMessage extends React.Component {
     )
   }
   render () {
-      return (
-        <ScrollView >
+    return (
+      <ScrollView >
         <KeyboardAvoidingView
-        keyboardVerticalOffset={100}
-        behavior={Platform.OS == "ios" ? "padding" : null}
-        style={{
-          flex: 1
-        }}
-      >
+          keyboardVerticalOffset={100}
+          behavior={Platform.OS === 'ios' ? 'padding' : null}
+          style={{
+            flex: 1
+          }}>
           <Block flex center style={styles.block}>
-            <Block shadow style={styles.pages}>
-              <Text style={{marginHorizontal: 25,fontWeight: "bold" , marginTop:10}}>
-                WhatsApp Number:
-              </Text>
-              <View style={{marginTop:5}}>
-              <Input
-                style={{height: 40, width: 300, marginHorizontal: 25,  borderColor: 'gray', borderWidth: 1}}
-                value={this.state.number}
-                onChangeText={text => this.onInputPhoneChange(text)}
-                color='black'
-              />
-              <Text style={{marginHorizontal: 25,fontWeight: "bold", color: this.state.isPhoneNumberValid ? 'white': 'red'}}>
-                 Invalid phone number
-              </Text>
-              </View>
-              <Text style={{marginHorizontal: 25, marginTop:5, fontWeight: "bold" }}>
-                Select Template:
-              </Text>
-              <FlatList
-              style={{marginTop: 2}}
-              data={this.props.whatsAppMessageTemplates}
-              renderItem={this.renderItem}
-              keyExtractor={(item) => item.name} />
-              {/* <ScrollView
-              style= {{marginTop: 10,  marginHorizontal: 25, height:80}}
-              showsVerticalScrollIndicator = {true}
-              persistentScrollbar={true}
-              > */}
+            {this.props.whatsAppMessageTemplates && this.props.whatsAppMessageTemplates.length > 0
+              ? <Block shadow style={styles.pages}>
+                <Text style={{marginHorizontal: 25, fontWeight: 'bold', marginTop: 10}}>
+                  WhatsApp Number:
+                </Text>
+                <View style={{marginTop: 5}}>
+                  <Input
+                    style={{height: 40, width: 300, marginHorizontal: 25, borderColor: 'gray', borderWidth: 1}}
+                    value={this.state.number}
+                    onChangeText={text => this.onInputPhoneChange(text)}
+                    color='black'
+                  />
+                  <Text style={{marginHorizontal: 25, fontWeight: 'bold', color: this.state.isPhoneNumberValid ? 'white' : 'red'}}>
+                    Invalid phone number
+                  </Text>
+                </View>
+                <Text style={{marginHorizontal: 25, marginTop: 5, fontWeight: 'bold'}}>
+                  Select Template:
+                </Text>
+                <FlatList
+                  style={{marginTop: 2}}
+                  data={this.props.whatsAppMessageTemplates}
+                  renderItem={this.renderItem}
+                  keyExtractor={(item) => item.name} />
+                {/* <ScrollView
+                style= {{marginTop: 10,  marginHorizontal: 25, height:80}}
+                showsVerticalScrollIndicator = {true}
+                persistentScrollbar={true}
+                > */}
                 <Input
-                color='black'
-                style={{paddingVertical: 0, marginTop: 10,  marginHorizontal: 25, height:70, borderColor: 'gray', width: 300}}
-                multiline = {true}
-                numberOfLines = {4}
-                value={this.state.selectedTemplate ? this.state.selectedTemplate.text: ''}
-                onChangeText={text => this.onTextChange(text)}
+                  color='black'
+                  style={{paddingVertical: 0, marginTop: 10, marginHorizontal: 25, height: 70, borderColor: 'gray', width: 300}}
+                  multiline
+                  numberOfLines={4}
+                  value={this.state.selectedTemplate ? this.state.selectedTemplate.text : ''}
+                  onChangeText={text => this.onTextChange(text)}
                 />
-              {/* </ScrollView> */}
-              {!this.state.isTemplateValid &&
-              <Text style={{marginHorizontal: 25,fontWeight: "bold", color: 'red'}}>
-                 Message template format cann't be changed.
-              </Text>
-              }
-              <Text style={{marginHorizontal: 25}}>
-              {'Each variable "{{x}}" can be replaced with text that contains letters, digits, special characters or spaces.'}
-            </Text>
-            <View style={styles.container}>
-              <Button radius={10}
-                style={styles.button}
-                onPress={this.reset}>Reset</Button>
-              <Button radius={10}
-                style={styles.button}
-                onPress={this.Preview}>Preview</Button>
-              <Button radius={10}
-                loading={this.state.loading}
-                style={this.state.isButtonDisabled ? [styles.button, {backgroundColor:'#CE9DD9'}]: [styles.button]}
-                onPress={this.sendTemplate}
-                >Send</Button>
-            </View>
+                {/* </ScrollView> */}
+                {!this.state.isTemplateValid &&
+                <Text style={{marginHorizontal: 25, fontWeight: 'bold', color: 'red'}}>
+                   Message template format cann't be changed.
+                </Text>
+                }
+                <Text style={{marginHorizontal: 25}}>
+                  {'Each variable "{{x}}" can be replaced with text that contains letters, digits, special characters or spaces.'}
+                </Text>
+                <View style={styles.container}>
+                  <Button radius={10}
+                    style={styles.button}
+                    onPress={this.reset}>Reset</Button>
+                  <Button radius={10}
+                    style={styles.button}
+                    onPress={this.Preview}>Preview</Button>
+                  <Button radius={10}
+                    loading={this.state.loading}
+                    style={this.state.isButtonDisabled ? [styles.button, {backgroundColor: '#CE9DD9'}] : [styles.button]}
+                    onPress={this.sendTemplate}
+                  >Send</Button>
+                </View>
 
-          <Perview
-          showModal={this.state.showAssignmentModal}
-          toggleAssignmentModal={this.toggleAssignmentModal}
-          user = {this.props.user}
-          selectedTemplate = {this.state.selectedTemplate}
-          />
-            </Block>
+                <Perview
+                  showModal={this.state.showAssignmentModal}
+                  toggleAssignmentModal={this.toggleAssignmentModal}
+                  user={this.props.user}
+                  selectedTemplate={this.state.selectedTemplate}
+                />
+              </Block>
+              : <Block flex>
+                <Text style={{marginHorizontal: 16, marginTop: 10}}>
+                  You do not have any WhatsApp Templates approved for your account. Please contact your WhatsApp Service Provider in order to get templates for your account.
+                </Text>
+              </Block>
+            }
           </Block>
         </KeyboardAvoidingView>
-        </ScrollView>
+      </ScrollView>
 
-      )
-    }
-
+    )
+  }
 }
 
 function mapStateToProps (state) {
   return {
     whatsAppMessageTemplates: (state.settingsInfo.whatsAppMessageTemplates),
     automated_options: (state.basicInfo.automated_options),
-    user: (state.basicInfo.user),
+    user: (state.basicInfo.user)
   }
 }
 
@@ -283,6 +287,7 @@ function mapDispatchToProps (dispatch) {
 export default connect(mapStateToProps, mapDispatchToProps)(WhatsappTemplateMessage)
 const styles = StyleSheet.create({
   block: {
+    height: height,
     width: width,
     backgroundColor: 'white'
   },
@@ -322,10 +327,10 @@ const styles = StyleSheet.create({
     height: 40,
     width: 100,
     marginHorizontal: 10,
-    marginVertical: 15,
+    marginVertical: 15
   },
   container: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'row'
   }
 })

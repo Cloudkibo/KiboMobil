@@ -58,6 +58,6 @@ export function getWhatsAppMessageTemplates () {
     callApi(dispatch, 'company/getWhatsAppMessageTemplates')
       .then(res => {
         dispatch(updateWhatsAppMessageTemplates(res.payload))
-    })
+      })
   }
 }
