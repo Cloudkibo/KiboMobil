@@ -9,6 +9,7 @@ import { joinRoomKiboEngage } from '../../socket/kiboengageSocket'
 import { loadDashboardData } from '../../redux/actions/dashboard.actions'
 import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
+import {backgroundSessionDataFetch} from '../../redux/actions/liveChat.actions'
 
 // import * as Sentry from 'sentry-expo'
 import Bugsnag from '@bugsnag/expo'
@@ -28,6 +29,7 @@ class Loading extends React.Component {
     this.handleAutomatedResponse = this.handleAutomatedResponse.bind(this)
     this.fetchInActiveData = this.fetchInActiveData.bind(this)
     this._handleAppStateChange = this._handleAppStateChange.bind(this)
+    
     // this._handleNotification = this._handleNotification.bind(this)
   }
 
@@ -95,7 +97,9 @@ class Loading extends React.Component {
     console.log('AppState.currentState', this.state.appState)
     console.log('AppState.nextAppState', nextAppState)
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      console.log('App has come to the foreground!')
+      // console.log('App has come to the foreground!')
+      this.props.backgroundSessionDataFetch(true)
+
     }
     this.setState({appState: nextAppState})
   }
@@ -172,7 +176,8 @@ function mapDispatchToProps (dispatch) {
     getAutomatedOptions,
     loadDashboardData,
     fetchPages,
-    loadCardBoxesDataWhatsApp
+    loadCardBoxesDataWhatsApp,
+    backgroundSessionDataFetch
   }, dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Loading)

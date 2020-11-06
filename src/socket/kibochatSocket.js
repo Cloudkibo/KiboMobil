@@ -76,10 +76,11 @@ socket.on('message', (data) => {
     'Whatsapp_subscriberName_update'].includes(data.action)) {
     handleWhatsAppSubscribers(store, data)
   }
-  // if (['new_chat', 'agent_replied', 'session_pending_response', 'unsubscribe', 'session_status'].includes(data.action)) {
-  //   if (data.action === 'new_chat') data.showNotification = true
-  //   store.dispatch(handleSocketEvent(data))
-  // } else if (data.action === 'session_assign') {
+  if (['new_chat', 'agent_replied', 'session_pending_response', 'unsubscribe', 'session_status'].includes(data.action)) {
+    if (data.action === 'new_chat') data.showNotification = true
+    store.dispatch(handleSocketEvent(data))
+  } 
+  //else if (data.action === 'session_assign') {
   //   store.dispatch(updateSessions(data.payload.data))
   // } else if (data.action === 'new_session_created_whatsapp') {
   //   store.dispatch(whatsAppActions.updateWhatspSessions(data.payload))

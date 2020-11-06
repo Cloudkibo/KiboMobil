@@ -9,7 +9,7 @@ import { materialTheme } from '../../constants/'
 import * as Notifications from 'expo-notifications'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
-import {fetchOpenSessions, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead, clearSession} from '../../redux/actions/liveChat.actions'
+import {fetchOpenSessions, backgroundSessionDataFetch, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead, clearSession} from '../../redux/actions/liveChat.actions'
 import { updatePicture } from '../../redux/actions/subscribers.actions'
 import { handleSocketEvent } from './socket'
 import { clearSocketData } from '../../redux/actions/socket.actions'
@@ -123,6 +123,11 @@ class LiveChat extends React.Component {
         this.props.clearSocketData
       )
     }
+    if(nextProps.isBackgroundDataFetch) {
+      console.log('backgroundSessionDataFetch', nextProps.isBackgroundDataFetch)
+      this.props.backgroundSessionDataFetch(false)
+      this.fetchSessions(true, 'none', true, true)
+    }
   }
 
   changeTab (value) {
@@ -176,7 +181,7 @@ class LiveChat extends React.Component {
     return chatPreview
   }
 
-  fetchSessions (firstPage, lastId, fetchBoth) {
+  fetchSessions (firstPage, lastId, fetchBoth, isBackgroundDataFetch) {
     const data = {
       first_page: firstPage,
       last_id: lastId,
@@ -191,8 +196,8 @@ class LiveChat extends React.Component {
       }
     }
     if (fetchBoth) {
-      this.props.fetchOpenSessions(data)
-      this.props.fetchCloseSessions(data)
+      this.props.fetchOpenSessions(data,  isBackgroundDataFetch)
+      this.props.fetchCloseSessions(data, isBackgroundDataFetch)
     } else if (this.state.tabValue === 'open') {
       this.props.fetchOpenSessions(data)
     } else if (this.state.tabValue === 'close') {
@@ -202,7 +207,6 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillMount () {
-
 
     // console.log('this.props.route.params', this.props.route)
     // if (this.props.route.params && this.props.route.params.activeSession){
@@ -338,7 +342,8 @@ function mapStateToProps (state) {
     socketData: (state.socketInfo.socketData),
     userChat: (state.liveChat.userChat),
     chatCount: (state.liveChat.chatCount),
-    chatLoading: (state.liveChat.chatLoading)
+    chatLoading: (state.liveChat.chatLoading),
+    isBackgroundDataFetch: (state.liveChat.isBackgroundDataFetch)
   }
 }
 
@@ -351,7 +356,8 @@ function mapDispatchToProps (dispatch) {
     clearSocketData,
     updateLiveChatInfo,
     markRead,
-    clearSession
+    clearSession,
+    backgroundSessionDataFetch
   }, dispatch)
 }
 

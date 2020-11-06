@@ -5,6 +5,7 @@ import { AsyncStorage } from 'react-native'
 
 export const API_URL = 'https://kibochat.cloudkibo.com/api'
 
+
 export function updateSessionProfilePicture (subscriber, profilePic) {
   return {
     type: ActionTypes.UPDATE_SESSION_PROFILE_PICTURE,
@@ -13,6 +14,12 @@ export function updateSessionProfilePicture (subscriber, profilePic) {
   }
 }
 
+export function backgroundSessionDataFetch (data) {
+  return {
+    type: ActionTypes.BACKGROUND_SESSION_DATA_FETCH,
+    data: data
+  }
+}
 export function clearSession (data) {
   return {
     type: ActionTypes.LOADING_CHAT,
@@ -87,12 +94,30 @@ export function updateUserChat (message) {
 }
 
 export function showOpenChatSessions (sessions, data) {
-  var subscribers = sessions.openSessions.map((s) => {
+  var subscribers = ''
+  // var payload = ''
+  console.log('sessions.isBackgroundDataFetch', sessions.isBackgroundDataFetch)
+  if(sessions.isBackgroundDataFetch) {
+      subscribers = sessions.payload.openSessions.map((s) => {
+      let name = s.name.split(' ')
+      s.firstName = name[0]
+      s.lastName = name[1]
+      return s
+    })
+    // payload.subscribers = subscribers
+    // payload.isBackgroundDataFetch= sessions.isBackgroundDataFetch
+
+  } else {
+    subscribers = sessions.openSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
     s.lastName = name[1]
     return s
   })
+}
+
+  // console.log('sessions.subscribers', payload.isBackgroundDataFetch)
+
   // var sorted = subscribers.sort(function (a, b) {
   //   return new Date(b.lastDateTime) - new Date(a.lastDateTime)
   // })
@@ -100,7 +125,8 @@ export function showOpenChatSessions (sessions, data) {
     return {
       type: ActionTypes.SHOW_OPEN_CHAT_SESSIONS_OVERWRITE,
       openSessions: subscribers,
-      count: sessions.count
+      count: sessions.count,
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch 
     }
   } else {
     return {
@@ -112,12 +138,27 @@ export function showOpenChatSessions (sessions, data) {
 }
 
 export function showCloseChatSessions (sessions, firstPage) {
-  var subscribers = sessions.closedSessions.map((s) => {
+  var subscribers = ''
+  // var payload = ''
+  console.log('sessions.isBackgroundDataFetch', sessions.isBackgroundDataFetch)
+  if(sessions.isBackgroundDataFetch) {
+      subscribers = sessions.payload.closedSessions.map((s) => {
+      let name = s.name.split(' ')
+      s.firstName = name[0]
+      s.lastName = name[1]
+      return s
+    })
+    // payload.subscribers = subscribers
+    // payload.isBackgroundDataFetch= sessions.isBackgroundDataFetch
+
+  } else {
+    subscribers = sessions.closedSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
     s.lastName = name[1]
     return s
   })
+}
   // var sorted = subscribers.sort(function (a, b) {
   //   return new Date(b.lastDateTime) - new Date(a.lastDateTime)
   // })
@@ -125,7 +166,8 @@ export function showCloseChatSessions (sessions, firstPage) {
     return {
       type: ActionTypes.SHOW_CLOSE_CHAT_SESSIONS_OVERWRITE,
       closeSessions: subscribers,
-      count: sessions.count
+      count: sessions.count,
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch 
     }
   }
   return {
@@ -249,21 +291,37 @@ export function clearData () {
   }
 }
 
-export function fetchOpenSessions (data) {
+export function fetchOpenSessions (data, isBackgroundDataFetch) {
   return (dispatch) => {
     callApi(dispatch, 'sessions/getOpenSessions', 'post', data)
       .then(res => {
         // console.log('res in livechat', res)
-        dispatch(showOpenChatSessions(res.payload, data))
+        if(isBackgroundDataFetch) {
+          let newPayload = {
+            payload : res.payload,
+            isBackgroundDataFetch: isBackgroundDataFetch
+          }
+          dispatch(showOpenChatSessions(newPayload, data))
+        } else {
+          dispatch(showOpenChatSessions(res.payload, data))
+        }
       })
   }
 }
 
-export function fetchCloseSessions (data) {
+export function fetchCloseSessions (data, isBackgroundDataFetch) {
   return (dispatch) => {
     callApi(dispatch, 'sessions/getClosedSessions', 'post', data)
       .then(res => {
-        dispatch(showCloseChatSessions(res.payload, data.first_page))
+        if(isBackgroundDataFetch) {
+          let newPayload = {
+            payload : res.payload,
+            isBackgroundDataFetch: isBackgroundDataFetch
+          }
+          dispatch(showCloseChatSessions(newPayload, data.first_page))
+        } else {
+          dispatch(showCloseChatSessions(res.payload, data.first_page))
+        }
       })
   }
 }
