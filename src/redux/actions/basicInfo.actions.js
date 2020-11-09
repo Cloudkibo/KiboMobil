@@ -76,17 +76,19 @@ export function updatePicture (data, callback) {
   }
 }
 
-export function updatePlatform (user, data, cb) {
+export function updatePlatform (data, cb) {
   return (dispatch) => {
     callApi(dispatch, 'users/updatePlatform', 'post', data).then(res => {
       if (res.status === 'success') {
-        dispatch(showuserdetails(user))
-        if (cb) cb()
+        dispatch(getuserdetails())
+        if(cb) {
+          cb(false)
+        }
+      } else {
       }
     })
   }
 }
-
 export function getAutomatedOptions (cb) {
   return (dispatch) => {
     callApi(dispatch, 'company/getAutomatedOptions').then(res => {
