@@ -128,6 +128,11 @@ class LiveChat extends React.Component {
       this.props.backgroundSessionDataFetch(false)
       this.fetchSessions(true, 'none', true, true)
     }
+    if(nextProps.isSessionDataFetch) {
+      console.log('isSessionDataFetch', nextProps.isSessionDataFetch)
+      this.props.backgroundSessionDataFetch(false)
+      this.fetchSessions(true, 'none', true)
+    }
   }
 
   changeTab (value) {
@@ -343,7 +348,8 @@ function mapStateToProps (state) {
     userChat: (state.liveChat.userChat),
     chatCount: (state.liveChat.chatCount),
     chatLoading: (state.liveChat.chatLoading),
-    isBackgroundDataFetch: (state.liveChat.isBackgroundDataFetch)
+    isBackgroundDataFetch: (state.liveChat.isBackgroundDataFetch),
+    isSessionDataFetch: (state.liveChat.isSessionDataFetch)
   }
 }
 
@@ -357,7 +363,7 @@ function mapDispatchToProps (dispatch) {
     updateLiveChatInfo,
     markRead,
     clearSession,
-    backgroundSessionDataFetch
+    backgroundSessionDataFetch,
   }, dispatch)
 }
 
