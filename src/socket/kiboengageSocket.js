@@ -31,7 +31,7 @@ export function initiateKiboEngageSocket (storeObj) {
 socket.on('connect', () => {
   console.log('connectionEstablished')
   if (myId !== '') {
-    joinRoom(myId)
+    joinRoomKiboEngage(myId)
   }
   store.dispatch(setSocketStatus(true))
 })
