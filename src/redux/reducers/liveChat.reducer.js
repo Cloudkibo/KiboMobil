@@ -331,8 +331,29 @@ export function liveChat (state = initialState, action) {
       })
     case ActionTypes.BACKGROUND_SESSION_DATA_FETCH:
       return Object.assign({}, state, {
-        isBackgroundDataFetch: action.data
-      }) 
+        isBackgroundDataFetch: action.data,
+        isSessionDataFetch: action.data
+      })
+
+    case ActionTypes.DISCONNECT_FB_PAGE_EVENT: {
+      let closeSessions = [...state.closeSessions]
+      let closeCount = state.closeCount
+      let Opensessions = [...state.openSessions]
+      let openCount = state.openCount
+      let remainingOpenSessions = Opensessions.filter(Opensession => Opensession.pageId.pageId !== action.data.page_id)
+      let count = Opensessions.length - remainingOpenSessions.length
+      let remainingCloseSessions = closeSessions.filter(closeSession => closeSession.pageId.pageId !== action.data.page_id)
+      openCount = openCount - count
+      count  = closeSessions.length - remainingCloseSessions.length
+      closeCount = closeCount - count 
+      return Object.assign({}, state, {
+        openSessions: remainingOpenSessions,
+        openCount: openCount,
+        closeSessions: remainingCloseSessions,
+        closeCount: closeCount,
+        isSessionDataFetch: true
+      })
+    }
     default:
       return state
   }
