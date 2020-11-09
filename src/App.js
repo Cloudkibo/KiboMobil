@@ -12,8 +12,7 @@ import { enableScreens } from 'react-native-screens'
 import { initiateKibochatSocket } from './socket/kibochatSocket'
 import { initiateKiboEngageSocket } from './socket/kiboengageSocket'
 import { materialTheme, Images } from './constants/'
-// import * as Sentry from 'sentry-expo'
-import Bugsnag from '@bugsnag/expo'
+import * as Sentry from 'sentry-expo'
 enableScreens()
 
 import Screens from './navigation/Screens';
@@ -21,16 +20,7 @@ import Screens from './navigation/Screens';
 const assetImages = [
   Images.Profile,
   Images.Avatar,
-  Images.Onboarding,
-  Images.Products.Auto,
-  Images.Products.Motocycle,
-  Images.Products.Watches,
-  Images.Products.Makeup,
-  Images.Products.Accessories,
-  Images.Products.Fragrance,
-  Images.Products.BMW,
-  Images.Products.Mustang,
-  Images.Products['Harley-Davidson'],
+  Images.Onboarding
 ];
 // cache product images
 // products.map(product => assetImages.push(product.image));
@@ -53,7 +43,6 @@ function cacheImages(images) {
 const store = configureStore()
 initiateKibochatSocket(store)
 initiateKiboEngageSocket(store)
-Bugsnag.start()
 
 // Sentry.init({
 //   dsn: 'https://6c7958e0570f455381d6f17122fbd117@o132281.ingest.sentry.io/292307',

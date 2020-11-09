@@ -10,6 +10,10 @@ export function teamsInfo (state = {}, action) {
         teamPages: [],
         teamAgents: []
       })
+    case ActionTypes.UPDATE_TEAM_AGENTS:
+      return Object.assign({}, state, {
+        assignedTeamAgents: action.data
+      })
     default:
       return state
   }

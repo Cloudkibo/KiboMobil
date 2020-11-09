@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1013572641461",
+    "firebase_url": "https://kibopush-mobile-app.firebaseio.com",
+    "project_id": "kibopush-mobile-app",
+    "storage_bucket": "kibopush-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013572641461:android:670aa8a5b6f67f5e0814fc",
+        "android_client_info": {
+          "package_name": "com.cloudkibo.kibopush"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1013572641461-gmbq5fbe5211gorhqqqlvfto2g1ijtv6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7yinPu9KTP7M12eapI4sEEBAYkIScbqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1013572641461-gmbq5fbe5211gorhqqqlvfto2g1ijtv6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -10,9 +10,8 @@ import { loadDashboardData } from '../../redux/actions/dashboard.actions'
 import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
 import {backgroundSessionDataFetch} from '../../redux/actions/liveChat.actions'
-import { backgroundWhatsappSessionFetch} from '../../redux/actions/whatsAppChat.actions'
-// import * as Sentry from 'sentry-expo'
-import Bugsnag from '@bugsnag/expo'
+import { backgroundWhatsappSessionFetch } from '../../redux/actions/whatsAppChat.actions'
+import * as Sentry from 'sentry-expo'
 import VersionCheck from 'react-native-version-check-expo'
 
 const { width } = Dimensions.get('screen')
@@ -29,7 +28,7 @@ class Loading extends React.Component {
     this.handleAutomatedResponse = this.handleAutomatedResponse.bind(this)
     this.fetchInActiveData = this.fetchInActiveData.bind(this)
     this._handleAppStateChange = this._handleAppStateChange.bind(this)
-    
+
     // this._handleNotification = this._handleNotification.bind(this)
   }
 
@@ -51,8 +50,7 @@ class Loading extends React.Component {
         }
       })
       .catch((err) => {
-        Bugsnag.notify(err)
-        // Sentry.captureException(err)
+        Sentry.captureException(err)
       })
     // if (Platform.OS === 'android') {
     //   Notifications.createChannelAndroidAsync('default', {
@@ -115,7 +113,7 @@ class Loading extends React.Component {
   handleResponse (res) {
     if (res.status === 'success' && this.props.automated_options) {
       this.fetchInActiveData(res.payload.user, this.props.automated_options)
-      res.payload.connectFacebook || this.props.automated_options.whatsApp
+      res.payload.user.connectFacebook || this.props.automated_options.whatsApp
         ? this.props.navigation.navigate('App')
         : this.setState({loadingData: false})
     }

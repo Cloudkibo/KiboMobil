@@ -20,6 +20,14 @@ export function backgroundSessionDataFetch (data) {
     data: data
   }
 }
+
+export function updateAgents (data) {
+  return {
+    type: ActionTypes.UPDATE_TEAM_AGENTS,
+    data
+  }
+}
+
 export function clearSession (data) {
   return {
     type: ActionTypes.LOADING_CHAT,
@@ -126,7 +134,7 @@ export function showOpenChatSessions (sessions, data) {
       type: ActionTypes.SHOW_OPEN_CHAT_SESSIONS_OVERWRITE,
       openSessions: subscribers,
       count: sessions.count,
-      isBackgroundDataFetch: sessions.isBackgroundDataFetch 
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch
     }
   } else {
     return {
@@ -167,7 +175,7 @@ export function showCloseChatSessions (sessions, firstPage) {
       type: ActionTypes.SHOW_CLOSE_CHAT_SESSIONS_OVERWRITE,
       closeSessions: subscribers,
       count: sessions.count,
-      isBackgroundDataFetch: sessions.isBackgroundDataFetch 
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch
     }
   }
   return {
@@ -212,18 +220,18 @@ export function clearSearchResult () {
   }
 }
 
-export function showUserChats (payload, originalData) {
+export function showUserChats (payload, originalData, count) {
   if (originalData.page === 'first') {
     return {
       type: ActionTypes.SHOW_USER_CHAT_OVERWRITE,
       userChat: payload.chat,
-      chatCount: payload.count
+      chatCount: count
     }
   } else {
     return {
       type: ActionTypes.SHOW_USER_CHAT,
       userChat: payload.chat,
-      chatCount: payload.count
+      chatCount: count
     }
   }
 }
@@ -335,11 +343,11 @@ export function fetchSingleSession (sessionid, appendDeleteInfo) {
   }
 }
 
-export function fetchUserChats (sessionid, data, handleFunction) {
+export function fetchUserChats (sessionid, data, count, handleFunction) {
   return (dispatch) => {
     callApi(dispatch, `livechat/${sessionid}`, 'post', data)
       .then(res => {
-        dispatch(showUserChats(res.payload, data))
+        dispatch(showUserChats(res.payload, data, count))
         if (handleFunction) {
           handleFunction(data.messageId)
         }
@@ -387,10 +395,12 @@ export function uploadAttachment (fileData, handleUpload) {
           handleUpload(res)
         })
           .catch((err) => {
+            handleUpload({status: 'failed'})
             console.log('failed to upload file', err)
           })
       })
       .catch((err) => {
+        handleUpload({status: 'failed'})
         console.log('failed to fetch token', err)
       })
   }
@@ -506,6 +516,7 @@ export function fetchTeamAgents (id, handleAgents) {
         if (res.status === 'success' && handleAgents) {
           handleAgents(res.payload)
         }
+        dispatch(updateAgents(res.payload))
       })
   }
 }

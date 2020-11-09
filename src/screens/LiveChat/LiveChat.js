@@ -9,7 +9,7 @@ import { materialTheme } from '../../constants/'
 import * as Notifications from 'expo-notifications'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
-import {fetchOpenSessions, backgroundSessionDataFetch, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead, clearSession} from '../../redux/actions/liveChat.actions'
+import {fetchOpenSessions, backgroundSessionDataFetch, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead, clearSession, fetchTeamAgents} from '../../redux/actions/liveChat.actions'
 import { updatePicture } from '../../redux/actions/subscribers.actions'
 import { handleSocketEvent } from './socket'
 import { clearSocketData } from '../../redux/actions/socket.actions'
@@ -56,6 +56,9 @@ class LiveChat extends React.Component {
       session.unreadCount = 0
       this.props.markRead(session._id)
     }
+    if (session.is_assigned && session.assigned_to.type === 'team') {
+      this.props.fetchTeamAgents(session.assigned_to.id)
+    }
     this.setState({activeSession: session})
     this.getPushNotificationsAsync(session._id)
     this.props.navigation.navigate('Chat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
@@ -74,11 +77,15 @@ class LiveChat extends React.Component {
   }
 
   componentDidMount () {
-      this.setState({loading: true, activeSession: {}})
-      this.fetchSessions(true, 'none', true)
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({activeSession: {}})
+    })
+    this.setState({loading: true, activeSession: {}})
+    this.fetchSessions(true, 'none', true)
   }
 
   componentWillUnmount () {
+    this._unsubscribe()
   }
 
   /* eslint-disable */
@@ -357,7 +364,8 @@ function mapDispatchToProps (dispatch) {
     updateLiveChatInfo,
     markRead,
     clearSession,
-    backgroundSessionDataFetch
+    backgroundSessionDataFetch,
+    fetchTeamAgents
   }, dispatch)
 }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, View} from 'react-native'
+import {StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, View, Platform} from 'react-native'
 import Icon from '../../../components/Icon'
 import { materialTheme } from '../../../constants/'
 import { Input, Block, Button, theme } from 'galio-framework'
@@ -12,6 +12,7 @@ import * as Permissions from 'expo-permissions'
 import * as FileSystem from 'expo-file-system'
 import { Audio } from 'expo-av'
 import StickerMenu from '../../StickerPicker/stickers'
+import ATTACHMENTSMODAL from './attachmentsModal'
 const { width } = Dimensions.get('screen')
 
 let Toast = null
@@ -46,11 +47,25 @@ class Footer extends React.Component {
       recordingPermissionGranted: false,
       gifSearchValue: '',
       gifs: [],
-      loadingGif: false
+      loadingGif: false,
+      showAttachmentsModal: false,
+      galleryPermission: false
     }
 
-    this.recordingSettings = JSON.parse(JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY))
-
+    this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+    this.recordingSettings.ios.outputFormat = Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4AAC
+    this.recordingSettings.ios.extension = '.m4a'
+    // this.recordingSettings.ios = {
+    //   extension: '.m4a',
+    //   outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_APPLELOSSLESS,
+    //   audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_MIN,
+    //   sampleRate: 44100,
+    //   numberOfChannels: 2,
+    //   bitRate: 128000,
+    //   linearPCMBitDepth: 16,
+    //   linearPCMIsBigEndian: false,
+    //   linearPCMIsFloat: false
+    // }
     this.onInputChange = this.onInputChange.bind(this)
     this.sendMessage = this.sendMessage.bind(this)
     this.setDataPayload = this.setDataPayload.bind(this)
@@ -75,6 +90,17 @@ class Footer extends React.Component {
     this.sendGif = this.sendGif.bind(this)
     this.changeGifSearchValue = this.changeGifSearchValue.bind(this)
     this.addNewLine = this.addNewLine.bind(this)
+    this.setAttachmentsModal = this.setAttachmentsModal.bind(this)
+    this.setGalleryPermission = this.setGalleryPermission.bind(this)
+    this.uploadAttachment = this.uploadAttachment.bind(this)
+  }
+
+  setGalleryPermission (value) {
+    this.setState({gelleryPermission: value})
+  }
+
+  setAttachmentsModal () {
+    this.setState({showAttachmentsModal: !this.state.showAttachmentsModal})
   }
 
   componentDidMount () {
@@ -99,7 +125,7 @@ class Footer extends React.Component {
         uploaded: false,
         loading: false
       }, () => {
-        this.updateChatData(data, payload)
+        // this.updateChatData(data, payload)
       })
     } else {
       this.setState({loading: false})
@@ -142,38 +168,47 @@ class Footer extends React.Component {
     }
   }
 
+  uploadAttachment (file) {
+    if (file.size && file.size > 25000000) {
+      Alert.alert('ERROR!', 'Attachment exceeds the limit of 25MB', [{ text: 'OK' }], { cancelable: true })
+    } else {
+      let type = mime.lookup(file.uri)
+      console.log('type', type)
+      const data = this.props.performAction('send attachments', this.props.activeSession)
+      if (type) {
+        if (data.isAllowed) {
+          if (this.state.attachment && this.state.attachment.id) {
+            this.props.deletefile(this.state.attachment.id)
+          }
+          const componentType = this.getComponentType(type)
+          this.setState({
+            uploadingFile: true,
+            attachment: file,
+            componentType
+          })
+          var fileData = new FormData()
+          fileData.append('file', {uri: file.uri, type: type, name: file.name, size: file.size})
+          fileData.append('filename', file.name)
+          fileData.append('filetype', type)
+          fileData.append('filesize', file.size)
+          fileData.append('componentType', componentType)
+          this.props.uploadAttachment(fileData, this.onAttachmentUpload)
+        } else {
+          Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
+        }
+      } else {
+        Alert.alert('ERROR!', 'This file type is not supported', [{ text: 'OK' }], { cancelable: true })
+      }
+    }
+  }
+
   selectAttachment () {
     this.setState({showPickers: false, selectedPicker: ''})
     DocumentPicker.getDocumentAsync()
       .then(result => {
         if (result && result.type === 'success') {
-          const file = result
-          if (file.size > 25000000) {
-            Alert.alert('ERROR!', 'Attachment exceeds the limit of 25MB', [{ text: 'OK' }], { cancelable: true })
-          } else {
-            let type = mime.lookup(file.uri)
-            const data = this.props.performAction('send attachments', this.props.activeSession)
-            if (data.isAllowed) {
-              if (this.state.attachment && this.state.attachment.id) {
-                this.props.deletefile(this.state.attachment.id)
-              }
-              const componentType = this.getComponentType(type)
-              this.setState({
-                uploadingFile: true,
-                attachment: file,
-                componentType
-              })
-              var fileData = new FormData()
-              fileData.append('file', {uri: file.uri, type: type, name: file.name, size: file.size})
-              fileData.append('filename', file.name)
-              fileData.append('filetype', type)
-              fileData.append('filesize', file.size)
-              fileData.append('componentType', componentType)
-              this.props.uploadAttachment(fileData, this.onAttachmentUpload)
-            } else {
-              Alert.alert('ERROR!', data.errorMsg, [{ text: 'OK' }], { cancelable: true })
-            }
-          }
+          this.setState({showAttachmentsModal: false})
+          this.uploadAttachment(result)
         }
       })
       .catch((err) => {
@@ -215,7 +250,6 @@ class Footer extends React.Component {
   }
 
   updateChatData (data, payload) {
-    data._id = new Date().getTime()
     let sessions = this.props.sessions
     let session = this.props.activeSession
     let index = sessions.findIndex((s) => s._id === session._id)
@@ -416,7 +450,7 @@ class Footer extends React.Component {
     this.setState({
       isLoading: true
     })
-    await Audio.setAudioModeAsync({
+    Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
       playsInSilentModeIOS: true,
@@ -425,20 +459,33 @@ class Footer extends React.Component {
       playThroughEarpieceAndroid: false,
       staysActiveInBackground: true
     })
-    if (this.recording !== null) {
-      this.recording.setOnRecordingStatusUpdate(null)
-      this.recording = null
-    }
-
-    const recording = new Audio.Recording()
-    await recording.prepareToRecordAsync(this.recordingSettings)
-    recording.setOnRecordingStatusUpdate(this._updateScreenForRecordingStatus)
-
-    this.recording = recording
-    await this.recording.startAsync()
-    this.setState({
-      isLoading: false
-    })
+      .then(result => {
+        if (this.recording !== null) {
+          this.recording.setOnRecordingStatusUpdate(null)
+          this.recording = null
+        }
+        const recording = new Audio.Recording()
+        recording.prepareToRecordAsync(this.recordingSettings)
+          .then(result => {
+            recording.setOnRecordingStatusUpdate(this._updateScreenForRecordingStatus)
+            this.recording = recording
+            this.recording.startAsync()
+              .then(result => {
+                this.setState({
+                  isLoading: false
+                })
+              })
+              .catch((err) => {
+                console.log('error in startAsync', err)
+              })
+          })
+          .catch((err) => {
+            console.log('error in prepareToRecordAsync', err)
+          })
+      })
+      .catch((err) => {
+        console.log('error in setAudioModeAsync', err)
+      })
   }
 
   _updateScreenForRecordingStatus (status) {
@@ -565,6 +612,15 @@ class Footer extends React.Component {
   render () {
     return (
       <Block style={{paddingBottom: 10}}>
+        <ATTACHMENTSMODAL
+          showAttachmentsModal={this.state.showAttachmentsModal}
+          setAttachmentsModal={this.setAttachmentsModal}
+          updateAttachments={this.updateAttachments}
+          selectAttachment={this.selectAttachment}
+          gelleryPermission={this.state.galleryPermission}
+          setGalleryPermission={this.setGalleryPermission}
+          uploadAttachment={this.uploadAttachment}
+        />
         <Block style={styles.messageFormContainer}>
           <Block flex row middle space='between'>
             { this.state.uploadingFile
@@ -647,7 +703,11 @@ class Footer extends React.Component {
                           <TouchableOpacity onPress={this.showPickers}>
                             <Icon size={20} color={theme.COLORS.MUTED} name='emoji-happy' family='entypo' />
                           </TouchableOpacity>
-                          <TouchableOpacity onPress={this.selectAttachment}>
+                          <TouchableOpacity onPress={() => {
+                            Platform.OS === 'android'
+                              ? this.setAttachmentsModal()
+                              : this.selectAttachment()
+                          }}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='attachment' family='entypo' />
                           </TouchableOpacity>
                            {!this.props.isWhatspModule &&

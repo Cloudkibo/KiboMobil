@@ -45,7 +45,7 @@ export function whatsAppChatInfo (state = initialState, action) {
                 if(JSON.stringify(newSession) !== JSON.stringify(oldOpensessions[index])) {
                   oldPayloadSession.splice(index, 1)
                   oldPayloadSession.splice(0, 0, newSession)
-                } 
+                }
               } else {
                 oldPayloadSession.splice(0, 0, newSession)
               }
@@ -81,7 +81,7 @@ export function whatsAppChatInfo (state = initialState, action) {
           }
             if (index === -1) {
               oldPayloadSession.splice(0, 0, newSession)
-            } 
+            }
           })
       return Object.assign({}, state, {
         closeSessions: oldPayloadSession,
@@ -194,7 +194,7 @@ export function whatsAppChatInfo (state = initialState, action) {
       case ActionTypes.BACKGROUND_WHATSAPP_SESSION_FETCH:
       return Object.assign({}, state, {
         isBackgroundWhatsappDataFetch: action.data
-      }) 
+      })
     default:
       return state
   }

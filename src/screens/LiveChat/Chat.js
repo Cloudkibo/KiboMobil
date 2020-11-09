@@ -55,7 +55,7 @@ class LiveChat extends React.Component {
 
     // }
     this.props.loadcannedResponses()
-    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
+    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 }, props.route.params.activeSession.messagesCount)
     props.getSMPStatus(this.handleSMPStatus)
     props.getZoomIntegrations()
     // if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
@@ -105,7 +105,6 @@ class LiveChat extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
-
     if (nextProps.openSessions && !this.state.sessions) {
       this.setState({sessions:nextProps.openSessions})
     }
@@ -156,13 +155,13 @@ class LiveChat extends React.Component {
         isAllowed = false
         errorMsg = `Only assigned agent can ${errorMsg}`
       } else if (session.assigned_to.type === 'team') {
-        this.fetchTeamAgents(session._id, (teamAgents) => {
-          const agentIds = teamAgents.map((agent) => agent.agentId._id)
+        // this.fetchTeamAgents(session._id, (teamAgents) => {
+          const agentIds = this.props.teamAgents && this.props.teamAgents.map((agent) => agent.agentId._id)
           if (!agentIds.includes(this.props.user._id)) {
             isAllowed = false
             errorMsg = `Only agents who are part of assigned team can ${errorMsg}`
           }
-        })
+        // })
       }
     }
     errorMsg = `You can not perform this action. ${errorMsg}`
@@ -193,6 +192,7 @@ class LiveChat extends React.Component {
 
   setMessageData (session, payload) {
     const data = {
+      _id : new Date().getTime(),
       sender_id: session.pageId._id,
       recipient_id: session._id,
       sender_fb_id: session.pageId.pageId,
@@ -280,7 +280,8 @@ function mapStateToProps (state) {
     closeCount: (state.liveChat.closeCount),
     closeSessions: (state.liveChat.closeSessions),
     cannedResponses: state.settingsInfo.cannedResponses,
-    zoomIntegrations: (state.settingsInfo.zoomIntegrations)
+    zoomIntegrations: (state.settingsInfo.zoomIntegrations),
+    teamAgents: (state.teamsInfo.assignedTeamAgents)
   }
 }
 

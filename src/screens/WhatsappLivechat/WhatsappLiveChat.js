@@ -9,7 +9,7 @@ import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
 import {getWhatsAppMessageTemplates} from '../../redux/actions/settings.action'
-import {backgroundWhatsappSessionFetch, fetchOpenSessions, fetchCloseSessions, markRead, updateLiveChatInfo} from '../../redux/actions/whatsAppChat.actions'
+import {backgroundWhatsappSessionFetch, fetchOpenSessions, fetchCloseSessions, markRead, updateLiveChatInfo, fetchTeamAgentsWhatsApp} from '../../redux/actions/whatsAppChat.actions'
 import { handleSocketEvent } from './socket'
 import * as Notifications from 'expo-notifications'
 import { clearSocketDataWhatsapp } from '../../redux/actions/socket.actions'
@@ -74,17 +74,24 @@ class WhastappLiveChat extends React.Component {
       this.props.markRead(session._id)
       this.getPushNotificationsAsync(session._id)
     }
+    if (session.is_assigned && session.assigned_to.type === 'team') {
+      this.props.fetchTeamAgentsWhatsApp(session.assigned_to.id)
+    }
     this.setState({activeSession: session})
     this.props.navigation.navigate('WhatsappChat', { activeSession: session, sessions: this.state.sessions, tabValue: this.state.tabValue })
     // session.unreadCount = 0
   }
 
   componentDidMount () {
-      this.setState({loading: true, activeSession: {}})
-      this.fetchSessions(true, 'none', true)
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({activeSession: {}})
+    })
+    this.setState({loading: true})
+    this.fetchSessions(true, 'none', true)
   }
 
   componentWillUnmount () {
+    this._unsubscribe()
   }
 
   /* eslint-disable */
@@ -339,6 +346,7 @@ function mapDispatchToProps (dispatch) {
     updateLiveChatInfo,
     clearSession,
     backgroundWhatsappSessionFetch,
+    fetchTeamAgentsWhatsApp
   }, dispatch)
 }
 

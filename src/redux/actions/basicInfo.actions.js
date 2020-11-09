@@ -1,6 +1,14 @@
 import * as ActionTypes from '../constants/constants'
 import callApi from '../../utility/api.caller.service'
 
+
+export function saveExpoToken (data) {
+  return {
+    type: ActionTypes.SAVE_EXPOTOKEN,
+    data
+  }
+}
+
 export function setSocketStatus (data) {
   return {
     type: ActionTypes.SET_SOCKET_STATUS,
@@ -49,6 +57,9 @@ export function saveNotificationToken (user, logOut) {
         dispatch(showuserdetails(user))
       }
     })
+    if(logOut){
+      logOut()
+    }
   }
 }
 export function updatePicture (data, callback) {

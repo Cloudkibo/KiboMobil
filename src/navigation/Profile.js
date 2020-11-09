@@ -25,7 +25,7 @@ class Profile extends React.Component {
                 : 'https://cdn.cloudkibo.com/public/icons/users.jpg'
             }}
             style={styles.avatar} />
-          <Block>
+          <Block style={{marginTop: 4}}>
             <Text h5 color='white'>
               {this.props.user.name}
             </Text>
@@ -55,15 +55,13 @@ export default connect(mapStateToProps, mapDispatchToProps)(Profile)
 
 const styles = StyleSheet.create({
   profile: {
-    marginBottom: theme.SIZES.BASE / 2,
-    borderBottomWidth: 1,
-    borderBottomColor: '#979797'
+    // marginVertical: theme.SIZES.BASE / 2
   },
   avatar: {
     height: 50,
     width: 50,
     borderRadius: 50,
-    marginBottom: theme.SIZES.BASE,
+    // marginBottom: theme.SIZES.BASE,
     marginRight: 10,
     marginHorizontal: 16
   }

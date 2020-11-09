@@ -83,7 +83,7 @@ export function showOpenSessions (sessions, data) {
       type: ActionTypes.SHOW_OPEN_WHATSAPP_SESSIONS_OVERWRITE,
       openSessions: subscribers,
       count: sessions.count,
-      isBackgroundDataFetch: sessions.isBackgroundDataFetch 
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch
     }
   } else {
     return {
@@ -125,7 +125,7 @@ export function showCloseChatSessions (sessions, firstPage) {
       type: ActionTypes.SHOW_CLOSE_WHATSAPP_SESSIONS_OVERWRITE,
       closeSessions: subscribers,
       count: sessions.count,
-      isBackgroundDataFetch: sessions.isBackgroundDataFetch 
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch
     }
   }
   return {
@@ -261,7 +261,7 @@ export function uploadAttachment (fileData, handleUpload) {
       })
   }
 }
-export function fetchUserChats (sessionid, data, handleFunction) {
+export function fetchUserChats (sessionid, data, count, handleFunction) {
   return (dispatch) => {
     callApi(dispatch, `whatsAppChat/getChat/${sessionid}`, 'post', data)
       .then(res => {
@@ -279,6 +279,7 @@ export function fetchTeamAgentsWhatsApp (id, handleAgents) {
         if (res.status === 'success' && handleAgents) {
           handleAgents(res.payload)
         }
+        dispatch(updateAgents(res.payload))
       })
   }
 }
