@@ -287,11 +287,13 @@ export function fetchUserChats (sessionid, data, count, handleFunction) {
   return (dispatch) => {
     callApi(dispatch, `livechat/${sessionid}`, 'post', data)
       .then(res => {
+        if(res.status === 'success') {
         dispatch(showUserChats(res.payload, data, count))
         if (handleFunction) {
           handleFunction(data.messageId)
         }
-      })
+      }
+    })
   }
 }
 export function uploadRecording (fileData, handleUpload) {
