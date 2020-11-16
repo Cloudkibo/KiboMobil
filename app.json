@@ -10,7 +10,7 @@
       "android"
     ],
     "entryPoint": "./src/App.js",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "orientation": "portrait",
     "icon": "./assets/images/appstore.png",
     "notification": {
@@ -31,7 +31,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.cloudkibo.kibopush",
-      "buildNumber": "1.2.4",
+      "buildNumber": "1.2.5",
       "usesIcloudStorage": true,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "KiboPush needs to access your camera roll so that you can upload images and send them on Facebook Messenger",
@@ -41,7 +41,7 @@
     },
     "android": {
       "package": "com.cloudkibo.kibopush",
-      "versionCode": 24,
+      "versionCode": 25,
       "useNextNotificationsApi": true,
       "googleServicesFile": "./google-services.json"
     },
