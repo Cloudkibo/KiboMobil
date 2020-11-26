@@ -14,6 +14,7 @@ import POLL from '../Messages/Poll'
 import SURVEY from '../Messages/Survey'
 import CARD from '../Messages/Card'
 import GALLERY from '../Messages/Gallery'
+import QuickReplies from "../Messages/QuickReplies"
 
 class RightChatItem extends PureComponent {
   constructor (props, context) {
@@ -152,6 +153,8 @@ class RightChatItem extends PureComponent {
             </LinearGradient>
           </Block>
         </Block>
+        <QuickReplies buttons={this.props.message.payload.quickReplies} alignment='flex-end'/>
+        <Block style={{marginBottom: 20}} />
       </Block>
     )
   }
@@ -160,8 +163,7 @@ class RightChatItem extends PureComponent {
 const styles = StyleSheet.create({
   messageCardWrapper: {
     maxWidth: '85%',
-    marginLeft: 8,
-    marginBottom: 20
+    marginLeft: 8
   },
   messageCard: {
     paddingHorizontal: 8,
