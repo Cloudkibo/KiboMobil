@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, View, Platform} from 'react-native'
-import Icon from '../../../components/Icon'
-import { materialTheme } from '../../../constants/'
+import Icon from '../../Icon'
+import { materialTheme } from '../../../constants'
 import { Input, Block, Button, theme } from 'galio-framework'
 import EmojiSelector, { Categories } from 'react-native-emoji-selector'
 import * as DocumentPicker from 'expo-document-picker'
@@ -93,6 +93,7 @@ class Footer extends React.Component {
     this.setAttachmentsModal = this.setAttachmentsModal.bind(this)
     this.setGalleryPermission = this.setGalleryPermission.bind(this)
     this.uploadAttachment = this.uploadAttachment.bind(this)
+    this.sendQuickReplyMessage = this.sendQuickReplyMessage.bind(this)
   }
 
   setGalleryPermission (value) {
@@ -326,7 +327,7 @@ class Footer extends React.Component {
     }
   }
 
-  sendMessage () {
+  sendMessage (quickReplies) {
     const data = this.props.performAction('send messages', this.props.activeSession)
     if (data.isAllowed) {
       let payload = {}
@@ -355,6 +356,9 @@ class Footer extends React.Component {
       }
       else if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
         payload = this.setDataPayload('text')
+        if (quickReplies) {
+          payload.quickReplies = quickReplies
+        }
         data = this.props.setMessageData(this.props.activeSession, payload)
         this.props.sendChatMessage(data)
         this.setState({ text: '', urlmeta: {}, currentUrl: '', selectedPicker: '', showPickers: false })
@@ -378,6 +382,14 @@ class Footer extends React.Component {
         { cancelable: true }
       )
     }
+  }
+
+  sendQuickReplyMessage (text, quickReplies) {
+    this.setState({
+      text
+    }, () => {
+      this.sendMessage(quickReplies)
+    })
   }
 
   setDataPayload (component) {
@@ -710,11 +722,16 @@ class Footer extends React.Component {
                           }}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='attachment' family='entypo' />
                           </TouchableOpacity>
-                           {!this.props.isWhatspModule &&
+                           {!this.props.isWhatsappModule &&
                           <TouchableOpacity onPress={this.onRecordPress}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
                           </TouchableOpacity>
                            }
+                          {!this.props.isWhatsappModule &&
+                            <TouchableOpacity onPress={() => this.props.setGetContactInfoModal(this.sendQuickReplyMessage)}>
+                              <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='idcard' family='AntDesign' />
+                            </TouchableOpacity>
+                          }
                           {this.props.showZoom &&
                             <TouchableOpacity onPress={this.props.setZoomModal}>
                               <Image
@@ -749,7 +766,7 @@ class Footer extends React.Component {
         {this.state.showPickers && this.state.selectedPicker !== '' &&
           <Block>
             <Tabs
-              data= { this.props.isWhatspModule ? [{id: 'emoji', title: 'EMOJI', width: 70}] : [
+              data= { this.props.isWhatsappModule ? [{id: 'emoji', title: 'EMOJI', width: 70}] : [
                 {id: 'emoji', title: 'EMOJI', width: 70},
                 {id: 'stickers', title: 'STICKERS', width: 100},
                 {id: 'gifs', title: 'GIFS', width: 55}

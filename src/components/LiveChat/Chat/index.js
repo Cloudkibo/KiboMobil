@@ -6,8 +6,9 @@ import { materialTheme } from '../../../constants/'
 import { displayDate, showDate } from '../../../screens/LiveChat/utilities'
 import moment from 'moment'
 import BODY from './Body'
-import FOOTER from './MessageForm'
+import FOOTER from './Footer'
 import ZOOMMODAL from './ZoomModal'
+import GetContactInfo from './GetContactInfo'
 const { height } = Dimensions.get('screen')
 
 class Chat extends React.Component {
@@ -18,7 +19,8 @@ class Chat extends React.Component {
       cannedResponses: [],
       showCannedMessages: false,
       selectedCannedResponse: null,
-      showZoomModal: false
+      showZoomModal: false,
+      showGetContactInfoModal: false
     }
     this.overrideUserInput = this.overrideUserInput.bind(this)
     this.updateNewMessage = this.updateNewMessage.bind(this)
@@ -28,11 +30,17 @@ class Chat extends React.Component {
     this.onCannedMessageChange = this.onCannedMessageChange.bind(this)
     this.setCannedResponse = this.setCannedResponse.bind(this)
     this.setZoomModal = this.setZoomModal.bind(this)
-
+    this.setGetContactInfoModal = this.setGetContactInfoModal.bind(this)
     this.newMessage = false
   }
 
+  setGetContactInfoModal (sendQuickReplyMessage) {
+    console.log('setGetContactInfoModal')
+    this.setState({showGetContactInfoModal: !this.state.showGetContactInfoModal, sendQuickReplyMessage})
+  }
+
   setZoomModal () {
+    console.log('setZoomModal')
     this.setState({showZoomModal: !this.state.showZoomModal})
   }
 
@@ -104,6 +112,14 @@ class Chat extends React.Component {
           flex: 1
         }}
       >
+        {
+          this.state.showGetContactInfoModal &&
+          <GetContactInfo 
+            showGetContactInfoModal={this.state.showGetContactInfoModal}
+            setGetContactInfoModal={this.setGetContactInfoModal}
+            sendQuickReplyMessage={this.state.sendQuickReplyMessage}
+          />
+        }
         {this.state.showZoomModal &&
           <ZOOMMODAL
             zoomIntegrations={this.props.zoomIntegrations}
@@ -179,7 +195,7 @@ class Chat extends React.Component {
         }
           </View>
 
-          {!moment(this.props.activeSession.lastMessagedAt).isAfter(moment().subtract(24, 'hours')) && (!this.props.isSMPApproved || this.props.isWhatspModule)
+          {!moment(this.props.activeSession.lastMessagedAt).isAfter(moment().subtract(24, 'hours')) && (!this.props.isSMPApproved || this.props.isWhatsappModule)
             ? <Block row style={{backgroundColor: materialTheme.COLORS.ERROR, margin: 10, borderRadius: 10}}>
               <Text style={{color: 'white', marginVertical: 5, marginHorizontal: 10}}>
                 Chat's 24 hours window session has been expired for this subscriber. You cannot send a message to this subscriber until they message you.
@@ -197,7 +213,7 @@ class Chat extends React.Component {
                 </Button>
               </Block>
               : <FOOTER
-                isWhatspModule = {this.props.isWhatspModule}
+                isWhatsappModule = {this.props.isWhatsappModule}
                 showCannResponse = {this.showCannResponse}
                 setCannedResponse = {this.setCannedResponse}
                 selectedCannedResponse = {this.state.selectedCannedResponse}
@@ -232,6 +248,7 @@ class Chat extends React.Component {
                 zoomIntegrations={this.props.zoomIntegrations}
                 createZoomMeeting={this.props.createZoomMeeting}
                 setZoomModal={this.setZoomModal}
+                setGetContactInfoModal={this.setGetContactInfoModal}
               />
           }
         </Block>

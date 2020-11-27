@@ -34,7 +34,7 @@ class SubscribersListItem extends React.Component {
           <Block flex={0.2}>
             <Image
               onError={() => this.profilePicError(item)}
-              source={{uri: item.profilePic}}
+              source={{uri: item.profilePic ? item.profilePic : 'https://cdn.cloudkibo.com/public/icons/users.jpg'}}
               style={styles.avatar} />
           </Block>
           <Block style={{marginTop: 2, marginLeft: 10}} flex={0.6}>

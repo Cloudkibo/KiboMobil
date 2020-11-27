@@ -42,6 +42,7 @@
     "expo-video-player": "^1.5.8",
     "galio-framework": "^0.6.3",
     "react": "16.11.0",
+    "react-devtools": "^4.10.0",
     "react-giphy-component": "^1.1.0",
     "react-giphy-picker": "^1.1.1",
     "react-image-appear": "^1.2.23",
