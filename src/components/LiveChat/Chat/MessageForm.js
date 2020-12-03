@@ -174,6 +174,12 @@ class Footer extends React.Component {
     } else {
       let type = mime.lookup(file.uri)
       console.log('type', type)
+      if ([
+        'application/zip', 'text/javascript', 'text/exe', 'application/x-ms-dos-executable',
+        'application/x-pem-file', 'application/x-x509-ca-cert'
+      ].includes(type)) {
+        Alert.alert('ERROR!', 'This file type is not supported', [{ text: 'OK' }], { cancelable: true })
+      } else {
       const data = this.props.performAction('send attachments', this.props.activeSession)
       if (type) {
         if (data.isAllowed) {
@@ -199,6 +205,7 @@ class Footer extends React.Component {
       } else {
         Alert.alert('ERROR!', 'This file type is not supported', [{ text: 'OK' }], { cancelable: true })
       }
+     }
     }
   }
 
