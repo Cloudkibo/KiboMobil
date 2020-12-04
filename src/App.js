@@ -45,7 +45,10 @@ initiateSocket(store)
 
 Sentry.init({
   dsn: 'https://6c7958e0570f455381d6f17122fbd117@o132281.ingest.sentry.io/292307',
-  enableInExpoDevelopment: true,
+  enableInExpoDevelopment: false,
+  release: 'KiboPushMobile@1.0.0',
+  environment: 'Production',
+  serverName: 'KiboPushMobile',
   debug: true,
   attachStacktrace: true
 })
