@@ -6,7 +6,7 @@ import { materialTheme } from '../../../constants/'
 import { displayDate, showDate } from '../../../screens/LiveChat/utilities'
 import moment from 'moment'
 import BODY from './Body'
-import FOOTER from './Footer'
+import FOOTER from './MessageForm'
 import ZOOMMODAL from './ZoomModal'
 import GetContactInfo from './GetContactInfo'
 const { height } = Dimensions.get('screen')
