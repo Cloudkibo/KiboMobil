@@ -14,6 +14,8 @@ import { Audio } from 'expo-av'
 import StickerMenu from '../../StickerPicker/stickers'
 import ATTACHMENTSMODAL from './attachmentsModal'
 const { width } = Dimensions.get('screen')
+import { Text } from 'react-native-elements';
+import Popover from 'react-native-popover-view';
 
 let Toast = null
 if (Platform.OS === 'ios') {
@@ -49,7 +51,9 @@ class Footer extends React.Component {
       gifs: [],
       loadingGif: false,
       showAttachmentsModal: false,
-      galleryPermission: false
+      galleryPermission: false,
+      showPopover: false,
+      suggestionShown: false
     }
 
     this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
@@ -238,7 +242,7 @@ class Footer extends React.Component {
   }
 
   showPickers () {
-    Keyboard.dismiss()
+    // Keyboard.dismiss()
     this.setState({showPickers: true, selectedPicker: 'emoji'})
   }
 
@@ -307,7 +311,17 @@ class Footer extends React.Component {
       this.props.showCannResponse(true)
       this.search(text)
     } else {
-      this.setState({text: text})
+      const contactInfoTerms = ['email', 'phone', 'contact']
+      const containsContactInfoTerms = contactInfoTerms.some(term => text.toLowerCase().includes(term))
+      if (!this.state.suggestionShown && containsContactInfoTerms) {
+        this.setState({showPopover: true, suggestionShown: true})
+        setTimeout(() => {
+          if (this.state.showPopover) {
+            this.setState({showPopover: false})
+          }
+        }, 3000)
+      }
+      this.setState({text})
       this.props.showCannResponse(false)
       this.props.setCannedResponse(null)
     }
@@ -728,9 +742,14 @@ class Footer extends React.Component {
                           </TouchableOpacity>
                            }
                           {!this.props.isWhatsappModule &&
-                            <TouchableOpacity onPress={() => this.props.setGetContactInfoModal(this.sendQuickReplyMessage)}>
+                          <Popover  
+                            onRequestClose={() => this.setState({showPopover: false})} 
+                            isVisible={this.state.showPopover}                          
+                            from={<TouchableOpacity onPress={() => this.props.setGetContactInfoModal(this.sendQuickReplyMessage)}>
                               <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='idcard' family='AntDesign' />
-                            </TouchableOpacity>
+                            </TouchableOpacity>}>
+                              <Text style={{margin: 10}}>Consider using this to get subscriber's email or phone number</Text>
+                          </Popover>
                           }
                           {this.props.showZoom &&
                             <TouchableOpacity onPress={this.props.setZoomModal}>
