@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {StyleSheet, Dimensions, Keyboard, TouchableOpacity, Alert, Image, FlatList, ActivityIndicator, View, Platform} from 'react-native'
-import Icon from '../../../components/Icon'
-import { materialTheme } from '../../../constants/'
+import Icon from '../../Icon'
+import { materialTheme } from '../../../constants'
 import { Input, Block, Button, theme } from 'galio-framework'
 import EmojiSelector, { Categories } from 'react-native-emoji-selector'
 import * as DocumentPicker from 'expo-document-picker'
@@ -14,6 +14,8 @@ import { Audio } from 'expo-av'
 import StickerMenu from '../../StickerPicker/stickers'
 import ATTACHMENTSMODAL from './attachmentsModal'
 const { width } = Dimensions.get('screen')
+import { Text } from 'react-native-elements';
+import Popover from 'react-native-popover-view';
 
 let Toast = null
 if (Platform.OS === 'ios') {
@@ -49,7 +51,9 @@ class Footer extends React.Component {
       gifs: [],
       loadingGif: false,
       showAttachmentsModal: false,
-      galleryPermission: false
+      galleryPermission: false,
+      showPopover: false,
+      suggestionShown: false
     }
 
     this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
@@ -93,6 +97,7 @@ class Footer extends React.Component {
     this.setAttachmentsModal = this.setAttachmentsModal.bind(this)
     this.setGalleryPermission = this.setGalleryPermission.bind(this)
     this.uploadAttachment = this.uploadAttachment.bind(this)
+    this.sendQuickReplyMessage = this.sendQuickReplyMessage.bind(this)
   }
 
   setGalleryPermission (value) {
@@ -244,7 +249,7 @@ class Footer extends React.Component {
   }
 
   showPickers () {
-    Keyboard.dismiss()
+    // Keyboard.dismiss()
     this.setState({showPickers: true, selectedPicker: 'emoji'})
   }
 
@@ -313,7 +318,17 @@ class Footer extends React.Component {
       this.props.showCannResponse(true)
       this.search(text)
     } else {
-      this.setState({text: text})
+      const contactInfoTerms = ['email', 'phone', 'contact']
+      const containsContactInfoTerms = contactInfoTerms.some(term => text.toLowerCase().includes(term))
+      if (!this.state.suggestionShown && containsContactInfoTerms) {
+        this.setState({showPopover: true, suggestionShown: true})
+        setTimeout(() => {
+          if (this.state.showPopover) {
+            this.setState({showPopover: false})
+          }
+        }, 3000)
+      }
+      this.setState({text})
       this.props.showCannResponse(false)
       this.props.setCannedResponse(null)
     }
@@ -333,7 +348,7 @@ class Footer extends React.Component {
     }
   }
 
-  sendMessage () {
+  sendMessage (quickReplies) {
     const data = this.props.performAction('send messages', this.props.activeSession)
     if (data.isAllowed) {
       let payload = {}
@@ -362,6 +377,9 @@ class Footer extends React.Component {
       }
       else if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
         payload = this.setDataPayload('text')
+        if (quickReplies) {
+          payload.quickReplies = quickReplies
+        }
         data = this.props.setMessageData(this.props.activeSession, payload)
         this.props.sendChatMessage(data)
         this.setState({ text: '', urlmeta: {}, currentUrl: '', selectedPicker: '', showPickers: false })
@@ -385,6 +403,14 @@ class Footer extends React.Component {
         { cancelable: true }
       )
     }
+  }
+
+  sendQuickReplyMessage (text, quickReplies) {
+    this.setState({
+      text
+    }, () => {
+      this.sendMessage(quickReplies)
+    })
   }
 
   setDataPayload (component) {
@@ -717,11 +743,21 @@ class Footer extends React.Component {
                           }}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='attachment' family='entypo' />
                           </TouchableOpacity>
-                           {!this.props.isWhatspModule &&
+                           {!this.props.isWhatsappModule &&
                           <TouchableOpacity onPress={this.onRecordPress}>
                             <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='mic' family='feather' />
                           </TouchableOpacity>
                            }
+                          {!this.props.isWhatsappModule &&
+                          <Popover  
+                            onRequestClose={() => this.setState({showPopover: false})} 
+                            isVisible={this.state.showPopover}                          
+                            from={<TouchableOpacity onPress={() => this.props.setGetContactInfoModal(this.sendQuickReplyMessage)}>
+                              <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='idcard' family='AntDesign' />
+                            </TouchableOpacity>}>
+                              <Text style={{margin: 10}}>Consider using this to get subscriber's email or phone number</Text>
+                          </Popover>
+                          }
                           {this.props.showZoom &&
                             <TouchableOpacity onPress={this.props.setZoomModal}>
                               <Image
@@ -756,7 +792,7 @@ class Footer extends React.Component {
         {this.state.showPickers && this.state.selectedPicker !== '' &&
           <Block>
             <Tabs
-              data= { this.props.isWhatspModule ? [{id: 'emoji', title: 'EMOJI', width: 70}] : [
+              data= { this.props.isWhatsappModule ? [{id: 'emoji', title: 'EMOJI', width: 70}] : [
                 {id: 'emoji', title: 'EMOJI', width: 70},
                 {id: 'stickers', title: 'STICKERS', width: 100},
                 {id: 'gifs', title: 'GIFS', width: 55}

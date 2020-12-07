@@ -215,7 +215,7 @@ class Header extends React.Component {
       <Block flex={0.2}>
         <Image
           onError={() => this.profilePicError(activeSession)}
-          source={{uri: activeSession.profilePic}}
+          source={{uri: activeSession.profilePic ? activeSession.profilePic : 'https://cdn.cloudkibo.com/public/icons/users.jpg'}}
           style={styles.avatar} />
       </Block>
       <Block flex={0.8}>
