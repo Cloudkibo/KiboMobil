@@ -20,7 +20,8 @@ class Chat extends React.Component {
       showCannedMessages: false,
       selectedCannedResponse: null,
       showZoomModal: false,
-      showGetContactInfoModal: false
+      showGetContactInfoModal: false,
+      sendQuickReplyMessage: ''
     }
     this.overrideUserInput = this.overrideUserInput.bind(this)
     this.updateNewMessage = this.updateNewMessage.bind(this)
