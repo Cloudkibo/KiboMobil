@@ -32,7 +32,7 @@ class SessionsListItem extends React.Component {
           <Block center flex={0.3}>
             <Image
               onError={(e) => this.props.profilePicError(session, e)}
-              source={{uri: session.profilePic}}
+              source={{uri: session.profilePic ? session.profilePic : 'https://cdn.cloudkibo.com/public/icons/users.jpg'}}
               style={styles.avatar} />
           </Block>
           <Block flex={0.7}>
