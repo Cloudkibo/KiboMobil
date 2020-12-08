@@ -58,10 +58,8 @@ class LiveChat extends React.Component {
     // }
     this.props.loadcannedResponses()
     if (this.props.allChatMessages[props.route.params.activeSession._id]) {
-      console.log('setUserChat')
       this.props.setUserChat(props.route.params.activeSession._id, props.route.params.activeSession.messagesCount)
     } else {
-      console.log('fetchUserChats')
       this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 }, props.route.params.activeSession.messagesCount)
     }
     // this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 }, props.route.params.activeSession.messagesCount)

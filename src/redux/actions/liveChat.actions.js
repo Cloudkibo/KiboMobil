@@ -368,7 +368,6 @@ export function fetchSingleSession (sessionid, appendDeleteInfo) {
 }
 
 export function fetchUserChats (sessionid, data, count, handleFunction) {
-  console.log('fetchUserChats')
   return (dispatch) => {
     callApi(dispatch, `livechat/${sessionid}`, 'post', data)
       .then(res => {
