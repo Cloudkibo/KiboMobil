@@ -341,6 +341,7 @@ class LiveChat extends React.Component {
 
 function mapStateToProps (state) {
   return {
+    allChatMessages: (state.liveChat.allChatMessages),
     openSessions: (state.liveChat.openSessions),
     openCount: (state.liveChat.openCount),
     closeCount: (state.liveChat.closeCount),

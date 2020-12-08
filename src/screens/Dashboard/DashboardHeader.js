@@ -31,6 +31,9 @@ class DashboardHeader extends React.Component {
     }
     this.handlePlatformSelect = this.handlePlatformSelect.bind(this)
     this.handlePlatform = this.handlePlatform.bind(this)
+    this.handleLeftPress = this.handleLeftPress.bind(this)
+    this.renderRight = this.renderRight.bind(this)
+
   }
   handlePlatformSelect (value, index) {
     if (value) {
@@ -70,7 +73,6 @@ class DashboardHeader extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
-    console.log('DidMount called', nextProps.user)
     if(nextProps.automated_options) {
       this.setState({automated_options: nextProps.automated_options})
     }

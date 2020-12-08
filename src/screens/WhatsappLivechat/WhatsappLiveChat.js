@@ -322,6 +322,7 @@ class WhastappLiveChat extends React.Component {
 
 function mapStateToProps (state) {
   return {
+    allChatMessages: (state.whatsAppChatInfo.allChatMessages),
     openSessions: (state.whatsAppChatInfo.openSessions),
     openCount: (state.whatsAppChatInfo.openCount),
     closeCount: (state.whatsAppChatInfo.closeCount),

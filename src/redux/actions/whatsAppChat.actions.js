@@ -4,13 +4,12 @@ import callApi from '../../utility/api.caller.service'
 import { AsyncStorage } from 'react-native'
 export const API_URL = 'https://kibochat.cloudkibo.com/api'
 
-
-export function backgroundWhatsappSessionFetch(data) {
-    return {
-      type: ActionTypes.BACKGROUND_WHATSAPP_SESSION_FETCH,
-      data: data
-    }
+export function backgroundWhatsappSessionFetch (data) {
+  return {
+    type: ActionTypes.BACKGROUND_WHATSAPP_SESSION_FETCH,
+    data: data
   }
+}
 export function updateLiveChatInfo (data) {
   return {
     type: ActionTypes.UPDATE_WHATSAPPCHAT_INFO,
@@ -140,6 +139,29 @@ export function UpdateUnreadCount (data) {
     data
   }
 }
+export function updateAllChat (payload, originalData, sessionId) {
+  if (originalData.page === 'first') {
+    return {
+      type: ActionTypes.ALL_CHAT_OVERWRITE,
+      userChat: payload.chat,
+      sessionId
+    }
+  } else {
+    return {
+      type: ActionTypes.ALL_CHAT_UPDATE,
+      userChat: payload.chat,
+      sessionId
+    }
+  }
+}
+
+export function setUserChat (sessionId, count) {
+  return {
+    type: ActionTypes.SET_USER_CHAT,
+    sessionId,
+    count
+  }
+}
 export function fetchOpenSessions (data,isBackgroundDataFetch) {
   return (dispatch) => {
     callApi(dispatch, 'whatsAppSessions/getOpenSessions', 'post', data)
@@ -265,6 +287,7 @@ export function fetchUserChats (sessionid, data, count, handleFunction) {
   return (dispatch) => {
     callApi(dispatch, `whatsAppChat/getChat/${sessionid}`, 'post', data)
       .then(res => {
+        dispatch(updateAllChat(res.payload, data, sessionid))
         dispatch(showChat(res.payload, data))
         if (handleFunction) {
           handleFunction(data.messageId)

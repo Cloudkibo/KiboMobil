@@ -21,7 +21,8 @@ import {
   updateLiveChatInfo,
   getSMPStatus,
   updateSessionProfilePicture,
-  deletefile
+  deletefile,
+  setUserChat
 } from '../../redux/actions/liveChat.actions'
 import {getZoomIntegrations, createZoomMeeting, loadcannedResponses} from '../../redux/actions/settings.action'
 import { clearSocketData } from '../../redux/actions/socket.actions'
@@ -34,7 +35,7 @@ class LiveChat extends React.Component {
     super(props, context)
     this.state = {
       fetchingChat: false,
-      loadingChat: true,
+      loadingChat: !this.props.allChatMessages[props.route.params.activeSession._id],
       teamAgents: [],
       userChat: [],
       smpStatus: [],
@@ -51,11 +52,19 @@ class LiveChat extends React.Component {
     this.fetchTeamAgents = this.fetchTeamAgents.bind(this)
     this.updateState = this.updateState.bind(this)
     this.handleSMPStatus = this.handleSMPStatus.bind(this)
+    this.getPushNotificationsAsync = this.getPushNotificationsAsync.bind(this)
     // if( props.route.params && !props.route.params.sessions) {
 
     // }
     this.props.loadcannedResponses()
-    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 }, props.route.params.activeSession.messagesCount)
+    if (this.props.allChatMessages[props.route.params.activeSession._id]) {
+      console.log('setUserChat')
+      this.props.setUserChat(props.route.params.activeSession._id, props.route.params.activeSession.messagesCount)
+    } else {
+      console.log('fetchUserChats')
+      this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 }, props.route.params.activeSession.messagesCount)
+    }
+    // this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 }, props.route.params.activeSession.messagesCount)
     props.getSMPStatus(this.handleSMPStatus)
     props.getZoomIntegrations()
     // if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
@@ -68,9 +77,12 @@ class LiveChat extends React.Component {
   }
 
   updateState (state, callback) {
+    const allChatMessages = this.props.allChatMessages
+    allChatMessages[this.state.activeSession._id] = state.userChat
     if (state.reducer) {
       const data = {
         userChat: state.userChat,
+        allChatMessages,
         openSessions: this.state.tabValue === 'open' ? state.sessions : this.props.openSessions,
         closeSessions: this.state.tabValue === 'close' ? state.sessions : this.props.closeSessions
       }
@@ -88,19 +100,18 @@ class LiveChat extends React.Component {
     }
   }
 
-  getPushNotificationsAsync = async (sessionId) => {
+  async getPushNotificationsAsync (sessionId) {
     let notifications = await Notifications.getPresentedNotificationsAsync()
     // // let data = JSON.parse(notification[0])
     for (let notification of notifications) {
-      if(notification.request.content.data.subscriber && (notification.request.content.data.subscriber._id === sessionId)) {
+      if (notification.request.content.data.subscriber && (notification.request.content.data.subscriber._id === sessionId)) {
         let removeNotification = await Notifications.dismissNotificationAsync(notification.request.identifier)
-       }
+      }
     }
     // console.log('notification[0].identifier', notification[0].request.identifier)
     // let removeNotification = await Notifications.dismissNotificationAsync(notification[0].request.identifier)
     // // console.log('notification in Live chat', data)
     // console.log('remove_notidication', removeNotification)
-
   }
 
   /* eslint-disable */
@@ -111,7 +122,7 @@ class LiveChat extends React.Component {
   /* eslint-enable */
     let state = {}
     if (nextProps.cannedResponses !== this.props.cannedResponses) {
-      this.setState({ cannedResponses: nextProps.cannedResponses})
+      this.setState({cannedResponses: nextProps.cannedResponses})
     }
     if (nextProps.userChat) {
       if (nextProps.userChat.length > 0) {
@@ -155,13 +166,11 @@ class LiveChat extends React.Component {
         isAllowed = false
         errorMsg = `Only assigned agent can ${errorMsg}`
       } else if (session.assigned_to.type === 'team') {
-        // this.fetchTeamAgents(session._id, (teamAgents) => {
-          const agentIds = this.props.teamAgents && this.props.teamAgents.map((agent) => agent.agentId._id)
-          if (!agentIds.includes(this.props.user._id)) {
-            isAllowed = false
-            errorMsg = `Only agents who are part of assigned team can ${errorMsg}`
-          }
-        // })
+        const agentIds = this.props.teamAgents && this.props.teamAgents.map((agent) => agent.agentId._id)
+        if (!agentIds.includes(this.props.user._id)) {
+          isAllowed = false
+          errorMsg = `Only agents who are part of assigned team can ${errorMsg}`
+        }
       }
     }
     errorMsg = `You can not perform this action. ${errorMsg}`
@@ -192,7 +201,7 @@ class LiveChat extends React.Component {
 
   setMessageData (session, payload) {
     const data = {
-      _id : new Date().getTime(),
+      _id: new Date().getTime(),
       sender_id: session.pageId._id,
       recipient_id: session._id,
       sender_fb_id: session.pageId.pageId,
@@ -270,6 +279,7 @@ function mapStateToProps (state) {
   return {
     userChat: (state.liveChat.userChat),
     chatCount: (state.liveChat.chatCount),
+    allChatMessages: (state.liveChat.allChatMessages),
     pages: (state.pagesInfo.pages),
     user: (state.basicInfo.user),
     // members: (state.membersInfo.members),
@@ -309,7 +319,8 @@ function mapDispatchToProps (dispatch) {
     deletefile,
     loadcannedResponses,
     getZoomIntegrations,
-    createZoomMeeting
+    createZoomMeeting,
+    setUserChat
   }, dispatch)
 }
 
