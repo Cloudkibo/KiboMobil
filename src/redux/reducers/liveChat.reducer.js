@@ -2,7 +2,8 @@ import * as ActionTypes from '../constants/constants'
 
 const initialState = {
   socketSession: '',
-  socketData: {}
+  socketData: {},
+  allChatMessages: {}
 }
 
 export function liveChat (state = initialState, action) {
@@ -68,7 +69,7 @@ export function liveChat (state = initialState, action) {
             if(JSON.stringify(newSession) !== JSON.stringify(oldOpensessions[index])) {
               oldPayloadSession.splice(index, 1)
               oldPayloadSession.splice(0, 0, newSession)
-            } 
+            }
           } else {
             oldPayloadSession.splice(0, 0, newSession)
           }
@@ -111,7 +112,7 @@ export function liveChat (state = initialState, action) {
         }
           if (index === -1) {
             oldPayloadSession.splice(0, 0, newSession)
-          } 
+          }
         })
       return Object.assign({}, state, {
         closeSessions: oldPayloadSession,
@@ -221,6 +222,27 @@ export function liveChat (state = initialState, action) {
         userChat: orderedChat,
         chatCount: action.chatCount,
         changedStatus: ''
+      })
+
+    case ActionTypes.SET_USER_CHAT:
+      let newUserChat = state.allChatMessages[action.sessionId]
+      return Object.assign({}, state, {
+        userChat: newUserChat,
+        chatCount: action.count
+      })
+
+    case ActionTypes.ALL_CHAT_OVERWRITE:
+      let overwriteChat = state.allChatMessages
+      overwriteChat[action.sessionId] = action.userChat
+      return Object.assign({}, state, {
+        allChatMessages: overwriteChat
+      })
+
+    case ActionTypes.ALL_CHAT_UPDATE:
+      let updateChat = state.allChatMessages
+      updateChat[action.sessionId] = [...updateChat[action.sessionId], ...action.userChat]
+      return Object.assign({}, state, {
+        allChatMessages: updateChat
       })
 
     case ActionTypes.SOCKET_UPDATE:
@@ -334,7 +356,7 @@ export function liveChat (state = initialState, action) {
     case ActionTypes.BACKGROUND_SESSION_DATA_FETCH:
       return Object.assign({}, state, {
         isBackgroundDataFetch: action.data
-      }) 
+      })
     default:
       return state
   }

@@ -2,7 +2,8 @@ import * as ActionTypes from '../constants/constants'
 
 const initialState = {
   chat: [],
-  chatCount: 0
+  chatCount: 0,
+  allChatMessages: {}
 }
 
 export function whatsAppChatInfo (state = initialState, action) {
@@ -106,6 +107,26 @@ export function whatsAppChatInfo (state = initialState, action) {
       return Object.assign({}, state, {
         chat: orderedChat,
         chatCount: action.count
+      })
+    case ActionTypes.SET_USER_CHAT:
+      let newUserChat = state.allChatMessages[action.sessionId]
+      return Object.assign({}, state, {
+        chat: newUserChat,
+        chatCount: action.count
+      })
+
+    case ActionTypes.ALL_CHAT_OVERWRITE:
+      let overwriteChat = state.allChatMessages
+      overwriteChat[action.sessionId] = action.userChat
+      return Object.assign({}, state, {
+        allChatMessages: overwriteChat
+      })
+
+    case ActionTypes.ALL_CHAT_UPDATE:
+      let updateChat = state.allChatMessages
+      updateChat[action.sessionId] = [...updateChat[action.sessionId], ...action.userChat]
+      return Object.assign({}, state, {
+        allChatMessages: updateChat
       })
     case ActionTypes.UPDATE_UNREAD_COUNT_WHATSAPP:
       openSessions = [...state.openSessions]

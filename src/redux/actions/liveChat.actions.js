@@ -236,6 +236,30 @@ export function showUserChats (payload, originalData, count) {
   }
 }
 
+export function updateAllChat (payload, originalData, sessionId) {
+  if (originalData.page === 'first') {
+    return {
+      type: ActionTypes.ALL_CHAT_OVERWRITE,
+      userChat: payload.chat,
+      sessionId
+    }
+  } else {
+    return {
+      type: ActionTypes.ALL_CHAT_UPDATE,
+      userChat: payload.chat,
+      sessionId
+    }
+  }
+}
+
+export function setUserChat (sessionId, count) {
+  return {
+    type: ActionTypes.SET_USER_CHAT,
+    sessionId,
+    count
+  }
+}
+
 export function resetSocket () {
   return {
     type: ActionTypes.RESET_SOCKET
@@ -347,6 +371,7 @@ export function fetchUserChats (sessionid, data, count, handleFunction) {
   return (dispatch) => {
     callApi(dispatch, `livechat/${sessionid}`, 'post', data)
       .then(res => {
+        dispatch(updateAllChat(res.payload, data, sessionid))
         dispatch(showUserChats(res.payload, data, count))
         if (handleFunction) {
           handleFunction(data.messageId)
