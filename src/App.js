@@ -44,12 +44,15 @@ const store = configureStore()
 initiateKibochatSocket(store)
 initiateKiboEngageSocket(store)
 
-// Sentry.init({
-//   dsn: 'https://6c7958e0570f455381d6f17122fbd117@o132281.ingest.sentry.io/292307',
-//   enableInExpoDevelopment: true,
-//   debug: true,
-//   attachStacktrace: true
-// })
+Sentry.init({
+  dsn: 'https://6c7958e0570f455381d6f17122fbd117@o132281.ingest.sentry.io/292307',
+  enableInExpoDevelopment: false,
+  release: 'KiboPushMobile@1.0.0',
+  environment: 'Production',
+  serverName: 'KiboPushMobile',
+  debug: true,
+  attachStacktrace: true
+})
 class App extends React.Component {
   state = {
     isLoadingComplete: false,

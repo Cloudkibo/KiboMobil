@@ -371,10 +371,12 @@ export function fetchUserChats (sessionid, data, count, handleFunction) {
   return (dispatch) => {
     callApi(dispatch, `livechat/${sessionid}`, 'post', data)
       .then(res => {
-        dispatch(updateAllChat(res.payload, data, sessionid))
-        dispatch(showUserChats(res.payload, data, count))
-        if (handleFunction) {
-          handleFunction(data.messageId)
+        if (res.status === 'success') {
+          dispatch(updateAllChat(res.payload, data, sessionid))
+          dispatch(showUserChats(res.payload, data, count))
+          if (handleFunction) {
+            handleFunction(data.messageId)
+          }
         }
       })
   }

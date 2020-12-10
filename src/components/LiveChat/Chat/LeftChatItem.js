@@ -134,7 +134,7 @@ class LeftChatItem extends PureComponent {
             </Block>
         }
         <Block row>
-          <Image source={{ uri: this.props.activeSession.profilePic }} style={[styles.avatar, styles.shadow]} />
+          <Image source={{ uri: this.props.activeSession.profilePic ? this.props.activeSession.profilePic : 'https://cdn.cloudkibo.com/public/icons/users.jpg'  }} style={[styles.avatar, styles.shadow]} />
           <Block style={styles.messageCardWrapper}>
             <Block style={[styles.messageCard, styles.shadow]}>
               {this.getMessage()}
