@@ -76,16 +76,16 @@ socket.on('message', (data) => {
     'Whatsapp_subscriberName_update'].includes(data.action)) {
     handleWhatsAppSubscribers(store, data)
   }
-  if (['new_chat', 'agent_replied', 'session_pending_response', 'unsubscribe', 'session_status'].includes(data.action)) {
+  if (['new_chat', 'agent_replied', 'session_pending_response', 'unsubscribe', 'session_status', 'mark_read'].includes(data.action)) {
     if (data.action === 'new_chat') data.showNotification = true
     store.dispatch(handleSocketEvent(data))
-  } 
+  }
   //else if (data.action === 'session_assign') {
   //   store.dispatch(updateSessions(data.payload.data))
   // } else if (data.action === 'new_session_created_whatsapp') {
   //   store.dispatch(whatsAppActions.updateWhatspSessions(data.payload))
   // }
-  if (['new_chat_whatsapp', 'agent_replied_whatsapp', 'session_pending_response_whatsapp', 'unsubscribe_whatsapp', 'session_status_whatsapp', 'new_session_created_whatsapp', 'message_delivered_whatsApp', 'message_seen_whatsApp'].includes(data.action)) {
+  if (['new_chat_whatsapp', 'agent_replied_whatsapp', 'session_pending_response_whatsapp', 'unsubscribe_whatsapp', 'session_status_whatsapp', 'new_session_created_whatsapp', 'message_delivered_whatsApp', 'message_seen_whatsApp', 'mark_read_whatsapp'].includes(data.action)) {
     if (data.action === 'new_chat_whatsapp') data.showNotification = true
     store.dispatch(handleSocketEventWhatsapp(data))
   }
