@@ -44,12 +44,30 @@ class ChatSessionScreen extends React.Component {
         });
     }
 
+    isWhatsappNotification(action) {
+        let whatsappAction = ['chat_whatsapp', 'chat_whatsapp_unresolvedSession', 'chat_whatsapp_pendingSession']
+        if(whatsappAction.includes(action)) {
+            return true
+        } else{
+            return false
+        }
+    }
+
+    isMessengerNotification(action) {
+        let messengerAction = ['chat_messenger', 'chat_messenger_unresolvedSession', 'chat_messenger_pendingSession']
+        if(messengerAction.includes(action)) {
+            return true
+        } else{
+            return false
+        }
+    }
+
     _handleNotification = notification => {
-        if(notification.notification.request.content.data.action === 'chat_whatsapp') {
+        if(isWhatsappNotification(notification.notification.request.content.data.action)) {
           let activeSubscriber = notification.notification.request.content.data.subscriber
           activeSubscriber.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
           this.setState({whatsappActiveSession: activeSubscriber})
-        } else if (notification.notification.request.content.data.action === 'chat_messenger') {
+        } else if (isMessengerNotification(notification.notification.request.content.data.action)) {
          this.setState({messengerActiveSession: notification.notification.request.content.data.subscriber})
         }
       };
