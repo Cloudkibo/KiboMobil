@@ -1,12 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { saveNotificationToken } from '../../redux/actions/basicInfo.actions'
-import { StyleSheet, Dimensions, Platform, Image, TouchableOpacity, View, Text, TextInput, AsyncStorage, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native'
-import { Block, Button, Input, theme } from 'galio-framework'
-import {getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
-
-import { LinearGradient } from 'expo-linear-gradient'
+import { saveNotificationToken, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
+import { StyleSheet, Dimensions, Platform, Image, TouchableOpacity, View, Text, AsyncStorage, KeyboardAvoidingView, Keyboard } from 'react-native'
+import { Block, Button, Input } from 'galio-framework'
 import { materialTheme } from '../../constants/'
 import { HeaderHeight } from '../../constants/utils'
 
@@ -203,28 +200,26 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   parent: {
-        flex: 1,
-        padding: 10
-    },
+    flex: 1,
+    padding: 10
+  },
+  upper: {
+    paddingTop: 44,
+    padding: 10,
+    flex: 1
+  },
+  textInput: {
+    height: 40, borderColor: 'gray', borderWidth: 1
+  },
 
-    upper: {
-        paddingTop: 44,
-        padding: 10,
-        flex: 1,
-    },
-
-    textInput: {
-        height: 40, borderColor: 'gray', borderWidth: 1
-    },
-
-    bottomParent: {
-        marginTop: 20,
-        alignItems: "center",
-        width: '100%',
-        height: 40,
-    },
-
-    bottom: {
-        textAlignVertical: "center", textAlign: "center",
-    }
+  bottomParent: {
+    marginTop: 20,
+    alignItems: 'center',
+    width: '100%',
+    height: 40
+  },
+  bottom: {
+    textAlignVertical: 'center',
+    textAlign: 'center'
+  }
 })

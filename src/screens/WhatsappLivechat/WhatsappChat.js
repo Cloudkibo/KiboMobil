@@ -19,7 +19,8 @@ import {
   assignToAgent,
   sendNotifications,
   uploadRecording,
-  updateLiveChatInfo
+  updateLiveChatInfo,
+  setUserChat
 } from '../../redux/actions/whatsAppChat.actions'
 import {getZoomIntegrations, createZoomMeeting, loadcannedResponses} from '../../redux/actions/settings.action'
 import { clearSocketDataWhatsapp } from '../../redux/actions/socket.actions'
@@ -32,7 +33,7 @@ class LiveChat extends React.Component {
     super(props, context)
     this.state = {
       fetchingChat: false,
-      loadingChat: true,
+      loadingChat: !this.props.allChatMessages[props.route.params.activeSession._id],
       teamAgents: [],
       userChat: [],
       smpStatus: [],
@@ -49,7 +50,13 @@ class LiveChat extends React.Component {
     this.updateState = this.updateState.bind(this)
     this.getPushNotificationsAsync = this.getPushNotificationsAsync.bind(this)
     this.props.loadcannedResponses()
-    this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 })
+    if (this.props.allChatMessages[props.route.params.activeSession._id]) {
+      console.log('setUserChat')
+      this.props.setUserChat(props.route.params.activeSession._id, props.route.params.activeSession.messagesCount)
+    } else {
+      console.log('fetchUserChats')
+      this.props.fetchUserChats(props.route.params.activeSession._id, { page: 'first', number: 25 }, props.route.params.activeSession.messagesCount)
+    }
     props.getZoomIntegrations()
     // if (props.route.params.activeSession.unreadCount && props.route.params.activeSession.unreadCount > 0) {
     //   this.props.markRead(props.route.params.activeSession._id)
@@ -61,9 +68,12 @@ class LiveChat extends React.Component {
   }
 
   updateState (state, callback) {
+    const allChatMessages = this.props.allChatMessages
+    allChatMessages[this.state.activeSession._id] = state.userChat
     if (state.reducer) {
       const data = {
         chat: state.userChat,
+        allChatMessages,
         openSessions: this.state.tabValue === 'open' ? state.sessions : this.props.openSessions,
         closeSessions: this.state.tabValue === 'close' ? state.sessions : this.props.closeSessions
       }
@@ -235,6 +245,7 @@ class LiveChat extends React.Component {
 
 function mapStateToProps (state) {
   return {
+    allChatMessages: (state.whatsAppChatInfo.allChatMessages),
     userChat: (state.whatsAppChatInfo.chat),
     chatCount: (state.whatsAppChatInfo.chatCount),
     // members: (state.membersInfo.members),
@@ -273,7 +284,8 @@ function mapDispatchToProps (dispatch) {
     deletefile,
     loadcannedResponses,
     getZoomIntegrations,
-    createZoomMeeting
+    createZoomMeeting,
+    setUserChat
   }, dispatch)
 }
 

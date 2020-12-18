@@ -9,7 +9,7 @@ import { materialTheme } from '../../constants/'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
 import {getWhatsAppMessageTemplates} from '../../redux/actions/settings.action'
-import {fetchOpenSessions, fetchCloseSessions, markRead, updateLiveChatInfo, fetchTeamAgentsWhatsApp} from '../../redux/actions/whatsAppChat.actions'
+import {backgroundWhatsappSessionFetch, fetchOpenSessions, fetchCloseSessions, markRead, updateLiveChatInfo, fetchTeamAgentsWhatsApp} from '../../redux/actions/whatsAppChat.actions'
 import { handleSocketEvent } from './socket'
 import * as Notifications from 'expo-notifications'
 import { clearSocketDataWhatsapp } from '../../redux/actions/socket.actions'
@@ -131,6 +131,12 @@ class WhastappLiveChat extends React.Component {
         this.props.user,
         this.props.clearSocketDataWhatsapp
       )
+    }
+    console.log('isBackgroundWhatsappDataFetch', nextProps.isBackgroundWhatsappDataFetch)
+    if(nextProps.isBackgroundWhatsappDataFetch) {
+      console.log('isBackgroundWhatsappDataFetch', nextProps.isBackgroundWhatsappDataFetch)
+      this.props.backgroundWhatsappSessionFetch(false)
+      this.fetchSessions(true, 'none', true, true)
     }
   }
 
@@ -316,6 +322,7 @@ class WhastappLiveChat extends React.Component {
 
 function mapStateToProps (state) {
   return {
+    allChatMessages: (state.whatsAppChatInfo.allChatMessages),
     openSessions: (state.whatsAppChatInfo.openSessions),
     openCount: (state.whatsAppChatInfo.openCount),
     closeCount: (state.whatsAppChatInfo.closeCount),
@@ -325,7 +332,8 @@ function mapStateToProps (state) {
     socketData: (state.socketInfo.socketDataWhatsapp),
     userChat: (state.whatsAppChatInfo.chat),
     chatCount: (state.whatsAppChatInfo.chatCount),
-    chatLoading: (state.liveChat.chatLoading)
+    chatLoading: (state.liveChat.chatLoading),
+    isBackgroundWhatsappDataFetch: (state.whatsAppChatInfo.isBackgroundWhatsappDataFetch)
   }
 }
 
@@ -338,6 +346,7 @@ function mapDispatchToProps (dispatch) {
     clearSocketDataWhatsapp,
     updateLiveChatInfo,
     clearSession,
+    backgroundWhatsappSessionFetch,
     fetchTeamAgentsWhatsApp
   }, dispatch)
 }

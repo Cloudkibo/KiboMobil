@@ -3,10 +3,13 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
 import { Block, Text, theme, Input, Button } from 'galio-framework'
-import { loadWhatsAppContactsList, editSubscriberWhatsApp } from '../../redux/actions/whatsAppSubscribers.actions'
+import { loadWhatsAppContactsList, editSubscriberWhatsApp, updateSubscribersInfo } from '../../redux/actions/whatsAppSubscribers.actions'
 import { materialTheme } from '../../constants/'
 import SubscribersListItem from '../../components/WhatsAppSubscribers/SubscribersListItem'
 import Modal from 'react-native-modal'
+import { handleSocketEvent } from './socket'
+import { clearSocketDataSubscribersWhatsApp } from '../../redux/actions/socket.actions'
+import { updateDashboardInfo } from '../../redux/actions/whatsAppDashboard.actions'
 
 const { width } = Dimensions.get('screen')
 let Toast = null
@@ -47,17 +50,32 @@ class Subscribers extends React.Component {
   }
 
   /* eslint-disable */
+  UNSAFE_componentWillReceiveProps (nextProps) {
+  /* eslint-enable */
+    if (nextProps.socketData) {
+      handleSocketEvent(
+        nextProps.socketData,
+        this.state,
+        this.props,
+        this.props.updateSubscribersInfo,
+        this.props.user,
+        this.props.clearSocketDataSubscribersWhatsApp
+      )
+    }
+  }
+
+  /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
   }
 
   componentDidMount () {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.loadSubscribers()
-    })
+    this.loadSubscribers()
+    // this._unsubscribe = this.props.navigation.addListener('focus', () => {
+    // })
   }
   componentWillUnmount () {
-    this._unsubscribe()
+    // this._unsubscribe()
   }
 
   changeSearchValue (value) {
@@ -217,14 +235,19 @@ class Subscribers extends React.Component {
 function mapStateToProps (state) {
   return {
     subscribers: (state.whatsAppSubscribersInfo.contacts),
-    count: (state.whatsAppSubscribersInfo.count)
+    count: (state.whatsAppSubscribersInfo.count),
+    socketData: (state.socketInfo.socketDataSubscribersWhatsApp),
+    cardBoxesData: (state.smsWhatsAppDashboardInfo.cardBoxesData)
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     loadWhatsAppContactsList,
-    editSubscriberWhatsApp
+    editSubscriberWhatsApp,
+    clearSocketDataSubscribersWhatsApp,
+    updateSubscribersInfo,
+    updateDashboardInfo
   }, dispatch)
 }
 

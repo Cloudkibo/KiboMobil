@@ -24,22 +24,22 @@ export function showAutomatedOptions (data) {
 }
 
 export function showuserdetails (data) {
-  // NOTE: don't remove following auth method call
-  // auth.putUserId(data._id)
   return {
     type: ActionTypes.LOAD_USER_DETAILS,
     data
   }
 }
 
-export function getuserdetails (callback, joinRoom) {
+export function getuserdetails (callback, joinRoomKibochat, joinRoomKiboEngage) {
   return (dispatch) => {
     callApi(dispatch, 'users').then(res => {
-      if (res.status === 'Unauthorized' || res.status === 'failed' || res.message === 'Unauthorized') {
-        // AsyncStorage.removeItem('token')
-        // if (callback) callback(res)
-      } else {
-        if (joinRoom) joinRoom(res.payload.user.companyId)
+      if (res.status === 'success') {
+        if (joinRoomKibochat) {
+          joinRoomKibochat(res.payload.user.companyId)
+        }
+        if(joinRoomKiboEngage) {
+          joinRoomKiboEngage(res.payload.user.companyId)
+        }
         if (callback) callback(res)
         dispatch(showuserdetails(res.payload.user))
       }
@@ -47,10 +47,13 @@ export function getuserdetails (callback, joinRoom) {
   }
 }
 
-export function saveNotificationToken(user, logOut) {
+export function saveNotificationToken (user, logOut) {
   return (dispatch) => {
     callApi(dispatch, `companyUsers/update/${user._id}`, 'post', {expoListToken: user.expoListToken}).then(res => {
       if (res.status === 'success') {
+        if (logOut) {
+          logOut()
+        }
         dispatch(showuserdetails(user))
       }
     })
@@ -86,10 +89,11 @@ export function updatePlatform (data, cb) {
     })
   }
 }
-
-export function getAutomatedOptions () {
+export function getAutomatedOptions (cb) {
   return (dispatch) => {
-    callApi(dispatch, 'company/getAutomatedOptions').then(res => dispatch(showAutomatedOptions(res.payload)))
+    callApi(dispatch, 'company/getAutomatedOptions').then(res => {
+      dispatch(showAutomatedOptions(res.payload))
+      if (cb) cb(res)
+    })
   }
 }
-

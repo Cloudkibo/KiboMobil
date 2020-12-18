@@ -36,11 +36,15 @@ class Subscribers extends React.Component {
   }
 
   componentDidMount () {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.loadSubscribers()
+    this.loadSubscribers()
+    // this._unsubscribe = this.props.navigation.addListener('focus', () => {
+    // })
+    this._unsubscribe = this.props.navigation.addListener('blur', (payload) => {
+      this.setState({searchValue: ''})
     })
   }
   componentWillUnmount () {
+    console.log('componentWillUnmount')
     this._unsubscribe()
   }
 
@@ -54,9 +58,11 @@ class Subscribers extends React.Component {
       searchValue: value,
       pageSelected: 0,
       typing: false,
+      loading: value !== '',
       typingTimeout: setTimeout(function () {
-        self.setState({loading: true})
-        self.loadSubscribers()
+        if (value !== '') {
+          self.loadSubscribers()
+        }
       }, 1000)
     })
   }
@@ -90,9 +96,16 @@ class Subscribers extends React.Component {
       onEndReachedCalledDuringMomentum: false
     })
     let pageSelected = this.state.pageSelected
-    if (this.props.subscribers.length < this.props.count) {
-      this.setState({pageSelected: pageSelected + 1})
-      this.loadSubscribers(pageSelected, pageSelected + 1)
+    if (this.state.searchValue === '') {
+      if (this.props.subscribers.length < this.props.count) {
+        this.setState({pageSelected: pageSelected + 1})
+        this.loadSubscribers(pageSelected, pageSelected + 1)
+      }
+    } else {
+      if (this.props.searchedSubscribers.length < this.props.searchedCount) {
+        this.setState({pageSelected: pageSelected + 1})
+        this.loadSubscribers(pageSelected, pageSelected + 1)
+      }
     }
   }
 
@@ -109,19 +122,36 @@ class Subscribers extends React.Component {
   }
 
   _renderSearchResultsFooter () {
-    return (this.props.subscribers && this.props.subscribers.length < this.props.count
-      ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large' /></View>
-      : null
-    )
+    if (this.state.searchValue === '') {
+      return (this.props.subscribers && this.props.subscribers.length < this.props.count
+        ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large' /></View>
+        : null
+      )
+    } else {
+      return (this.props.searchedSubscribers && this.props.searchedSubscribers.length < this.props.searchedCount
+        ? <View style={{flex: 1, alignItems: 'center'}}><ActivityIndicator size='large' /></View>
+        : null
+      )
+    }
   }
 
   _loadMoreData () {
-    if (!this.state.onEndReachedCalledDuringMomentum && this.props.subscribers.length < this.props.count) {
-      this.setState({ onEndReachedCalledDuringMomentum: true }, () => {
-        setTimeout(() => {
-          this.loadMore()
-        }, 1500)
-      })
+    if (this.state.searchValue === '') {
+      if (!this.state.onEndReachedCalledDuringMomentum && this.props.subscribers.length < this.props.count) {
+        this.setState({ onEndReachedCalledDuringMomentum: true }, () => {
+          setTimeout(() => {
+            this.loadMore()
+          }, 1500)
+        })
+      }
+    } else {
+      if (!this.state.onEndReachedCalledDuringMomentum && this.props.searchedSubscribers.length < this.props.searchedCount) {
+        this.setState({ onEndReachedCalledDuringMomentum: true }, () => {
+          setTimeout(() => {
+            this.loadMore()
+          }, 1500)
+        })
+      }
     }
   }
 
@@ -141,7 +171,7 @@ class Subscribers extends React.Component {
           {this.state.loading
             ? <Block flex={0.8} middle><ActivityIndicator size='large' /></Block>
             : <FlatList
-              data={this.props.subscribers}
+              data={this.state.searchValue === '' ? this.props.subscribers : this.props.searchedSubscribers}
               renderItem={({item}) => {
                 return <SubscribersListItem
                   item={item}
@@ -167,7 +197,9 @@ class Subscribers extends React.Component {
 function mapStateToProps (state) {
   return {
     subscribers: (state.subscribersInfo.subscribers),
-    count: (state.subscribersInfo.count)
+    count: (state.subscribersInfo.count),
+    searchedSubscribers: (state.subscribersInfo.searchedSubscribers),
+    searchedCount: (state.subscribersInfo.searchedCount)
   }
 }
 

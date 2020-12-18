@@ -4,6 +4,12 @@ import callApi from '../../utility/api.caller.service'
 import { AsyncStorage } from 'react-native'
 export const API_URL = 'https://kibochat.cloudkibo.com/api'
 
+export function backgroundWhatsappSessionFetch (data) {
+  return {
+    type: ActionTypes.BACKGROUND_WHATSAPP_SESSION_FETCH,
+    data: data
+  }
+}
 export function updateLiveChatInfo (data) {
   return {
     type: ActionTypes.UPDATE_WHATSAPPCHAT_INFO,
@@ -48,49 +54,83 @@ export function updateWhatspSessions (data) {
   }
 }
 export function showOpenSessions (sessions, data) {
-  let openSessions = sessions.openSessions.map((s) => {
+  var subscribers = ''
+  // var payload = ''
+  if(sessions.isBackgroundDataFetch) {
+      subscribers = sessions.payload.openSessions.map((s) => {
+      let name = s.name.split(' ')
+      s.firstName = name[0]
+      s.lastName = name[1]
+      s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
+      return s
+    })
+    // payload.subscribers = subscribers
+    // payload.isBackgroundDataFetch= sessions.isBackgroundDataFetch
+
+  } else {
+    subscribers = sessions.openSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
     s.lastName = name[1]
     s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
     return s
   })
+}
 
-  if (data.first_page) {
+  if (data.first_page && (data.page_value !== '' || data.search_value !== '')) {
     return {
       type: ActionTypes.SHOW_OPEN_WHATSAPP_SESSIONS_OVERWRITE,
-      openSessions,
-      openCount: sessions.count
+      openSessions: subscribers,
+      count: sessions.count,
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch
     }
   } else {
     return {
       type: ActionTypes.FETCH_WHATSAPP_OPEN_SESSIONS,
-      openSessions,
-      openCount: sessions.count
+      openSessions: subscribers,
+      count: sessions.count
     }
   }
 }
-export function showCloseChatSessions (sessions, data) {
-  let closeSessions = sessions.closedSessions.map((s) => {
+export function showCloseChatSessions (sessions, firstPage) {
+  var subscribers = ''
+  // var payload = ''
+  console.log('sessions.isBackgroundDataFetch', sessions.isBackgroundDataFetch)
+  if(sessions.isBackgroundDataFetch) {
+      subscribers = sessions.payload.closedSessions.map((s) => {
+      let name = s.name.split(' ')
+      s.firstName = name[0]
+      s.lastName = name[1]
+      s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
+      return s
+    })
+    // payload.subscribers = subscribers
+    // payload.isBackgroundDataFetch= sessions.isBackgroundDataFetch
+
+  } else {
+    subscribers = sessions.closedSessions.map((s) => {
     let name = s.name.split(' ')
     s.firstName = name[0]
     s.lastName = name[1]
     s.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
     return s
   })
-
-  if (data.first_page) {
+}
+  // var sorted = subscribers.sort(function (a, b) {
+  //   return new Date(b.lastDateTime) - new Date(a.lastDateTime)
+  // })
+  if (firstPage) {
     return {
       type: ActionTypes.SHOW_CLOSE_WHATSAPP_SESSIONS_OVERWRITE,
-      closeSessions,
-      closeCount: sessions.count
+      closeSessions: subscribers,
+      count: sessions.count,
+      isBackgroundDataFetch: sessions.isBackgroundDataFetch
     }
-  } else {
-    return {
-      type: ActionTypes.FETCH_WHATSAPP_CLOSE_SESSIONS,
-      closeSessions,
-      closeCount: sessions.count
-    }
+  }
+  return {
+    type: ActionTypes.SHOW_CLOSE_CHAT_SESSIONS,
+    closeSessions: subscribers,
+    count: sessions.count
   }
 }
 export function UpdateUnreadCount (data) {
@@ -99,22 +139,61 @@ export function UpdateUnreadCount (data) {
     data
   }
 }
-export function fetchOpenSessions (data) {
+export function updateAllChat (payload, originalData, sessionId) {
+  if (originalData.page === 'first') {
+    return {
+      type: ActionTypes.ALL_CHAT_OVERWRITE,
+      userChat: payload.chat,
+      sessionId
+    }
+  } else {
+    return {
+      type: ActionTypes.ALL_CHAT_UPDATE,
+      userChat: payload.chat,
+      sessionId
+    }
+  }
+}
+
+export function setUserChat (sessionId, count) {
+  return {
+    type: ActionTypes.SET_USER_CHAT,
+    sessionId,
+    count
+  }
+}
+export function fetchOpenSessions (data,isBackgroundDataFetch) {
   return (dispatch) => {
     callApi(dispatch, 'whatsAppSessions/getOpenSessions', 'post', data)
       .then(res => {
         if (res.status === 'success') {
-          dispatch(showOpenSessions(res.payload, data))
+          if(isBackgroundDataFetch) {
+            let newPayload = {
+              payload : res.payload,
+              isBackgroundDataFetch: isBackgroundDataFetch
+            }
+            dispatch(showOpenSessions(newPayload, data))
+          } else {
+            dispatch(showOpenSessions(res.payload, data))
+          }
         }
       })
   }
 }
-export function fetchCloseSessions (data) {
+export function fetchCloseSessions (data,isBackgroundDataFetch) {
   return (dispatch) => {
     callApi(dispatch, 'whatsAppSessions/getClosedSessions', 'post', data)
       .then(res => {
         if (res.status === 'success') {
-          dispatch(showCloseChatSessions(res.payload, data))
+          if(isBackgroundDataFetch) {
+            let newPayload = {
+              payload : res.payload,
+              isBackgroundDataFetch: isBackgroundDataFetch
+            }
+            dispatch(showCloseChatSessions(newPayload, data.first_page))
+          } else {
+            dispatch(showCloseChatSessions(res.payload, data.first_page))
+          }
         }
       })
   }
@@ -208,6 +287,7 @@ export function fetchUserChats (sessionid, data, count, handleFunction) {
   return (dispatch) => {
     callApi(dispatch, `whatsAppChat/getChat/${sessionid}`, 'post', data)
       .then(res => {
+        dispatch(updateAllChat(res.payload, data, sessionid))
         dispatch(showChat(res.payload, data))
         if (handleFunction) {
           handleFunction(data.messageId)

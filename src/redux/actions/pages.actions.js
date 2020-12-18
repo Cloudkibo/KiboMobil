@@ -8,6 +8,7 @@ export function updatePages (data) {
   }
 }
 
+
 export function updateConnectedPages (data) {
   return {
     type: ActionTypes.FETCH_CONNECTED_PAGES_LIST,
@@ -58,3 +59,5 @@ export function fetchConnectedPages (callback) {
     })
   }
 }
+
+

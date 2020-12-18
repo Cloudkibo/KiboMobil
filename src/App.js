@@ -9,8 +9,8 @@ import { configureStore } from './redux/store/store'
 import SubApp from './sub.app'
 // Before rendering any navigation stack
 import { enableScreens } from 'react-native-screens'
-import { initiateSocket } from './utility/socketio'
-
+import { initiateKibochatSocket } from './socket/kibochatSocket'
+import { initiateKiboEngageSocket } from './socket/kiboengageSocket'
 import { materialTheme, Images } from './constants/'
 import * as Sentry from 'sentry-expo'
 enableScreens()
@@ -41,7 +41,8 @@ function cacheImages(images) {
 }
 
 const store = configureStore()
-initiateSocket(store)
+initiateKibochatSocket(store)
+initiateKiboEngageSocket(store)
 
 Sentry.init({
   dsn: 'https://6c7958e0570f455381d6f17122fbd117@o132281.ingest.sentry.io/292307',

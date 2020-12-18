@@ -36,6 +36,10 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
   let data = {}
   const index = sessions.findIndex((s) => s._id === payload.subscriber._id)
   if (index === -1 && state.tabValue === 'open') {
+    let allChatMessages = props.allChatMessages
+    if (allChatMessages[payload.subscriber._id]) {
+      allChatMessages[payload.subscriber._id] = [...allChatMessages[payload.subscriber._id], payload.message]
+    }
     let userChat = props.userChat || []
     if (state.activeSession._id === payload.subscriber._id) {
       userChat.push(payload.message)
@@ -58,6 +62,7 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
     sessions = [session, ...sessions]
     data = {
       userChat,
+      allChatMessages,
       chatCount: (props.chatCount ? props.chatCount : 0) + 1,
       openSessions: sessions,
       closeSessions,
@@ -67,6 +72,8 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
   } else if (state.activeSession._id === payload.subscriber._id) {
     let userChat = props.userChat
     userChat.push(payload.message)
+    let allChatMessages = props.allChatMessages
+    allChatMessages[payload.subscriber._id] = userChat
     session = sessions.splice(index, 1)[0]
     session.lastPayload = payload.message.payload
     session.last_activity_time = new Date()
@@ -80,6 +87,7 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
     props.markRead(session._id)
     data = {
       userChat,
+      allChatMessages,
       chatCount: props.chatCount + 1,
       openSessions: state.tabValue === 'open' ? sessions : [session, ...props.openSessions],
       openCount: state.tabValue === 'close' ? props.openCount + 1 : props.openCount,
@@ -87,6 +95,10 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
       closeCount: state.tabValue === 'close' ? props.closeCount - 1 : props.closeCount
     }
   } else if (index >= 0) {
+    let allChatMessages = props.allChatMessages
+    if (allChatMessages[payload.subscriber._id]) {
+      allChatMessages[payload.subscriber._id] = [...allChatMessages[payload.subscriber._id], payload.message]
+    }
     session = sessions.splice(index, 1)[0]
     session.unreadCount = session.unreadCount ? session.unreadCount + 1 : 1
     session.lastPayload = payload.message.payload
@@ -95,6 +107,7 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
     session.pendingResponse = true
     session.status = 'new'
     data = {
+      allChatMessages,
       openSessions: state.tabValue === 'open' ? [session, ...sessions] : [session, ...props.openSessions],
       openCount: state.tabValue === 'close' ? props.openCount + 1 : props.openCount,
       closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions,
@@ -106,16 +119,19 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
 }
 
 const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
-  let data = {}
-  let sessions = state.sessions
-  let session = sessions.find((s) => s._id === payload.subscriber_id)
-  const index = sessions.findIndex((s) => s._id === payload.subscriber_id)
-  if (state.activeSession._id === payload.subscriber_id) {
-    let userChat = props.userChat
-    if (userChat && ((userChat.length > 0 && userChat[userChat.length -1]._id !== payload.message._id) || (userChat.length===0))) {
+  let ChatMessages = props.allChatMessages
+  let chatUser = ChatMessages[payload.subscriber_id]
+  if (chatUser && ((chatUser.length > 0 && chatUser[chatUser.length - 1]._id !== payload.message._id) || chatUser.length === 0)) {
+    let data = {}
+    let sessions = state.sessions
+    let session = sessions.find((s) => s._id === payload.subscriber_id)
+    const index = sessions.findIndex((s) => s._id === payload.subscriber_id)
+    if (state.activeSession._id === payload.subscriber_id) {
       let userChat = props.userChat
       payload.message.format = 'convos'
       userChat.push(payload.message)
+      let allChatMessages = props.allChatMessages
+      allChatMessages[payload.subscriber_id] = userChat
       session = sessions.splice(index, 1)[0]
       session.lastPayload = payload.message.payload
       session.last_activity_time = new Date()
@@ -131,7 +147,12 @@ const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocket
       }
       updateLiveChatInfo(data)
       clearSocketData()
-    } } else if (index >= 0) {
+    } else if (index >= 0) {
+      payload.message.format = 'convos'
+      let allChatMessages = props.allChatMessages
+      if (allChatMessages[payload.subscriber_id]) {
+        allChatMessages[payload.subscriber_id] = [...allChatMessages[payload.subscriber_id], payload.message]
+      }
       session = sessions.splice(index, 1)[0]
       session.lastPayload = payload.message.payload
       session.last_activity_time = new Date()
@@ -139,6 +160,7 @@ const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocket
       session.lastRepliedBy = payload.message.repliedBy
       if (state.tabValue === 'open') sessions = [session, ...sessions]
       data = {
+        allChatMessages,
         openSessions: state.tabValue === 'open' ? sessions : props.openSessions,
         closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions,
         closeCount: state.tabValue === 'close' ? props.closeCount - 1 : props.closeCount
@@ -146,6 +168,9 @@ const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocket
       updateLiveChatInfo(data)
       clearSocketData()
     } else {
+      clearSocketData()
+    }
+  } else {
     clearSocketData()
   }
 }
