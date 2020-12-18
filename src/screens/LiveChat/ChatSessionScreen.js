@@ -117,7 +117,7 @@ class ChatSessionScreen extends React.Component {
              alert('Your device has too many apps registered with Firebase Cloud Messaging. Please delete any one app to get Push Notification From KiboPush.')
             }
           }
-    } 
+    }
     UNSAFE_componentWillReceiveProps (nextProps) {
         if(nextProps.user !== this.props.user) {
             this.registerForPushNotificationsAsync(nextProps.user)

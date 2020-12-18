@@ -2,28 +2,33 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { getuserdetails, getAutomatedOptions } from '../../redux/actions/basicInfo.actions'
-import { Image, AsyncStorage, ActivityIndicator, Platform, Alert, Linking } from 'react-native'
-import { Asset } from 'expo-asset'
-import { Images } from '../../constants/'
-import { joinRoom } from '../../utility/socketio'
+import { AppState, AsyncStorage, ActivityIndicator, Platform, Alert, Linking, Dimensions, StyleSheet } from 'react-native'
+import { Block, Text, theme, Button } from 'galio-framework'
+import { joinRoomKibochat } from '../../socket/kibochatSocket'
+import { joinRoomKiboEngage } from '../../socket/kiboengageSocket'
+import { loadDashboardData } from '../../redux/actions/dashboard.actions'
+import { fetchPages } from '../../redux/actions/pages.actions'
+import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
+import {backgroundSessionDataFetch} from '../../redux/actions/liveChat.actions'
+import { backgroundWhatsappSessionFetch } from '../../redux/actions/whatsAppChat.actions'
 import * as Sentry from 'sentry-expo'
 import VersionCheck from 'react-native-version-check-expo'
 
-const assetImages = [
-  Images.Onboarding
-]
+const { width } = Dimensions.get('screen')
 
 class Loading extends React.Component {
   constructor (props, context) {
     super(props, context)
     this.state = {
-      isLoadingComplete: false,
-      showLoader: false
+      isLoadingComplete: true,
+      appState: AppState.currentState,
+      loadingData: true
     }
-    this._handleFinishLoading = this._handleFinishLoading.bind(this)
     this.handleResponse = this.handleResponse.bind(this)
-    this._loadResourcesAsync = this._loadResourcesAsync.bind(this)
-    this.cacheImages = this.cacheImages.bind(this)
+    this.handleAutomatedResponse = this.handleAutomatedResponse.bind(this)
+    this.fetchInActiveData = this.fetchInActiveData.bind(this)
+    this._handleAppStateChange = this._handleAppStateChange.bind(this)
+
     // this._handleNotification = this._handleNotification.bind(this)
   }
 
@@ -39,7 +44,7 @@ class Loading extends React.Component {
           Alert.alert(
             'Update KiboPush?',
             'KiboPush recommends that you update to the latest version. This version includes few bug fixes and performance improvements. You can keep using the app while downloading the update.',
-            [{ text: 'No Thanks', onPress: () => console.log('no thanks Pressed'), style: 'destructive' },
+            [{ text: 'No Thanks' },
               { text: 'Update', onPress: () => Linking.openURL(url) }],
             { cancelable: true })
         }
@@ -56,10 +61,20 @@ class Loading extends React.Component {
     //   });
     // }
     // this._notificationSubscription = Notifications.addListener(this._handleNotification)
+    // const subscription = Notifications.addNotificationReceivedListener(notification => {
+    //   console.log('notification got');
+    // });
+    // Notifications.setNotificationHandler({
+    //   handleNotification: async (notification) => {
+    //     console.log('handleNotification')
+    //   }
+    // })
+    AppState.addEventListener('change', this._handleAppStateChange)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
         if (token) {
-          this.props.getuserdetails(this.handleResponse, joinRoom)
+          this.props.getuserdetails(this.handleResponse, joinRoomKibochat, joinRoomKiboEngage)
+          this.props.getAutomatedOptions(this.handleAutomatedResponse)
         } else {
           this.props.navigation.navigate('Sign In')
         }
@@ -75,79 +90,106 @@ class Loading extends React.Component {
   //     });
   //   }
   // }
+
+  _handleAppStateChange (nextAppState) {
+    console.log('AppState.currentState', this.state.appState)
+    console.log('AppState.nextAppState', nextAppState)
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      console.log('App has come to the foreground!')
+      console.log('this.props.user.platform', this.props.user.platform)
+      if(this.props.user.platform === 'messenger') {
+        this.props.backgroundSessionDataFetch(true)
+      } else if(this.props.user.platform === 'whatsApp') {
+        this.props.backgroundWhatsappSessionFetch(true)
+       }
+  }
+  this.setState({appState: nextAppState})
+}
   componentWillUnmount () {
     this._unsubscribe()
+    AppState.removeEventListener('change', this._handleAppStateChange)
   }
-
-  async _loadResourcesAsync () {
-    return Promise.all([
-      ...this.cacheImages(assetImages)
-    ])
-  }
-
-  cacheImages (images) {
-    return images.map(image => {
-      if (typeof image === 'string') {
-        return Image.prefetch(image)
-      } else {
-        return Asset.fromModule(image).downloadAsync()
-      }
-    })
-  }
-
-  _handleLoadingError (error) {
-    // In this case, you might want to report the error to your error
-    // reporting service, for example Sentry
-    console.warn(error)
-    // Sentry.captureException(error)
-  };
-
-  async _handleFinishLoading () {
-    this.setState({isLoadingComplete: true}, () => {
-      AsyncStorage.getItem('token').then(token => {
-        if (token) {
-          this.setState({showLoader: true})
-          this.props.getuserdetails(this.handleResponse, joinRoom)
-        } else {
-          this.props.navigation.navigate('Sign In')
-        }
-      })
-    })
-  };
 
   handleResponse (res) {
-    if (res.status === 'success') {
-      this.props.getAutomatedOptions()
-      this.props.navigation.navigate('App')
-    } else {
-      this.props.navigation.navigate('Sign In')
+    if (res.status === 'success' && this.props.automated_options) {
+      this.fetchInActiveData(res.payload.user, this.props.automated_options)
+      res.payload.user.connectFacebook || this.props.automated_options.whatsApp
+        ? this.props.navigation.navigate('App')
+        : this.setState({loadingData: false})
+    }
+  }
+
+  fetchInActiveData (user, automatedOptions) {
+    if (user.connectFacebook) {
+      this.props.loadDashboardData()
+      this.props.fetchPages()
+    }
+    if (automatedOptions.whatsApp) {
+      this.props.loadCardBoxesDataWhatsApp()
+    }
+  }
+
+  handleAutomatedResponse (res) {
+    if (res.status === 'success' && this.props.user) {
+      this.fetchInActiveData(this.props.user, res.payload)
+      res.payload.whatsApp || this.props.user.connectFacebook
+        ? this.props.navigation.navigate('App')
+        : this.setState({loadingData: false})
     }
   }
 
   render () {
-    // if (!this.state.isLoadingComplete) {
-    //   return (
-    //     <AppLoading
-    //       startAsync={this._loadResourcesAsync}
-    //       onError={this._handleLoadingError}
-    //       onFinish={this._handleFinishLoading}
-    //     />
-    //   )
-    // } else {
-    return (
-      <ActivityIndicator size='large' style={{flex: 1}} />
-    )
-    // }
+    if (!this.props.connected) {
+      return (
+        <Block flex center style={styles.block}>
+          <Block style={styles.pages} flex middle>
+            <Text h6>You are not connected to the internet. Make sure you have an active internet connected and try again</Text>
+          </Block>
+        </Block>
+      )
+    } else if (this.state.loadingData) {
+      return (
+        <ActivityIndicator size='large' style={{flex: 1}} />
+      )
+    } else {
+      return (
+        <Block flex center style={styles.block}>
+          <Block style={styles.pages} flex middle>
+            <Text h6>You do not have any platform (Facebook or whatsApp) connected. In order to start using the app, you have to connect any one of the platforms. Please go to our website and connect them.</Text>
+            <Button radius={10}
+              style={{marginTop: 30}}
+              onPress={() => Linking.openURL('https://kibochat.cloudkibo.com')}>Connect Platform</Button>
+          </Block>
+        </Block>
+      )
+    }
   }
 }
 function mapStateToProps (state) {
   return {
-    user: (state.basicInfo.user)
+    user: (state.basicInfo.user),
+    automated_options: (state.basicInfo.automated_options),
+    connected: (state.socketInfo.connected)
   }
 }
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators(
-    {getuserdetails, getAutomatedOptions},
-    dispatch)
+  return bindActionCreators({
+    getuserdetails,
+    getAutomatedOptions,
+    loadDashboardData,
+    fetchPages,
+    loadCardBoxesDataWhatsApp,
+    backgroundSessionDataFetch,
+    backgroundWhatsappSessionFetch
+  }, dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Loading)
+const styles = StyleSheet.create({
+  block: {
+    width: width,
+    backgroundColor: theme.COLORS.WHITE
+  },
+  pages: {
+    marginHorizontal: 20
+  }
+})
