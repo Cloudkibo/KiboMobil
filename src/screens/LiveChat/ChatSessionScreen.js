@@ -63,11 +63,11 @@ class ChatSessionScreen extends React.Component {
     }
 
     _handleNotification = notification => {
-        if(isWhatsappNotification(notification.notification.request.content.data.action)) {
+        if(this.isWhatsappNotification(notification.notification.request.content.data.action)) {
           let activeSubscriber = notification.notification.request.content.data.subscriber
           activeSubscriber.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
           this.setState({whatsappActiveSession: activeSubscriber})
-        } else if (isMessengerNotification(notification.notification.request.content.data.action)) {
+        } else if (this.isMessengerNotification(notification.notification.request.content.data.action)) {
          this.setState({messengerActiveSession: notification.notification.request.content.data.subscriber})
         }
       };
