@@ -349,7 +349,6 @@ class Footer extends React.Component {
   }
 
   sendMessage (quickReplies) {
-    console.log('quickReplies', quickReplies)
     const data = this.props.performAction('send messages', this.props.activeSession)
     if (data.isAllowed) {
       let payload = {}
@@ -375,8 +374,7 @@ class Footer extends React.Component {
             this.props.showCannResponse(false)
           }
         }
-      }
-      else if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
+      } else if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
         payload = this.setDataPayload('text')
         if (quickReplies) {
           payload.quickReplies = quickReplies
