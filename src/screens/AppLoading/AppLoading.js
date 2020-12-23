@@ -96,10 +96,9 @@ class Loading extends React.Component {
     console.log('AppState.nextAppState', nextAppState)
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
       console.log('App has come to the foreground!')
-      console.log('this.props.user.platform', this.props.user.platform)
-      if(this.props.user.platform === 'messenger') {
+      if(this.props.user && this.props.user.platform === 'messenger') {
         this.props.backgroundSessionDataFetch(true)
-      } else if(this.props.user.platform === 'whatsApp') {
+      } else if(this.props.user && this.props.user.platform === 'whatsApp') {
         this.props.backgroundWhatsappSessionFetch(true)
        }
   }
