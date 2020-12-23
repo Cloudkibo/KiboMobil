@@ -34,7 +34,6 @@ class Pages extends React.Component {
 
   }
   componentWillUnmount () {
-    this._unsubscribe()
   }
 
   showSucessMessage (message) {
