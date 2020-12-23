@@ -21,6 +21,13 @@ export function backgroundSessionDataFetch (data) {
   }
 }
 
+export function SessionDataFetch (data) {
+  return {
+    type: ActionTypes.FETCH_SESSION_DATA,
+    data: data
+  }
+}
+
 export function updateAgents (data) {
   return {
     type: ActionTypes.UPDATE_TEAM_AGENTS,

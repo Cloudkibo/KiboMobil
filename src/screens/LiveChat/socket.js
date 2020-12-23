@@ -15,8 +15,23 @@ export function handleSocketEvent (data, state, props, updateLiveChatInfo, user,
     case 'session_status':
       handleStatus(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
       break
+    case 'mark_read':
+    markReadMessages(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
+      break
     default:
   }
+}
+
+const markReadMessages = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
+  let sessions = state.sessions
+  const index = sessions.findIndex((s) => s._id === payload.session_id)
+  sessions[index].unreadCount = 0
+  const data = {
+    openSessions: state.tabValue === 'open' ? sessions : props.openSessions,
+    closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions
+  }
+  updateLiveChatInfo(data)
+  clearSocketData()
 }
 
 const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearSocketData) => {

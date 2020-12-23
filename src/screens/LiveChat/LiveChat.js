@@ -9,7 +9,7 @@ import { materialTheme } from '../../constants/'
 import * as Notifications from 'expo-notifications'
 import SessionsListItem from '../../components/LiveChat/SessionsListItem'
 import Tabs from '../../components/Tabs'
-import {fetchOpenSessions, backgroundSessionDataFetch, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead, clearSession, fetchTeamAgents} from '../../redux/actions/liveChat.actions'
+import {fetchOpenSessions, backgroundSessionDataFetch, fetchCloseSessions, updateSessionProfilePicture, updateLiveChatInfo, markRead, clearSession, fetchTeamAgents, SessionDataFetch} from '../../redux/actions/liveChat.actions'
 import { updatePicture } from '../../redux/actions/subscribers.actions'
 import { handleSocketEvent } from './socket'
 import { clearSocketData } from '../../redux/actions/socket.actions'
@@ -134,6 +134,12 @@ class LiveChat extends React.Component {
       console.log('backgroundSessionDataFetch', nextProps.isBackgroundDataFetch)
       this.props.backgroundSessionDataFetch(false)
       this.fetchSessions(true, 'none', true, true)
+    }
+
+    if(nextProps.isFetchSessionData) {
+      console.log('isFetchSessionData', nextProps.isFetchSessionData)
+      this.props.SessionDataFetch(false)
+      this.fetchSessions(true, 'none', true)
     }
   }
 
@@ -351,7 +357,8 @@ function mapStateToProps (state) {
     userChat: (state.liveChat.userChat),
     chatCount: (state.liveChat.chatCount),
     chatLoading: (state.liveChat.chatLoading),
-    isBackgroundDataFetch: (state.liveChat.isBackgroundDataFetch)
+    isBackgroundDataFetch: (state.liveChat.isBackgroundDataFetch),
+    isFetchSessionData: (state.liveChat.isFetchSessionData)
   }
 }
 
@@ -366,7 +373,8 @@ function mapDispatchToProps (dispatch) {
     markRead,
     clearSession,
     backgroundSessionDataFetch,
-    fetchTeamAgents
+    fetchTeamAgents,
+    SessionDataFetch
   }, dispatch)
 }
 

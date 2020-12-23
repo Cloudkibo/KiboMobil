@@ -55,29 +55,49 @@ export function liveChat (state = initialState, action) {
     case ActionTypes.SHOW_OPEN_CHAT_SESSIONS_OVERWRITE:
       if(action.isBackgroundDataFetch) {
         let oldOpensessions = [...state.openSessions]
-        let oldPayloadSession = [...state.openSessions]
         let newOpenSessions = action.openSessions
-        newOpenSessions.map(newSession => {
+        let OpenSessionsList = action.openSessions
+        oldOpensessions.map(oldSession => {
         let index = -1
-        for (let i = 0; i <oldOpensessions.length ;i++) {
-          if( oldOpensessions[i]._id === newSession._id ) {
+        for (let i = 0; i <newOpenSessions.length ;i++) {
+          if( newOpenSessions[i]._id === oldSession._id ) {
            index = i
             break
           }
         }
-          if(index !== -1) {
-            if(JSON.stringify(newSession) !== JSON.stringify(oldOpensessions[index])) {
-              oldPayloadSession.splice(index, 1)
-              oldPayloadSession.splice(0, 0, newSession)
-            }
-          } else {
-            oldPayloadSession.splice(0, 0, newSession)
-          }
+
+        if(index == -1) {
+          OpenSessionsList.push(oldSession)
+         }
         })
-       return Object.assign({}, state, {
-        openSessions: oldPayloadSession,
-        openCount: action.count
+        return Object.assign({}, state, {
+        openSessions: OpenSessionsList,
+        openCount: OpenSessionsList.count
       })
+      //   let oldOpensessions = [...state.openSessions]
+      //   let oldPayloadSession = [...state.openSessions]
+      //   let newOpenSessions = action.openSessions
+      //   newOpenSessions.map(newSession => {
+      //   let index = -1
+      //   for (let i = 0; i <oldOpensessions.length ;i++) {
+      //     if( oldOpensessions[i]._id === newSession._id ) {
+      //      index = i
+      //       break
+      //     }
+      //   }
+      //     if(index !== -1) {
+      //       if(JSON.stringify(newSession) !== JSON.stringify(oldOpensessions[index])) {
+      //         oldPayloadSession.splice(index, 1)
+      //         oldPayloadSession.splice(0, 0, newSession)
+      //       }
+      //     } else {
+      //       oldPayloadSession.splice(0, 0, newSession)
+      //     }
+      //   })
+      //  return Object.assign({}, state, {
+      //   openSessions: oldPayloadSession,
+      //   openCount: action.count
+      // })
     } else {
       return Object.assign({}, state, {
         openSessions: action.openSessions,
@@ -355,7 +375,15 @@ export function liveChat (state = initialState, action) {
       })
     case ActionTypes.BACKGROUND_SESSION_DATA_FETCH:
       return Object.assign({}, state, {
-        isBackgroundDataFetch: action.data
+        isBackgroundDataFetch: action.data,
+      })
+    case ActionTypes.FETCH_SESSION_DATA:
+      return Object.assign({}, state, {
+        isFetchSessionData: action.data,
+      })
+    case ActionTypes.DISCONNECT_FB_PAGE_EVENT: 
+        return Object.assign({}, state, {
+          isFetchSessionData: true
       })
     default:
       return state
