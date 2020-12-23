@@ -98,8 +98,10 @@ class Loading extends React.Component {
       console.log('App has come to the foreground!')
       if(this.props.user && this.props.user.platform === 'messenger') {
         this.props.backgroundSessionDataFetch(true)
+        this.props.loadDashboardData()
       } else if(this.props.user && this.props.user.platform === 'whatsApp') {
         this.props.backgroundWhatsappSessionFetch(true)
+        this.props.loadCardBoxesDataWhatsApp()
        }
   }
   this.setState({appState: nextAppState})
