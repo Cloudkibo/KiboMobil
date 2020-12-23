@@ -328,18 +328,17 @@ export function fetchOpenSessions (data, isBackgroundDataFetch) {
     callApi(dispatch, 'sessions/getOpenSessions', 'post', data)
       .then(res => {
         if (res.status === 'success') {
-          // console.log('res in livechat', res)
-        if(isBackgroundDataFetch) {
-          let newPayload = {
-            payload : res.payload,
-            isBackgroundDataFetch: isBackgroundDataFetch
+          if(isBackgroundDataFetch) {
+            let newPayload = {
+              payload : res.payload,
+              isBackgroundDataFetch: isBackgroundDataFetch
+            }
+            dispatch(showOpenChatSessions(newPayload, data))
+          } else {
+            dispatch(showOpenChatSessions(res.payload, data))
           }
-          dispatch(showOpenChatSessions(newPayload, data))
-        } else {
-          dispatch(showOpenChatSessions(res.payload, data))
-        }
       }
-      })
+    })
   }
 }
 
