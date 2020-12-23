@@ -29,14 +29,6 @@ class Pages extends React.Component {
   UNSAFE_componentWillMount () {
   /* eslint-enable */
   }
-
-  componentDidMount () {
-
-  }
-  componentWillUnmount () {
-    this._unsubscribe()
-  }
-
   showSucessMessage (message) {
     Toast.default.show(message)
   }
