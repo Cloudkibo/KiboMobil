@@ -16,7 +16,7 @@ export function handleSocketEvent (data, state, props, updateLiveChatInfo, user,
       handleStatus(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
       break
     case 'mark_read':
-    markReadMessages(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
+      markReadMessages(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
       break
     default:
   }

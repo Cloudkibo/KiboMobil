@@ -25,7 +25,7 @@ export function handleSocketEvent (data, state, props, updateLiveChatInfo, user,
       handleMessageStatus(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
       break
     case 'mark_read_whatsapp':
-    markReadMessages(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
+      markReadMessages(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
       break
     default:
   }

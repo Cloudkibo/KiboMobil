@@ -29,11 +29,11 @@ export function whatsAppChatInfo (state = initialState, action) {
         openSessions: [...state.openSessions, ...action.openSessions],
         openCount: action.openCount
       })
-      case ActionTypes.SHOW_OPEN_WHATSAPP_SESSIONS_OVERWRITE:
-          return Object.assign({}, state, {
-            openSessions: action.openSessions,
-            openCount: action.count
-          })
+    case ActionTypes.SHOW_OPEN_WHATSAPP_SESSIONS_OVERWRITE:
+      return Object.assign({}, state, {
+        openSessions: action.openSessions,
+        openCount: action.count
+      })
     case ActionTypes.FETCH_WHATSAPP_CLOSE_SESSIONS:
       return Object.assign({}, state, {
         closeSessions: [...state.closeSessions, ...action.closeSessions],
