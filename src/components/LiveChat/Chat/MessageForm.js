@@ -374,8 +374,7 @@ class Footer extends React.Component {
             this.props.showCannResponse(false)
           }
         }
-      }
-      else if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
+      } else if (this.state.text !== '' && /\S/gm.test(this.state.text)) {
         payload = this.setDataPayload('text')
         if (quickReplies) {
           payload.quickReplies = quickReplies
@@ -749,9 +748,9 @@ class Footer extends React.Component {
                           </TouchableOpacity>
                            }
                           {!this.props.isWhatsappModule &&
-                          <Popover  
-                            onRequestClose={() => this.setState({showPopover: false})} 
-                            isVisible={this.state.showPopover}                          
+                          <Popover
+                            onRequestClose={() => this.setState({showPopover: false})}
+                            isVisible={this.state.showPopover}
                             from={<TouchableOpacity onPress={() => this.props.setGetContactInfoModal(this.sendQuickReplyMessage)}>
                               <Icon size={20} style={{marginLeft: 5}} color={theme.COLORS.MUTED} name='idcard' family='AntDesign' />
                             </TouchableOpacity>}>
@@ -782,7 +781,7 @@ class Footer extends React.Component {
               opacity={0.9}
               style={styles.iconButton}
               color={materialTheme.COLORS.BUTTON_COLOR}
-              onPress={this.sendMessage}
+              onPress={() => this.sendMessage()}
             >
               <Icon size={22} name='send' family='MaterialCommunityIcons' color='white' />
             </Button>
