@@ -53,57 +53,10 @@ export function liveChat (state = initialState, action) {
       })
 
     case ActionTypes.SHOW_OPEN_CHAT_SESSIONS_OVERWRITE:
-      if(action.isBackgroundDataFetch) {
-        let oldOpensessions = [...state.openSessions]
-        let newOpenSessions = action.openSessions
-        let OpenSessionsList = action.openSessions
-        oldOpensessions.map(oldSession => {
-        let index = -1
-        for (let i = 0; i <newOpenSessions.length ;i++) {
-          if( newOpenSessions[i]._id === oldSession._id ) {
-           index = i
-            break
-          }
-        }
-
-        if(index == -1) {
-          OpenSessionsList.push(oldSession)
-         }
-        })
-        return Object.assign({}, state, {
-        openSessions: OpenSessionsList,
-        openCount: OpenSessionsList.count
-      })
-      //   let oldOpensessions = [...state.openSessions]
-      //   let oldPayloadSession = [...state.openSessions]
-      //   let newOpenSessions = action.openSessions
-      //   newOpenSessions.map(newSession => {
-      //   let index = -1
-      //   for (let i = 0; i <oldOpensessions.length ;i++) {
-      //     if( oldOpensessions[i]._id === newSession._id ) {
-      //      index = i
-      //       break
-      //     }
-      //   }
-      //     if(index !== -1) {
-      //       if(JSON.stringify(newSession) !== JSON.stringify(oldOpensessions[index])) {
-      //         oldPayloadSession.splice(index, 1)
-      //         oldPayloadSession.splice(0, 0, newSession)
-      //       }
-      //     } else {
-      //       oldPayloadSession.splice(0, 0, newSession)
-      //     }
-      //   })
-      //  return Object.assign({}, state, {
-      //   openSessions: oldPayloadSession,
-      //   openCount: action.count
-      // })
-    } else {
       return Object.assign({}, state, {
         openSessions: action.openSessions,
         openCount: action.count
       })
-    }
 
     case ActionTypes.SHOW_OPEN_CHAT_SESSIONS:
       return Object.assign({}, state, {
@@ -118,32 +71,10 @@ export function liveChat (state = initialState, action) {
       })
 
     case ActionTypes.SHOW_CLOSE_CHAT_SESSIONS_OVERWRITE:
-      if(action.isBackgroundDataFetch) {
-        let oldClosesessions = [...state.closeSessions]
-        let oldPayloadSession = [...state.closeSessions]
-        let newCloseSessions = action.closeSessions
-        newCloseSessions.map(newSession => {
-        let index = -1
-        for (let i = 0; i <oldClosesessions.length ;i++) {
-          if( oldClosesessions[i]._id === newSession._id ) {
-            index = i
-            break
-          }
-        }
-          if (index === -1) {
-            oldPayloadSession.splice(0, 0, newSession)
-          }
-        })
-      return Object.assign({}, state, {
-        closeSessions: oldPayloadSession,
-        closeCount: action.count
-      })
-    } else {
       return Object.assign({}, state, {
         closeSessions: action.closeSessions,
         closeCount: action.count
       })
-  }
     case ActionTypes.UPDATE_CHAT_SESSIONS:
       let openSess = state.openSessions
       let closeSess = state.closeSessions

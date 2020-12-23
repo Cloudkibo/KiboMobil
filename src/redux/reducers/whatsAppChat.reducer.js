@@ -30,37 +30,10 @@ export function whatsAppChatInfo (state = initialState, action) {
         openCount: action.openCount
       })
       case ActionTypes.SHOW_OPEN_WHATSAPP_SESSIONS_OVERWRITE:
-        if(action.isBackgroundDataFetch) {
-          let oldOpensessions = [...state.openSessions]
-          let oldPayloadSession = [...state.openSessions]
-          let newOpenSessions = action.openSessions
-          newOpenSessions.map(newSession => {
-          let index = -1
-            for (let i = 0; i <oldOpensessions.length ;i++) {
-              if( oldOpensessions[i]._id === newSession._id ) {
-              index = i
-                break
-              }
-            }
-              if(index !== -1) {
-                if(JSON.stringify(newSession) !== JSON.stringify(oldOpensessions[index])) {
-                  oldPayloadSession.splice(index, 1)
-                  oldPayloadSession.splice(0, 0, newSession)
-                }
-              } else {
-                oldPayloadSession.splice(0, 0, newSession)
-              }
-            })
-          return Object.assign({}, state, {
-            openSessions: oldPayloadSession,
-            openCount: action.count
-          })
-    } else {
           return Object.assign({}, state, {
             openSessions: action.openSessions,
             openCount: action.count
           })
-      }
     case ActionTypes.FETCH_WHATSAPP_CLOSE_SESSIONS:
       return Object.assign({}, state, {
         closeSessions: [...state.closeSessions, ...action.closeSessions],
@@ -68,32 +41,10 @@ export function whatsAppChatInfo (state = initialState, action) {
       })
 
     case ActionTypes.SHOW_CLOSE_WHATSAPP_SESSIONS_OVERWRITE:
-      if(action.isBackgroundDataFetch) {
-        let oldClosesessions = [...state.closeSessions]
-        let oldPayloadSession = [...state.closeSessions]
-        let newCloseSessions = action.closeSessions
-        newCloseSessions.map(newSession => {
-        let index = -1
-          for (let i = 0; i <oldClosesessions.length ;i++) {
-            if( oldClosesessions[i]._id === newSession._id ) {
-              index = i
-              break
-            }
-          }
-            if (index === -1) {
-              oldPayloadSession.splice(0, 0, newSession)
-            }
-          })
-      return Object.assign({}, state, {
-        closeSessions: oldPayloadSession,
-        closeCount: action.count
-      })
-    } else {
       return Object.assign({}, state, {
         closeSessions: action.closeSessions,
         closeCount: action.count
       })
-  }
     case ActionTypes.FETCH_WHATSAPP_CHAT_OVERWRITE:
       return Object.assign({}, state, {
         chat: action.chat,
