@@ -337,8 +337,8 @@ export function fetchOpenSessions (data, isBackgroundDataFetch) {
           } else {
             dispatch(showOpenChatSessions(res.payload, data))
           }
-      }
-    })
+        }
+      })
   }
 }
 
@@ -347,16 +347,16 @@ export function fetchCloseSessions (data, isBackgroundDataFetch) {
     callApi(dispatch, 'sessions/getClosedSessions', 'post', data)
       .then(res => {
         if (res.status === 'success') {
-        if(isBackgroundDataFetch) {
-          let newPayload = {
-            payload : res.payload,
-            isBackgroundDataFetch: isBackgroundDataFetch
+          if(isBackgroundDataFetch) {
+            let newPayload = {
+              payload : res.payload,
+              isBackgroundDataFetch: isBackgroundDataFetch
+            }
+            dispatch(showCloseChatSessions(newPayload, data.first_page))
+          } else {
+            dispatch(showCloseChatSessions(res.payload, data.first_page))
           }
-          dispatch(showCloseChatSessions(newPayload, data.first_page))
-        } else {
-          dispatch(showCloseChatSessions(res.payload, data.first_page))
         }
-    }
       })
   }
 }
