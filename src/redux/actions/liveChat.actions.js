@@ -327,7 +327,8 @@ export function fetchOpenSessions (data, isBackgroundDataFetch) {
   return (dispatch) => {
     callApi(dispatch, 'sessions/getOpenSessions', 'post', data)
       .then(res => {
-        // console.log('res in livechat', res)
+        if (res.status === 'success') {
+          // console.log('res in livechat', res)
         if(isBackgroundDataFetch) {
           let newPayload = {
             payload : res.payload,
@@ -337,6 +338,7 @@ export function fetchOpenSessions (data, isBackgroundDataFetch) {
         } else {
           dispatch(showOpenChatSessions(res.payload, data))
         }
+      }
       })
   }
 }
@@ -345,6 +347,7 @@ export function fetchCloseSessions (data, isBackgroundDataFetch) {
   return (dispatch) => {
     callApi(dispatch, 'sessions/getClosedSessions', 'post', data)
       .then(res => {
+        if (res.status === 'success') {
         if(isBackgroundDataFetch) {
           let newPayload = {
             payload : res.payload,
@@ -354,6 +357,7 @@ export function fetchCloseSessions (data, isBackgroundDataFetch) {
         } else {
           dispatch(showCloseChatSessions(res.payload, data.first_page))
         }
+    }
       })
   }
 }
