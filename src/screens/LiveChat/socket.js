@@ -122,11 +122,11 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
 const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
   let ChatMessages = props.allChatMessages
   let chatUser = ChatMessages[payload.subscriber_id]
+  let sessions = state.sessions
+  const index = sessions.findIndex((s) => s._id === payload.subscriber_id)
   if (chatUser && ((chatUser.length > 0 && chatUser[chatUser.length - 1]._id !== payload.message._id) || chatUser.length === 0)) {
     let data = {}
-    let sessions = state.sessions
     let session = sessions.find((s) => s._id === payload.subscriber_id)
-    const index = sessions.findIndex((s) => s._id === payload.subscriber_id)
     if (state.activeSession._id === payload.subscriber_id) {
       let userChat = props.userChat
       payload.message.format = 'convos'
@@ -171,6 +171,18 @@ const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocket
     } else {
       clearSocketData()
     }
+  } else if (index >= 0 && !chatUser) {
+    payload.message.format = 'convos'
+    let session = sessions.splice(index, 1)[0]
+    session.lastPayload = payload.message.payload
+    session.last_activity_time = new Date()
+    session.pendingResponse = false
+    let data = {
+      openSessions: state.tabValue === 'open' ? [session, ...sessions] : [session, ...props.openSessions],
+      closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions,
+    }
+    updateLiveChatInfo(data)
+    clearSocketData() 
   } else {
     clearSocketData()
   }

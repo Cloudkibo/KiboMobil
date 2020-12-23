@@ -196,6 +196,7 @@ const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocket
     }
   } else if (index >= 0 && !chatUser) {
     let session = sessions.splice(index, 1)[0]
+    payload.message.format = 'convos'
     session.lastPayload = payload.message.payload
     session.last_activity_time = new Date()
     session.pendingResponse = false
