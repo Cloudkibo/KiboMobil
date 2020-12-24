@@ -11,6 +11,7 @@ import { fetchPages } from '../../redux/actions/pages.actions'
 import { loadCardBoxesDataWhatsApp } from '../../redux/actions/whatsAppDashboard.actions'
 import {backgroundSessionDataFetch} from '../../redux/actions/liveChat.actions'
 import { backgroundWhatsappSessionFetch } from '../../redux/actions/whatsAppChat.actions'
+import { backgroundDataFetch, backgroundDataFetchWhatsApp } from '../../redux/actions/socket.actions'
 import * as Sentry from 'sentry-expo'
 import VersionCheck from 'react-native-version-check-expo'
 
@@ -98,10 +99,12 @@ class Loading extends React.Component {
       console.log('App has come to the foreground!')
       if(this.props.user && this.props.user.platform === 'messenger') {
         this.props.backgroundSessionDataFetch(true)
+        this.props.backgroundDataFetch(true)
         this.props.loadDashboardData()
       } else if(this.props.user && this.props.user.platform === 'whatsApp') {
         this.props.backgroundWhatsappSessionFetch(true)
         this.props.loadCardBoxesDataWhatsApp()
+        this.props.backgroundDataFetchWhatsApp(true)
        }
   }
   this.setState({appState: nextAppState})
@@ -181,7 +184,9 @@ function mapDispatchToProps (dispatch) {
     fetchPages,
     loadCardBoxesDataWhatsApp,
     backgroundSessionDataFetch,
-    backgroundWhatsappSessionFetch
+    backgroundWhatsappSessionFetch,
+    backgroundDataFetch,
+    backgroundDataFetchWhatsApp
   }, dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Loading)

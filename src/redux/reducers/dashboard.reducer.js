@@ -17,14 +17,14 @@ export function dashboardInfo (state = initialState, action) {
       dashboardStats.pages = dashboardStats.pages + 1
       return Object.assign({}, state, {
         dashboard: dashboardStats
-    })
+      })
     }
     case ActionTypes.DISCONNECT_FB_PAGE_EVENT: {
       let dashboardStats = JSON.parse(JSON.stringify(state.dashboard))
       dashboardStats.pages = dashboardStats.pages - 1
       return Object.assign({}, state, {
         dashboard: dashboardStats
-    })
+      })
     }
     case ActionTypes.NEW_SUBSCRIBER_EVENT:
       let dashboard1 = JSON.parse(JSON.stringify(state.dashboard))

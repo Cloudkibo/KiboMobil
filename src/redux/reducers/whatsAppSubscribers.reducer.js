@@ -52,7 +52,7 @@ export function whatsAppSubscribersInfo (state = initialState, action) {
     case ActionTypes.SUBSCRIBE_WHATSAPP_EVENT:
       if (state.contacts) {
         let subscribers = JSON.parse(JSON.stringify(state.contacts))
-        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber_id)
         if (index >= 0) {
           subscribers[index].isSubscribed = true
         }
@@ -65,7 +65,7 @@ export function whatsAppSubscribersInfo (state = initialState, action) {
     case ActionTypes.UNSUBSCRIBE_WHATSAPP_EVENT:
       if (state.contacts) {
         let subscribers = JSON.parse(JSON.stringify(state.contacts))
-        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber_id)
         if (index >= 0) {
           subscribers[index].isSubscribed = false
         }
@@ -88,6 +88,10 @@ export function whatsAppSubscribersInfo (state = initialState, action) {
       } else {
         return state
       }
+    case ActionTypes.BACKGROUND_DATA_FETCH_WHATSAPP:
+      return Object.assign({}, state, {
+        backgroundDataFetchWhatsApp: true
+      })
     default:
       return state
   }

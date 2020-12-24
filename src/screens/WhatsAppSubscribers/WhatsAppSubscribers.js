@@ -7,7 +7,6 @@ import { loadWhatsAppContactsList, editSubscriberWhatsApp, updateSubscribersInfo
 import { materialTheme } from '../../constants/'
 import SubscribersListItem from '../../components/WhatsAppSubscribers/SubscribersListItem'
 import Modal from 'react-native-modal'
-import { handleSocketEvent } from './socket'
 import { clearSocketDataSubscribersWhatsApp } from '../../redux/actions/socket.actions'
 import { updateDashboardInfo } from '../../redux/actions/whatsAppDashboard.actions'
 
@@ -52,15 +51,9 @@ class Subscribers extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
   /* eslint-enable */
-    if (nextProps.socketData) {
-      handleSocketEvent(
-        nextProps.socketData,
-        this.state,
-        this.props,
-        this.props.updateSubscribersInfo,
-        this.props.user,
-        this.props.clearSocketDataSubscribersWhatsApp
-      )
+    if (nextProps.backgroundDataFetchWhatsApp) {
+      this.props.updateSubscribersInfo({backgroundDataFetchWhatsApp: false})
+      this.loadSubscribers()
     }
   }
 
@@ -237,7 +230,8 @@ function mapStateToProps (state) {
     subscribers: (state.whatsAppSubscribersInfo.contacts),
     count: (state.whatsAppSubscribersInfo.count),
     socketData: (state.socketInfo.socketDataSubscribersWhatsApp),
-    cardBoxesData: (state.smsWhatsAppDashboardInfo.cardBoxesData)
+    cardBoxesData: (state.smsWhatsAppDashboardInfo.cardBoxesData),
+    backgroundDataFetchWhatsApp: (state.whatsAppSubscribersInfo.backgroundDataFetchWhatsApp)
   }
 }
 

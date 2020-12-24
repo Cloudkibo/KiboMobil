@@ -163,9 +163,17 @@ export function whatsAppChatInfo (state = initialState, action) {
         openSessions: openSessions ? [...openSessions] : openSessions,
         closeSessions: closeSessions ? [...closeSessions] : closeSessions
       })
-      case ActionTypes.BACKGROUND_WHATSAPP_SESSION_FETCH:
+    case ActionTypes.BACKGROUND_WHATSAPP_SESSION_FETCH:
       return Object.assign({}, state, {
         isBackgroundWhatsappDataFetch: action.data
+      })
+    case ActionTypes.UNSUBSCRIBE_WHATSAPP_EVENT:
+      return Object.assign({}, state, {
+        shouldFetchSessions: true
+      })
+    case ActionTypes.SUBSCRIBE_WHATSAPP_EVENT:
+      return Object.assign({}, state, {
+        shouldFetchSessions: true
       })
     default:
       return state
