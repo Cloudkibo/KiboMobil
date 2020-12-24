@@ -43,6 +43,7 @@ socket.on('new_chat', (data) => {
 })
 
 socket.on('message', (data) => {
+  console.log('socket')
   if (['new_chat', 'agent_replied', 'session_pending_response', 'unsubscribe', 'session_status'].includes(data.action)) {
     if (data.action === 'new_chat') data.showNotification = true
     store.dispatch(handleSocketEvent(data))

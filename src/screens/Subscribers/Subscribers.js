@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StyleSheet, Dimensions, FlatList, View, ActivityIndicator } from 'react-native'
 import { Block, Text, theme, Input } from 'galio-framework'
-import { fetchSubscribers, updatePicture } from '../../redux/actions/subscribers.actions'
+import { fetchSubscribers, updatePicture, updateSubscribersInfo } from '../../redux/actions/subscribers.actions'
 import Icon from '../../components/Icon'
 import { materialTheme } from '../../constants/'
 import SubscribersListItem from '../../components/Subscribers/SubscribersListItem'
@@ -33,6 +33,20 @@ class Subscribers extends React.Component {
   /* eslint-disable */
   UNSAFE_componentWillMount () {
   /* eslint-enable */
+  }
+
+  /* eslint-disable */
+  UNSAFE_componentWillReceiveProps (nextProps) {
+    console.log('nextProps.shouldFetchSubscribers', nextProps.shouldFetchSubscribers)
+  /* eslint-enable */
+    if (nextProps.shouldFetchSubscribers) {
+      this.props.updateSubscribersInfo({shouldFetchSubscribers: false})
+      this.loadSubscribers()
+    }
+    if (nextProps.backgroundDataFetch) {
+      this.props.updateSubscribersInfo({backgroundDataFetch: false})
+      this.loadSubscribers()
+    }
   }
 
   componentDidMount () {
@@ -197,16 +211,19 @@ class Subscribers extends React.Component {
 function mapStateToProps (state) {
   return {
     subscribers: (state.subscribersInfo.subscribers),
+    shouldFetchSubscribers: (state.subscribersInfo.shouldFetchSubscribers),
     count: (state.subscribersInfo.count),
     searchedSubscribers: (state.subscribersInfo.searchedSubscribers),
-    searchedCount: (state.subscribersInfo.searchedCount)
+    searchedCount: (state.subscribersInfo.searchedCount),
+    backgroundDataFetch: (state.subscribersInfo.backgroundDataFetch)
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     fetchSubscribers,
-    updatePicture
+    updatePicture,
+    updateSubscribersInfo
   }, dispatch)
 }
 

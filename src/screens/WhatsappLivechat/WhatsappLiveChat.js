@@ -138,6 +138,10 @@ class WhastappLiveChat extends React.Component {
       this.props.backgroundWhatsappSessionFetch(false)
       this.fetchSessions(true, 'none', true, true)
     }
+    if(nextProps.shouldFetchSessions) {
+      this.props.updateLiveChatInfo({shouldFetchSessions: false})
+      this.fetchSessions(true, 'none', true, true)
+    }
   }
 
   changeTab (value) {
@@ -333,7 +337,8 @@ function mapStateToProps (state) {
     userChat: (state.whatsAppChatInfo.chat),
     chatCount: (state.whatsAppChatInfo.chatCount),
     chatLoading: (state.liveChat.chatLoading),
-    isBackgroundWhatsappDataFetch: (state.whatsAppChatInfo.isBackgroundWhatsappDataFetch)
+    isBackgroundWhatsappDataFetch: (state.whatsAppChatInfo.isBackgroundWhatsappDataFetch),
+    shouldFetchSessions: (state.whatsAppChatInfo.shouldFetchSessions)
   }
 }
 

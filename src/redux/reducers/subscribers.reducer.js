@@ -26,7 +26,9 @@ export function subscribersInfo (state = {}, action) {
     case ActionTypes.UPDATE_SUBSCRIBER_PICTURE:
       if (subscribers) {
         let subscriberIndex = subscribers.findIndex(s => s._id === action.subscriberId)
-        subscribers[subscriberIndex].profilePic = action.profilePic
+        if (subscribers[subscriberIndex]) {
+          subscribers[subscriberIndex].profilePic = action.profilePic
+        }
         return Object.assign({}, state, {
           subscribers: [...subscribers],
           timestamp: new Date().getTime()
@@ -55,7 +57,7 @@ export function subscribersInfo (state = {}, action) {
     case ActionTypes.SUBSCRIBE_EVENT:
       if (state.subscribers) {
         let subscribers = JSON.parse(JSON.stringify(state.subscribers))
-        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber_id)
         if (index >= 0) {
           subscribers[index].isSubscribed = true
         }
@@ -68,7 +70,7 @@ export function subscribersInfo (state = {}, action) {
     case ActionTypes.UNSUBSCRIBE_EVENT:
       if (state.subscribers) {
         let subscribers = JSON.parse(JSON.stringify(state.subscribers))
-        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber._id)
+        let index = subscribers.findIndex(s => s._id === action.data.payload.subscriber_id)
         if (index >= 0) {
           subscribers[index].isSubscribed = false
         }
@@ -78,6 +80,18 @@ export function subscribersInfo (state = {}, action) {
       } else {
         return state
       }
+    case ActionTypes.DISCONNECT_FB_PAGE_EVENT:
+      return Object.assign({}, state, {
+        shouldFetchSubscribers: true
+      })
+    case ActionTypes.CONNECT_FB_PAGE_EVENT:
+      return Object.assign({}, state, {
+        shouldFetchSubscribers: true
+      })
+    case ActionTypes.BACKGROUND_DATA_FETCH:
+      return Object.assign({}, state, {
+        backgroundDataFetch: true
+      })
     default:
       return state
   }

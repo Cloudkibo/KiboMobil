@@ -118,3 +118,15 @@ export function updateSubscriberWhatsAppEvent (data) {
     data
   }
 }
+export function backgroundDataFetch (data) {
+  return {
+    type: ActionTypes.BACKGROUND_DATA_FETCH,
+    data
+  }
+}
+export function backgroundDataFetchWhatsApp (data) {
+  return {
+    type: ActionTypes.BACKGROUND_DATA_FETCH_WHATSAPP,
+    data
+  }
+}
