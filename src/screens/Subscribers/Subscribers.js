@@ -37,7 +37,6 @@ class Subscribers extends React.Component {
 
   /* eslint-disable */
   UNSAFE_componentWillReceiveProps (nextProps) {
-    console.log('nextProps.shouldFetchSubscribers', nextProps.shouldFetchSubscribers)
   /* eslint-enable */
     if (nextProps.shouldFetchSubscribers) {
       this.props.updateSubscribersInfo({shouldFetchSubscribers: false})
@@ -58,7 +57,6 @@ class Subscribers extends React.Component {
     })
   }
   componentWillUnmount () {
-    console.log('componentWillUnmount')
     this._unsubscribe()
   }
 

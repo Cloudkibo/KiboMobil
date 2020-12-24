@@ -132,13 +132,11 @@ class WhastappLiveChat extends React.Component {
         this.props.clearSocketDataWhatsapp
       )
     }
-    console.log('isBackgroundWhatsappDataFetch', nextProps.isBackgroundWhatsappDataFetch)
     if(nextProps.isBackgroundWhatsappDataFetch) {
-      console.log('isBackgroundWhatsappDataFetch', nextProps.isBackgroundWhatsappDataFetch)
       this.props.backgroundWhatsappSessionFetch(false)
       this.fetchSessions(true, 'none', true, true)
     }
-    if(nextProps.shouldFetchSessions) {
+    if (nextProps.shouldFetchSessions) {
       this.props.updateLiveChatInfo({shouldFetchSessions: false})
       this.fetchSessions(true, 'none', true, true)
     }

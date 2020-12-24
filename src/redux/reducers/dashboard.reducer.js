@@ -33,14 +33,12 @@ export function dashboardInfo (state = initialState, action) {
         dashboard: dashboard1
       })
     case ActionTypes.SUBSCRIBE_EVENT:
-    console.log('SUBSCRIBE_EVENT')
       let dashboard2 = JSON.parse(JSON.stringify(state.dashboard))
       dashboard2.subscribers = state.dashboard.subscribers + 1
       return Object.assign({}, state, {
         dashboard: dashboard2
       })
     case ActionTypes.UNSUBSCRIBE_EVENT:
-    console.log('UNSUBSCRIBE_EVENT')
       let dashboard3 = JSON.parse(JSON.stringify(state.dashboard))
       dashboard3.subscribers = state.dashboard.subscribers - 1
       return Object.assign({}, state, {
