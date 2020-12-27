@@ -29,6 +29,7 @@ class Loading extends React.Component {
     this.handleAutomatedResponse = this.handleAutomatedResponse.bind(this)
     this.fetchInActiveData = this.fetchInActiveData.bind(this)
     this._handleAppStateChange = this._handleAppStateChange.bind(this)
+    this._fetchPageData = this._fetchPageData(this)
 
     // this._handleNotification = this._handleNotification.bind(this)
   }
@@ -92,6 +93,12 @@ class Loading extends React.Component {
   //   }
   // }
 
+  _fetchPageData() {
+    setTimeout(() => {
+      this.props.fetchPages()
+    }, 1500)
+  }
+
   _handleAppStateChange (nextAppState) {
     console.log('AppState.currentState', this.state.appState)
     console.log('AppState.nextAppState', nextAppState)
@@ -101,6 +108,7 @@ class Loading extends React.Component {
         this.props.backgroundSessionDataFetch(true)
         this.props.backgroundDataFetch(true)
         this.props.loadDashboardData()
+        this._fetchPageData()
       } else if(this.props.user && this.props.user.platform === 'whatsApp') {
         this.props.backgroundWhatsappSessionFetch(true)
         this.props.loadCardBoxesDataWhatsApp()
