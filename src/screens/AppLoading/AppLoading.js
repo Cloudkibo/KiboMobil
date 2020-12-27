@@ -54,23 +54,6 @@ class Loading extends React.Component {
       .catch((err) => {
         Sentry.captureException(err)
       })
-    // if (Platform.OS === 'android') {
-    //   Notifications.createChannelAndroidAsync('default', {
-    //     name: 'default',
-    //     sound: true,
-    //     priority: 'max',
-    //     vibrate: [0, 250, 250, 250],
-    //   });
-    // }
-    // this._notificationSubscription = Notifications.addListener(this._handleNotification)
-    // const subscription = Notifications.addNotificationReceivedListener(notification => {
-    //   console.log('notification got');
-    // });
-    // Notifications.setNotificationHandler({
-    //   handleNotification: async (notification) => {
-    //     console.log('handleNotification')
-    //   }
-    // })
     AppState.addEventListener('change', this._handleAppStateChange)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
@@ -83,16 +66,6 @@ class Loading extends React.Component {
       })
     })
   }
-  //   _handleNotification = notification => {
-  //   console.log('notification', notification)
-  //   if(notification.origin === 'selected') {
-  //     this.props.navigation.navigate('Live Chat', {
-  //       screen: 'Live Chat',
-  //       params: {activeSession: notification.data},
-  //     });
-  //   }
-  // }
-
   _fetchPageData() {
     setTimeout(() => {
       this.props.fetchPages()
