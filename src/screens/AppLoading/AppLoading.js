@@ -36,18 +36,20 @@ class Loading extends React.Component {
   async componentDidMount () {
     VersionCheck.needUpdate()
       .then(result => {
-        let currentVersion = parseInt(result.currentVersion, 10)
-        let latestVersion = parseInt(result.latestVersion, 10)
-        if (currentVersion < latestVersion || result.isNeeded) {
-          let url = Platform.OS === 'android'
-            ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
-            : 'https://apps.apple.com/us/app/kibopush/id1519207005'
-          Alert.alert(
-            'Update KiboPush?',
-            'KiboPush recommends that you update to the latest version. This version includes few bug fixes and performance improvements. You can keep using the app while downloading the update.',
-            [{ text: 'No Thanks' },
-              { text: 'Update', onPress: () => Linking.openURL(url) }],
-            { cancelable: true })
+        if(result) {
+          let currentVersion = parseInt(result.currentVersion, 10)
+          let latestVersion = parseInt(result.latestVersion, 10)
+          if (currentVersion < latestVersion || result.isNeeded) {
+            let url = Platform.OS === 'android'
+              ? 'https://play.google.com/store/apps/details?id=com.cloudkibo.kibopush'
+              : 'https://apps.apple.com/us/app/kibopush/id1519207005'
+            Alert.alert(
+              'Update KiboPush?',
+              'KiboPush recommends that you update to the latest version. This version includes few bug fixes and performance improvements. You can keep using the app while downloading the update.',
+              [{ text: 'No Thanks' },
+                { text: 'Update', onPress: () => Linking.openURL(url) }],
+              { cancelable: true })
+          }
         }
       })
       .catch((err) => {
