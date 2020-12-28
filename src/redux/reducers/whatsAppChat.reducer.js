@@ -175,6 +175,12 @@ export function whatsAppChatInfo (state = initialState, action) {
       return Object.assign({}, state, {
         shouldFetchSessions: true
       })
+    case ActionTypes.BACKGROUND_DATA_FETCH_WHATSAPP:
+      return Object.assign({}, state, {
+        allChatMessages: {},
+        chat: [],
+        backgroundDataFetchWhatsApp: true
+      })
     default:
       return state
   }

@@ -72,6 +72,22 @@ class Header extends React.Component {
         state.activeSession = sessions[index]
       }
     }
+    if (nextProps.openSessionsWhatsapp) {
+      let sessions = nextProps.openSessionsWhatsapp
+      sessions = sessions || []
+      let index = sessions.findIndex((session) => session._id === this.state.activeSession._id)
+      if (index !== -1) {
+        state.activeSession = sessions[index]
+      }
+    }
+    if (nextProps.closeSessionsWhatsapp) {
+      let sessions = nextProps.closeSessionsWhatsapp
+      sessions = sessions || []
+      let index = sessions.findIndex((session) => session._id === this.state.activeSession._id)
+      if (index !== -1) {
+        state.activeSession = sessions[index]
+      }
+    }
     this.setState({...state})
   }
 
@@ -280,7 +296,11 @@ function mapStateToProps (state) {
     openSessions: (state.liveChat.openSessions),
     openCount: (state.liveChat.openCount),
     closeCount: (state.liveChat.closeCount),
-    closeSessions: (state.liveChat.closeSessions)
+    closeSessions: (state.liveChat.closeSessions),
+    openSessionsWhatsapp: (state.whatsAppChatInfo.openSessions),
+    openCountWhatsapp: (state.whatsAppChatInfo.openCount),
+    closeCountWhatsapp: (state.whatsAppChatInfo.closeCount),
+    closeSessionsWhatsapp: (state.whatsAppChatInfo.closeSessions)
     // socketData: (state.socketInfo.socketData)
   }
 }

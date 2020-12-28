@@ -45,17 +45,21 @@ export function dashboardInfo (state = initialState, action) {
         dashboard: dashboard3
       })
     case ActionTypes.SOCKET_EVENT:
-      let data = action.data
-      let dashboard4 = JSON.parse(JSON.stringify(state.dashboard))
-      if (data.action === 'new_chat') {
-        dashboard4.unreadCount = state.dashboard.unreadCount + 1
+      if (state.dashboard) {
+        let data = action.data
+        let dashboard4 = JSON.parse(JSON.stringify(state.dashboard))
+        if (data.action === 'new_chat') {
+          dashboard4.unreadCount = state.dashboard.unreadCount + 1
+        }
+        if (data.action === 'mark_read') {
+          dashboard4.unreadCount = state.dashboard.unreadCount - data.payload.read_count
+        }
+        return Object.assign({}, state, {
+          dashboard: dashboard4
+        })
+      } else {
+        return state
       }
-      if (data.action === 'mark_read') {
-        dashboard4.unreadCount = state.dashboard.unreadCount - data.payload.read_count
-      }
-      return Object.assign({}, state, {
-        dashboard: dashboard4
-      })
     default:
       return state
   }

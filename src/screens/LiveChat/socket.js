@@ -15,6 +15,9 @@ export function handleSocketEvent (data, state, props, updateLiveChatInfo, user,
     case 'session_status':
       handleStatus(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
       break
+    case 'session_assign':
+      handleAssignment(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
+      break
     case 'mark_read':
       markReadMessages(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
       break
@@ -179,10 +182,10 @@ const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocket
     session.pendingResponse = false
     let data = {
       openSessions: state.tabValue === 'open' ? [session, ...sessions] : [session, ...props.openSessions],
-      closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions,
+      closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions
     }
     updateLiveChatInfo(data)
-    clearSocketData() 
+    clearSocketData()
   } else {
     clearSocketData()
   }
@@ -219,6 +222,41 @@ const handlePendingResponse = (payload, state, props, updateLiveChatInfo, clearS
   } else {
     clearSocketData()
   }
+}
+const handleAssignment = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
+  let openSessions = JSON.parse(JSON.stringify(props.openSessions))
+  let closeSessions = JSON.parse(JSON.stringify(props.closeSessions))
+  let data = {}
+  const openIndex = openSessions.findIndex((s) => s._id === payload.data.subscriberId)
+  const closeIndex = closeSessions.findIndex((s) => s._id === payload.data.subscriberId)
+  if (openIndex >= 0) {
+    openSessions[openIndex].is_assigned = payload.data.isAssigned
+    openSessions[openIndex].assigned_to = {
+      type: payload.data.teamId ? 'team' : 'agent',
+      id: payload.data.teamId ? payload.data.teamId : payload.data.agentId,
+      name: payload.data.teamName ? payload.data.teamName : payload.data.agentName
+    }
+  }
+  if (closeIndex >= 0) {
+    closeSessions[closeIndex].is_assigned = payload.data.isAssigned
+    closeSessions[closeIndex].assigned_to = {
+      type: payload.data.teamId ? 'team' : 'agent',
+      id: payload.data.teamId ? payload.data.teamId : payload.data.agentId,
+      name: payload.data.teamName ? payload.data.teamName : payload.data.agentName
+    }
+  }
+  openSessions = openSessions.sort(function (a, b) {
+    return new Date(b.last_activity_time) - new Date(a.last_activity_time)
+  })
+  closeSessions = closeSessions.sort(function (a, b) {
+    return new Date(b.last_activity_time) - new Date(a.last_activity_time)
+  })
+  data = {
+    openSessions: openSessions,
+    closeSessions: closeSessions
+  }
+  updateLiveChatInfo(data)
+  clearSocketData()
 }
 const handleStatus = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
   let openCount = props.openCount

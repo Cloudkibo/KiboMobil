@@ -27,17 +27,21 @@ export function smsWhatsAppDashboardInfo (state = {}, action) {
         cardBoxesData: dashboard3
       })
     case ActionTypes.SOCKET_EVENT_WHATSAPP:
-      let data = action.data
-      let dashboard4 = JSON.parse(JSON.stringify(state.cardBoxesData))
-      if (data.action === 'new_chat_whatsapp') {
-        dashboard4.unreadCount = state.cardBoxesData.unreadCount + 1
+      if (state.cardBoxesData) {
+        let data = action.data
+        let dashboard4 = JSON.parse(JSON.stringify(state.cardBoxesData))
+        if (data.action === 'new_chat_whatsapp') {
+          dashboard4.chats = state.cardBoxesData.chats + 1
+        }
+        if (data.action === 'mark_read_whatsapp') {
+          dashboard4.chats = state.cardBoxesData.chats - data.payload.read_count
+        }
+        return Object.assign({}, state, {
+          cardBoxesData: dashboard4
+        })
+      } else {
+        return state
       }
-      if (data.action === 'mark_read_whatsapp') {
-        dashboard4.unreadCount = state.cardBoxesData.unreadCount - data.payload.read_count
-      }
-      return Object.assign({}, state, {
-        cardBoxesData: dashboard4
-      })
     default:
       return state
   }
