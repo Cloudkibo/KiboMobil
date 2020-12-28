@@ -271,7 +271,7 @@ export function liveChat (state = initialState, action) {
         customers: action.data
       })
 
-      case ActionTypes.LOADING_CHAT:
+    case ActionTypes.LOADING_CHAT:
       return Object.assign({}, state, {
         chatLoading: action.data
       })
@@ -323,6 +323,12 @@ export function liveChat (state = initialState, action) {
     case ActionTypes.SUBSCRIBE_EVENT:
       return Object.assign({}, state, {
         isFetchSessionData: true
+      })
+    case ActionTypes.BACKGROUND_DATA_FETCH:
+      return Object.assign({}, state, {
+        allChatMessages: {},
+        userChat: [],
+        backgroundDataFetch: true
       })
     default:
       return state

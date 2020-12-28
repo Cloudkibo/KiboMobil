@@ -27,6 +27,9 @@ export function handleSocketEvent (data, state, props, updateLiveChatInfo, user,
     case 'mark_read_whatsapp':
       markReadMessages(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
       break
+    case 'session_assign_whatsapp':
+      handleAssignment(data.payload, state, props, updateLiveChatInfo, clearSocketData, user)
+      break
     default:
   }
 }
@@ -144,8 +147,6 @@ const handleIncomingMessage = (payload, state, props, updateLiveChatInfo, clearS
 const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
   let ChatMessages = props.allChatMessages
   let chatUser = ChatMessages[payload.subscriber_id]
-  console.log('chatUser', chatUser)
-  console.log('payload.message._id', payload.message._id)
   let sessions = state.sessions
   const index = sessions.findIndex((s) => s._id === payload.subscriber_id)
   if (chatUser && ((chatUser.length > 0 && chatUser[chatUser.length - 1]._id !== payload.message._id) || chatUser.length === 0)) {
@@ -174,6 +175,7 @@ const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocket
       clearSocketData()
     } else if (index >= 0) {
       payload.message.format = 'convos'
+      let allChatMessages = props.allChatMessages
       if (allChatMessages[payload.subscriber_id]) {
         allChatMessages[payload.subscriber_id] = [...allChatMessages[payload.subscriber_id], payload.message]
       }
@@ -202,12 +204,11 @@ const handleAgentReply = (payload, state, props, updateLiveChatInfo, clearSocket
     session.pendingResponse = false
     let data = {
       openSessions: state.tabValue === 'open' ? [session, ...sessions] : [session, ...props.openSessions],
-      closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions,
+      closeSessions: state.tabValue === 'close' ? sessions : props.closeSessions
     }
     updateLiveChatInfo(data)
-    clearSocketData() 
-  }
-  else {
+    clearSocketData()
+  } else {
     clearSocketData()
   }
 }
@@ -251,32 +252,86 @@ const handlePendingResponse = (payload, state, props, updateLiveChatInfo, clearS
     clearSocketData()
   }
 }
+
+const handleAssignment = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
+  console.log('in handleAssignment', payload)
+  let openSessions = JSON.parse(JSON.stringify(props.openSessions))
+  let closeSessions = JSON.parse(JSON.stringify(props.closeSessions))
+  let data = {}
+  const openIndex = openSessions.findIndex((s) => s._id === payload.data.subscriberId)
+  const closeIndex = closeSessions.findIndex((s) => s._id === payload.data.subscriberId)
+  if (openIndex >= 0) {
+    console.log('openIndex', openIndex)
+    openSessions[openIndex].is_assigned = payload.data.isAssigned
+    openSessions[openIndex].assigned_to = {
+      type: payload.data.teamId ? 'team' : 'agent',
+      id: payload.data.teamId ? payload.data.teamId : payload.data.agentId,
+      name: payload.data.teamName ? payload.data.teamName : payload.data.agentName
+    }
+  }
+  if (closeIndex >= 0) {
+    closeSessions[closeIndex].is_assigned = payload.data.isAssigned
+    closeSessions[closeIndex].assigned_to = {
+      type: payload.data.teamId ? 'team' : 'agent',
+      id: payload.data.teamId ? payload.data.teamId : payload.data.agentId,
+      name: payload.data.teamName ? payload.data.teamName : payload.data.agentName
+    }
+  }
+  openSessions = openSessions.sort(function (a, b) {
+    return new Date(b.last_activity_time) - new Date(a.last_activity_time)
+  })
+  closeSessions = closeSessions.sort(function (a, b) {
+    return new Date(b.last_activity_time) - new Date(a.last_activity_time)
+  })
+  data = {
+    openSessions: openSessions,
+    closeSessions: closeSessions
+  }
+  updateLiveChatInfo(data)
+  clearSocketData()
+}
+
 const handleStatus = (payload, state, props, updateLiveChatInfo, clearSocketData, user) => {
   let openCount = props.openCount
   let closeCount = props.closeCount
   let openSessions = props.openSessions
   let closeSessions = props.closeSessions
-  let session = payload.session
-  session.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
-  session.firstName = payload.session.name
+  let session
+  if (payload.status === 'resolved') {
+    console.log('one')
+    session = openSessions.find(session => session._id === payload.session_id)
+    session.status = 'resolved'
+    session.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
+    session.firstName = payload.session.name
+  } else {
+    console.log('2')
+    session = closeSessions.find(session => session._id === payload.session_id)
+    session.status = 'new'
+    session.profilePic = 'https://www.mastermindpromotion.com/wp-content/uploads/2015/02/facebook-default-no-profile-pic-300x300.jpg'
+    session.firstName = payload.session.name
+  }
   let data = {}
   const openIndex = openSessions.findIndex((s) => s._id === session._id)
   const closeIndex = closeSessions.findIndex((s) => s._id === session._id)
   if (payload.status === 'new') {
     if (openIndex === -1) {
+      console.log('3')
       openSessions = [session, ...openSessions]
       openCount = openCount + 1
     }
     if (closeIndex > -1) {
+      console.log('4')
       closeSessions.splice(closeIndex, 1)
       closeCount = closeCount - 1
     }
   } else if (payload.status === 'resolved') {
     if (openIndex > -1) {
+      console.log('5')
       openSessions.splice(openIndex, 1)
       openCount = openCount - 1
     }
     if (closeIndex === -1) {
+      console.log('6')
       closeSessions = [session, ...closeSessions]
       closeCount = closeCount + 1
     }

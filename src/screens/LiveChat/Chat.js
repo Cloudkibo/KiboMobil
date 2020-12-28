@@ -132,6 +132,12 @@ class LiveChat extends React.Component {
       }
     }
 
+    if (nextProps.backgroundDataFetch) {
+      this.props.updateLiveChatInfo({backgroundDataFetch: false})
+      this.setState({loadingChat: true})
+      this.props.fetchUserChats(this.props.route.params.activeSession._id, { page: 'first', number: 25 }, this.props.route.params.activeSession.messagesCount)
+    }
+
     this.setState({
       ...state
     })
@@ -219,14 +225,6 @@ class LiveChat extends React.Component {
     return data
   }
 
-  /* eslint-disable */
-  UNSAFE_componentWillMount () {
-  /* eslint-enable */
-  }
-
-  componentDidMount () {
-  }
-
   render () {
     return (
       <Block flex style={styles.block}>
@@ -278,6 +276,7 @@ function mapStateToProps (state) {
     userChat: (state.liveChat.userChat),
     chatCount: (state.liveChat.chatCount),
     allChatMessages: (state.liveChat.allChatMessages),
+    backgroundDataFetch: (state.liveChat.backgroundDataFetch),
     pages: (state.pagesInfo.pages),
     user: (state.basicInfo.user),
     // members: (state.membersInfo.members),

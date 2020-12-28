@@ -114,6 +114,12 @@ class LiveChat extends React.Component {
       }
     }
 
+    if (nextProps.backgroundDataFetch) {
+      this.props.updateLiveChatInfo({backgroundDataFetchWhatsApp: false})
+      state.loadingChat = true
+      this.props.fetchUserChats(this.props.route.params.activeSession._id, { page: 'first', number: 25 }, this.props.route.params.activeSession.messagesCount)
+    }
+
     this.setState({
       ...state
     })
@@ -260,6 +266,7 @@ function mapStateToProps (state) {
     zoomIntegrations: (state.settingsInfo.zoomIntegrations),
     automated_options: (state.basicInfo.automated_options),
     teamAgents: (state.teamsInfo.assignedTeamAgents),
+    backgroundDataFetch: (state.whatsAppChatInfo.backgroundDataFetchWhatsApp)
   }
 }
 
