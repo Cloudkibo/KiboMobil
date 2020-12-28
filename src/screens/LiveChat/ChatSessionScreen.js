@@ -115,7 +115,7 @@ class ChatSessionScreen extends React.Component {
             console.log(error.message);
             if(error.message.toUpperCase() === 'TOO_MANY_REGISTRATIONS') {
              alert('Your device has too many apps registered with Firebase Cloud Messaging. Please delete any one app to get Push Notification From KiboPush.')
-            } else if(error && error.message && error.message.includes('Network request failed')) {
+            } else if(error && retryCount > 0 && error.message && error.message.includes('Network request failed')) {
                 this.registerForPushNotificationsAsync(user, retryCount - 1)
             } else if(retryCount === 0 ) {
                 alert('Your internet connection is unstable. Please connect device with stable internet to get Push Notification From KiboPush.' )
