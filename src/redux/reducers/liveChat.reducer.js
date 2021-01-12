@@ -312,6 +312,10 @@ export function liveChat (state = initialState, action) {
       return Object.assign({}, state, {
         isFetchSessionData: action.data
       })
+    case ActionTypes.CONNECT_FB_PAGE_EVENT:
+      return Object.assign({}, state, {
+        isFetchSessionData: true
+      })
     case ActionTypes.DISCONNECT_FB_PAGE_EVENT:
       return Object.assign({}, state, {
         isFetchSessionData: true
