@@ -26,13 +26,14 @@ class DashboardHeader extends React.Component {
     this.state = {
       showAssignmentModal: false,
       automated_options: this.props.automated_options,
-      selectedPlatform: 'messenger',
+      selectedPlatform: this.props.user ? this.props.user.platform: 'messenger',
       Platforms: [{label: 'Messenger', value: 'messenger'}, {label: 'WhatsApp', value: 'whatsApp'}]
     }
     this.handlePlatformSelect = this.handlePlatformSelect.bind(this)
     this.handlePlatform = this.handlePlatform.bind(this)
     this.handleLeftPress = this.handleLeftPress.bind(this)
     this.renderRight = this.renderRight.bind(this)
+
 
   }
   handlePlatformSelect (value, index) {
