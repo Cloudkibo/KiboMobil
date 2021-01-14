@@ -16,7 +16,9 @@ export function liveChat (state = initialState, action) {
         openSessions[openIndex].profilePic = action.profilePic
       } else {
         let closeIndex = closeSessions.findIndex(s => s._id === action.subscriber._id)
-        closeSessions[closeIndex].profilePic = action.profilePic
+        if(closeIndex > -1) {
+          closeSessions[closeIndex].profilePic = action.profilePic
+          }
       }
       return Object.assign({}, state, {
         openSessions: [...openSessions],
