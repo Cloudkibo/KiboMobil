@@ -29,6 +29,7 @@ class Loading extends React.Component {
     this.handleAutomatedResponse = this.handleAutomatedResponse.bind(this)
     this.fetchInActiveData = this.fetchInActiveData.bind(this)
     this._handleAppStateChange = this._handleAppStateChange.bind(this)
+    this._fetchPageData = this._fetchPageData(this)
 
     // this._handleNotification = this._handleNotification.bind(this)
   }
@@ -55,23 +56,6 @@ class Loading extends React.Component {
       .catch((err) => {
         Sentry.captureException(err)
       })
-    // if (Platform.OS === 'android') {
-    //   Notifications.createChannelAndroidAsync('default', {
-    //     name: 'default',
-    //     sound: true,
-    //     priority: 'max',
-    //     vibrate: [0, 250, 250, 250],
-    //   });
-    // }
-    // this._notificationSubscription = Notifications.addListener(this._handleNotification)
-    // const subscription = Notifications.addNotificationReceivedListener(notification => {
-    //   console.log('notification got');
-    // });
-    // Notifications.setNotificationHandler({
-    //   handleNotification: async (notification) => {
-    //     console.log('handleNotification')
-    //   }
-    // })
     AppState.addEventListener('change', this._handleAppStateChange)
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('token').then(token => {
@@ -84,15 +68,11 @@ class Loading extends React.Component {
       })
     })
   }
-  //   _handleNotification = notification => {
-  //   console.log('notification', notification)
-  //   if(notification.origin === 'selected') {
-  //     this.props.navigation.navigate('Live Chat', {
-  //       screen: 'Live Chat',
-  //       params: {activeSession: notification.data},
-  //     });
-  //   }
-  // }
+  _fetchPageData() {
+    setTimeout(() => {
+      this.props.fetchPages()
+    }, 1500)
+  }
 
   _handleAppStateChange (nextAppState) {
     console.log('AppState.currentState', this.state.appState)
@@ -103,6 +83,7 @@ class Loading extends React.Component {
         this.props.backgroundSessionDataFetch(true)
         this.props.backgroundDataFetch(true)
         this.props.loadDashboardData()
+        this._fetchPageData()
       } else if(this.props.user && this.props.user.platform === 'whatsApp') {
         this.props.backgroundWhatsappSessionFetch(true)
         this.props.loadCardBoxesDataWhatsApp()
